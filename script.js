@@ -854,10 +854,13 @@ async function loadAdminDataFromD1() {
       )
     );
 
+
     results.forEach(
-      ({ type, items }) => {
-        adminData[type] = items;
-      }
+        ({ type, items }) => {
+            if (items.length > 0) {
+                adminData[type] = items;
+            }
+        }
     );
 
     renderAllAdminLists();
