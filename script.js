@@ -2583,21 +2583,14 @@ function createFanMessageCardHtml(messageData) {
       </p>
 
       <div class="fan-message-card-actions">
-        <button
-          type="button"
-          data-fan-message-action="edit"
-          data-fan-message-id="${id}"
-        >
-          수정
-        </button>
+      <button
+      type="button"
+      data-fan-message-action="manage"
+      data-fan-message-id="${id}"
+      >
+      관리
+      </button>
 
-        <button
-          type="button"
-          data-fan-message-action="delete"
-          data-fan-message-id="${id}"
-        >
-          삭제
-        </button>
       </div>
     </article>
   `;
