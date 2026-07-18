@@ -771,9 +771,6 @@ const adminData = {
   ],
 };
 
-const adminData = {
-  // 기존 데이터 전체
-};
 
 const initialAdminData =
   JSON.parse(JSON.stringify(adminData));
