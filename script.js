@@ -179,15 +179,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  /* =========================
-     ADMIN ENTRY - PLACEHOLDER
-  ========================= */
+/* =========================
+   ADMIN ENTRY
+========================= */
 
-  if (adminEntryButton) {
-    adminEntryButton.addEventListener("click", () => {
-      alert("관리자 기능은 다음 단계에서 연결할 예정입니다.");
-    });
-  }
+if (adminEntryButton) {
+  adminEntryButton.addEventListener("click", () => {
+    openAdminLogin();
+  });
+}
 });
 
 /* =========================================================
