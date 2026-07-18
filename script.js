@@ -2961,12 +2961,46 @@ async function handleFanMessageSubmit(event) {
 
 
 /* =========================================================
-   수정/삭제 버튼
-
-   이번 단계에서는 다음 기능 안내만 표시
+   메시지 삭제 API
 ========================================================= */
 
-function handleFanMessageListClick(event) {
+async function deleteFanMessage(
+  id,
+  password
+) {
+  const response = await fetch(
+    FAN_MESSAGE_API_URL,
+    {
+      method: "DELETE",
+
+      headers: {
+        "Content-Type":
+          "application/json",
+
+        Accept:
+          "application/json",
+      },
+
+      body: JSON.stringify({
+        id,
+        password,
+      }),
+    }
+  );
+
+  return parseFanMessageApiResponse(
+    response
+  );
+}
+
+
+/* =========================================================
+   수정/삭제 버튼
+========================================================= */
+
+async function handleFanMessageListClick(
+  event
+) {
   const actionButton =
     event.target.closest(
       "[data-fan-message-action]"
@@ -2979,18 +3013,86 @@ function handleFanMessageListClick(event) {
   const action =
     actionButton.dataset.fanMessageAction;
 
-  if (action === "edit") {
+  const messageId =
+    actionButton.dataset.fanMessageId;
+
+  if (!messageId) {
     alert(
-      "수정 기능은 다음 단계에서 비밀번호 확인과 함께 연결합니다."
+      "메시지 정보를 찾을 수 없습니다."
     );
 
     return;
   }
 
-  if (action === "delete") {
+  if (action === "edit") {
     alert(
-      "삭제 기능은 다음 단계에서 비밀번호 확인과 함께 연결합니다."
+      "수정 기능은 다음 단계에서 연결합니다."
     );
+
+    return;
+  }
+
+  if (action !== "delete") {
+    return;
+  }
+
+  const password = window.prompt(
+    "작성할 때 입력한 비밀번호를 입력해 주세요."
+  );
+
+  if (password === null) {
+    return;
+  }
+
+  if (!password.trim()) {
+    alert(
+      "비밀번호를 입력해 주세요."
+    );
+
+    return;
+  }
+
+  const confirmed = window.confirm(
+    "이 메시지를 삭제할까요?"
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  try {
+    actionButton.disabled = true;
+    actionButton.textContent =
+      "삭제 중";
+
+    const result =
+      await deleteFanMessage(
+        messageId,
+        password
+      );
+
+    await loadFanMessages({
+      reset: true,
+    });
+
+    alert(
+      result.message ||
+      "메시지가 삭제되었습니다."
+    );
+  } catch (error) {
+    console.error(
+      "Fan Message 삭제 실패:",
+      error
+    );
+
+    alert(
+      error.message ||
+      "메시지를 삭제하지 못했습니다."
+    );
+
+    actionButton.disabled = false;
+    actionButton.textContent =
+      "삭제";
   }
 }
 
