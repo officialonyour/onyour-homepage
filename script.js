@@ -190,10 +190,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-/* =========================
-   ADMIN LOGIN MODAL
-========================= */
+/* =========================================================
+   ONYOUR ADMIN CMS
+   STEP 1 - LOGIN / VIEW NAVIGATION
+========================================================= */
 
+/* =========================
+   ADMIN ELEMENTS
+========================= */
 
 const adminLoginModal =
   document.getElementById("adminLoginModal");
@@ -216,52 +220,304 @@ const adminPasswordToggle =
 const adminLoginMessage =
   document.getElementById("adminLoginMessage");
 
+const adminDashboard =
+  document.getElementById("adminDashboard");
+
+const adminDashboardClose =
+  document.getElementById("adminDashboardClose");
+
+const adminLogoutButton =
+  document.getElementById("adminLogoutButton");
+
+const adminDashboardTitle =
+  document.getElementById("adminDashboardTitle");
+
+const adminDashboardContent =
+  document.querySelector(
+    "#adminDashboard .admin-dashboard-content"
+  );
+
+const adminViews =
+  document.querySelectorAll(
+    "#adminDashboard [data-admin-view]"
+  );
+
+
+/* =========================
+   ADMIN VIEW INFORMATION
+========================= */
+
+const ADMIN_VIEW_TITLES = {
+  home: "홈페이지 관리",
+
+  news: "News 관리",
+  "news-form": "News 작성",
+
+  performance: "공연 관리",
+  "performance-form": "공연 작성",
+
+  video: "영상 관리",
+  "video-form": "영상 작성",
+
+  music: "음원 관리",
+  "music-form": "음원 작성",
+
+  gallery: "갤러리 관리",
+  "gallery-form": "갤러리 작성",
+
+  members: "멤버 관리",
+  "members-form": "멤버 작성",
+
+  settings: "홈페이지 설정",
+};
+
+
+/* =========================
+   LOGIN MODAL
+========================= */
+
 function openAdminLogin() {
   if (!adminLoginModal) return;
 
   adminLoginModal.classList.add("is-open");
-  adminLoginModal.setAttribute("aria-hidden", "false");
-  document.body.classList.add("admin-modal-open");
+  adminLoginModal.setAttribute(
+    "aria-hidden",
+    "false"
+  );
 
-  adminLoginMessage.textContent = "";
-  adminPassword.value = "";
+  document.body.classList.add(
+    "admin-modal-open"
+  );
 
-  window.setTimeout(() => {
-    adminPassword.focus();
-  }, 100);
+  if (adminLoginMessage) {
+    adminLoginMessage.textContent = "";
+  }
+
+  if (adminPassword) {
+    adminPassword.value = "";
+
+    window.setTimeout(() => {
+      adminPassword.focus();
+    }, 100);
+  }
 }
 
 function closeAdminLogin() {
   if (!adminLoginModal) return;
 
   adminLoginModal.classList.remove("is-open");
-  adminLoginModal.setAttribute("aria-hidden", "true");
-  document.body.classList.remove("admin-modal-open");
+  adminLoginModal.setAttribute(
+    "aria-hidden",
+    "true"
+  );
 
-  adminLoginMessage.textContent = "";
-  adminPassword.value = "";
+  document.body.classList.remove(
+    "admin-modal-open"
+  );
+
+  if (adminLoginMessage) {
+    adminLoginMessage.textContent = "";
+  }
+
+  if (adminPassword) {
+    adminPassword.value = "";
+  }
 }
 
 function toggleAdminPassword() {
   if (!adminPassword) return;
 
-  const isPassword =
+  const currentlyHidden =
     adminPassword.type === "password";
 
   adminPassword.type =
-    isPassword ? "text" : "password";
+    currentlyHidden ? "text" : "password";
 
-  adminPasswordToggle.textContent =
-    isPassword ? "숨기기" : "보기";
+  if (adminPasswordToggle) {
+    adminPasswordToggle.textContent =
+      currentlyHidden ? "숨기기" : "보기";
 
-  adminPasswordToggle.setAttribute(
-    "aria-label",
-    isPassword
-      ? "비밀번호 숨기기"
-      : "비밀번호 표시"
+    adminPasswordToggle.setAttribute(
+      "aria-label",
+      currentlyHidden
+        ? "비밀번호 숨기기"
+        : "비밀번호 표시"
+    );
+  }
+}
+
+
+/* =========================
+   ADMIN VIEW SWITCHING
+========================= */
+
+function getAdminView(viewName) {
+  return document.querySelector(
+    `#adminDashboard [data-admin-view="${viewName}"]`
   );
 }
 
+function openAdminView(viewName) {
+  const targetView = getAdminView(viewName);
+
+  if (!targetView) {
+    console.warn(
+      `관리자 화면을 찾을 수 없습니다: ${viewName}`
+    );
+
+    return;
+  }
+
+  adminViews.forEach((view) => {
+    const isTarget = view === targetView;
+
+    view.classList.toggle(
+      "is-open",
+      isTarget
+    );
+
+    view.setAttribute(
+      "aria-hidden",
+      isTarget ? "false" : "true"
+    );
+  });
+
+  if (adminDashboardTitle) {
+    adminDashboardTitle.textContent =
+      ADMIN_VIEW_TITLES[viewName] ||
+      "홈페이지 관리";
+  }
+
+  if (adminDashboardContent) {
+    adminDashboardContent.scrollTo({
+      top: 0,
+      behavior: "auto",
+    });
+  }
+}
+
+
+/* =========================
+   DASHBOARD OPEN / CLOSE
+========================= */
+
+function openAdminDashboard() {
+  closeAdminLogin();
+
+  if (!adminDashboard) return;
+
+  adminDashboard.classList.add("is-open");
+
+  adminDashboard.setAttribute(
+    "aria-hidden",
+    "false"
+  );
+
+  document.body.classList.add(
+    "admin-dashboard-open"
+  );
+
+  openAdminView("home");
+}
+
+function closeAdminDashboard() {
+  if (!adminDashboard) return;
+
+  adminDashboard.classList.remove("is-open");
+
+  adminDashboard.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+  document.body.classList.remove(
+    "admin-dashboard-open"
+  );
+
+  openAdminView("home");
+}
+
+
+/* =========================
+   FORM RESET
+========================= */
+
+function resetAdminForm(sectionName) {
+  const form = document.getElementById(
+    `admin${
+      sectionName.charAt(0).toUpperCase() +
+      sectionName.slice(1)
+    }Form`
+  );
+
+  form?.reset();
+
+  const hiddenId = form?.querySelector(
+    'input[type="hidden"]'
+  );
+
+  if (hiddenId) {
+    hiddenId.value = "";
+  }
+
+  form
+    ?.querySelectorAll(
+      ".admin-image-preview"
+    )
+    .forEach((preview) => {
+      preview.hidden = true;
+    });
+
+  form
+    ?.querySelectorAll(
+      ".admin-video-preview"
+    )
+    .forEach((preview) => {
+      preview.hidden = true;
+    });
+
+  const galleryPreview =
+    document.getElementById(
+      "adminGalleryPreview"
+    );
+
+  if (
+    sectionName === "gallery" &&
+    galleryPreview
+  ) {
+    galleryPreview.innerHTML = "";
+  }
+}
+
+
+/* =========================
+   OPEN ADD FORM
+========================= */
+
+function openAdminForm(sectionName) {
+  const formViewName =
+    `${sectionName}-form`;
+
+  resetAdminForm(sectionName);
+  openAdminView(formViewName);
+
+  const formView =
+    getAdminView(formViewName);
+
+  const firstField =
+    formView?.querySelector(
+      "input:not([type='hidden']):not([type='file']), select, textarea"
+    );
+
+  window.setTimeout(() => {
+    firstField?.focus();
+  }, 100);
+}
+
+
+/* =========================
+   LOGIN EVENTS
+========================= */
 
 adminLoginCloseButton?.addEventListener(
   "click",
@@ -278,51 +534,40 @@ adminPasswordToggle?.addEventListener(
   toggleAdminPassword
 );
 
-const adminDashboard =
-  document.getElementById("adminDashboard");
-
-const adminDashboardClose =
-  document.getElementById("adminDashboardClose");
-
-const adminLogoutButton =
-  document.getElementById("adminLogoutButton");
-
-function openAdminDashboard() {
-  closeAdminLogin();
-
-  adminDashboard?.classList.add("is-open");
-  adminDashboard?.setAttribute("aria-hidden", "false");
-
-  document.body.classList.add(
-    "admin-dashboard-open"
-  );
-}
-
-function closeAdminDashboard() {
-  adminDashboard?.classList.remove("is-open");
-  adminDashboard?.setAttribute("aria-hidden", "true");
-
-  document.body.classList.remove(
-    "admin-dashboard-open"
-  );
-}
-
 adminLoginForm?.addEventListener(
   "submit",
   (event) => {
     event.preventDefault();
 
-    if (!adminPassword.value.trim()) {
-      adminLoginMessage.textContent =
-        "비밀번호를 입력해주세요.";
+    const password =
+      adminPassword?.value.trim();
 
-      adminPassword.focus();
+    if (!password) {
+      if (adminLoginMessage) {
+        adminLoginMessage.textContent =
+          "비밀번호를 입력해 주세요.";
+      }
+
+      adminPassword?.focus();
       return;
     }
+
+    /*
+      현재 단계에서는 비밀번호가 입력되면
+      관리자 화면이 열립니다.
+
+      실제 비밀번호 검증은 이후
+      Cloudflare Functions에서 처리합니다.
+    */
 
     openAdminDashboard();
   }
 );
+
+
+/* =========================
+   DASHBOARD EVENTS
+========================= */
 
 adminDashboardClose?.addEventListener(
   "click",
@@ -334,195 +579,323 @@ adminLogoutButton?.addEventListener(
   closeAdminDashboard
 );
 
-const adminDashboardContent =
-  document.querySelector(".admin-dashboard-content");
 
-const adminNewsView =
-  document.getElementById("adminNewsView");
-
-const adminNewsBackButton =
-  document.getElementById("adminNewsBackButton");
-
-const adminNewsAddButton =
-  document.getElementById("adminNewsAddButton");
-
-function openAdminSection(sectionName) {
-  if (sectionName !== "news") {
-    return;
-  }
-
-  adminDashboardContent?.classList.add(
-    "section-active"
-  );
-
-  adminNewsView?.classList.add("is-open");
-  adminNewsView?.setAttribute(
-    "aria-hidden",
-    "false"
-  );
-}
-
-function closeAdminSection() {
-  adminDashboardContent?.classList.remove(
-    "section-active"
-  );
-
-  adminNewsView?.classList.remove("is-open");
-  adminNewsView?.setAttribute(
-    "aria-hidden",
-    "true"
-  );
-}
+/* =========================
+   MAIN MENU EVENTS
+========================= */
 
 document
-  .querySelectorAll(".admin-menu-item")
+  .querySelectorAll(
+    "#adminDashboard [data-admin-section]"
+  )
   .forEach((button) => {
     button.addEventListener("click", () => {
-      openAdminSection(
-        button.dataset.adminSection
-      );
+      const sectionName =
+        button.dataset.adminSection;
+
+      if (!sectionName) return;
+
+      openAdminView(sectionName);
     });
   });
 
-adminNewsBackButton?.addEventListener(
-  "click",
-  closeAdminSection
-);
 
-const adminNewsFormView =
-  document.getElementById("adminNewsFormView");
+/* =========================
+   BACK / CANCEL EVENTS
+========================= */
 
-const adminNewsFormBackButton =
-  document.getElementById("adminNewsFormBackButton");
+document
+  .querySelectorAll(
+    "#adminDashboard [data-admin-back]"
+  )
+  .forEach((button) => {
+    button.addEventListener("click", () => {
+      const targetView =
+        button.dataset.adminBack;
 
-const adminNewsCancelButton =
-  document.getElementById("adminNewsCancelButton");
+      if (!targetView) return;
 
-const adminNewsForm =
-  document.getElementById("adminNewsForm");
+      openAdminView(targetView);
+    });
+  });
 
-const adminNewsCategory =
-  document.getElementById("adminNewsCategory");
 
-const adminNewsTitle =
-  document.getElementById("adminNewsTitle");
+/* =========================
+   ADD BUTTON EVENTS
+========================= */
 
-const adminNewsDate =
-  document.getElementById("adminNewsDate");
+document
+  .querySelectorAll(
+    "#adminDashboard [data-open-form]"
+  )
+  .forEach((button) => {
+    button.addEventListener("click", () => {
+      const sectionName =
+        button.dataset.openForm;
 
-const adminNewsDescription =
-  document.getElementById("adminNewsDescription");
+      if (!sectionName) return;
 
-const adminNewsList =
-  document.querySelector(".admin-news-list");
+      openAdminForm(sectionName);
+    });
+  });
 
-function openAdminNewsForm() {
-  adminNewsView?.classList.remove("is-open");
-  adminNewsView?.setAttribute(
-    "aria-hidden",
-    "true"
-  );
 
-  adminNewsFormView?.classList.add("is-open");
-  adminNewsFormView?.setAttribute(
-    "aria-hidden",
-    "false"
-  );
+/* =========================
+   TEMPORARY FORM SUBMIT
+========================= */
 
-  adminNewsForm?.reset();
-
-  window.setTimeout(() => {
-    adminNewsTitle?.focus();
-  }, 100);
-}
-
-function closeAdminNewsForm() {
-  adminNewsFormView?.classList.remove("is-open");
-  adminNewsFormView?.setAttribute(
-    "aria-hidden",
-    "true"
-  );
-
-  adminNewsView?.classList.add("is-open");
-  adminNewsView?.setAttribute(
-    "aria-hidden",
-    "false"
-  );
-}
-
-adminNewsAddButton?.addEventListener(
-  "click",
-  openAdminNewsForm
-);
-
-adminNewsFormBackButton?.addEventListener(
-  "click",
-  closeAdminNewsForm
-);
-
-adminNewsCancelButton?.addEventListener(
-  "click",
-  closeAdminNewsForm
-);
-
-adminNewsForm?.addEventListener(
-  "submit",
-  (event) => {
-    event.preventDefault();
-
-    const category =
-      adminNewsCategory?.value.trim();
-
-    const title =
-      adminNewsTitle?.value.trim();
-
-    const date =
-      adminNewsDate?.value.trim();
-
-    const description =
-      adminNewsDescription?.value.trim();
-
-    if (
-      !category ||
-      !title ||
-      !date ||
-      !description
-    ) {
+document
+  .querySelectorAll(
+    "#adminDashboard form"
+  )
+  .forEach((form) => {
+    if (form.id === "adminSettingsForm") {
       return;
     }
 
-    const newsItem =
-      document.createElement("article");
+    form.addEventListener(
+      "submit",
+      (event) => {
+        event.preventDefault();
 
-    newsItem.className = "admin-news-item";
+        /*
+          다음 단계에서 실제 추가/수정 저장 기능을
+          연결할 예정입니다.
+        */
 
-    newsItem.innerHTML = `
-      <div>
-        <span>${category}</span>
-        <strong>${title}</strong>
-        <small>${date}</small>
-      </div>
+        alert(
+          "화면 이동 기능은 정상입니다.\n저장 기능은 다음 단계에서 연결합니다."
+        );
+      }
+    );
+  });
 
-      <div class="admin-news-actions">
-        <button type="button">수정</button>
-        <button type="button">삭제</button>
-      </div>
-    `;
+document
+  .getElementById("adminSettingsForm")
+  ?.addEventListener(
+    "submit",
+    (event) => {
+      event.preventDefault();
 
-    adminNewsList?.prepend(newsItem);
+      alert(
+        "설정 화면은 정상입니다.\n실제 저장 기능은 다음 단계에서 연결합니다."
+      );
+    }
+  );
 
-    closeAdminNewsForm();
+
+/* =========================
+   IMAGE PREVIEW
+========================= */
+
+function connectImagePreview(
+  inputId,
+  previewBoxId,
+  previewImageId
+) {
+  const input =
+    document.getElementById(inputId);
+
+  const previewBox =
+    document.getElementById(previewBoxId);
+
+  const previewImage =
+    document.getElementById(previewImageId);
+
+  if (
+    !input ||
+    !previewBox ||
+    !previewImage
+  ) {
+    return;
+  }
+
+  input.addEventListener("change", () => {
+    const file = input.files?.[0];
+
+    if (!file) {
+      previewBox.hidden = true;
+      previewImage.removeAttribute("src");
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      input.value = "";
+      previewBox.hidden = true;
+
+      alert("이미지 파일만 선택할 수 있습니다.");
+      return;
+    }
+
+    const imageUrl =
+      URL.createObjectURL(file);
+
+    previewImage.src = imageUrl;
+    previewBox.hidden = false;
+
+    previewImage.onload = () => {
+      URL.revokeObjectURL(imageUrl);
+    };
+  });
+}
+
+connectImagePreview(
+  "adminMusicImage",
+  "adminMusicImagePreview",
+  "adminMusicPreviewImage"
+);
+
+connectImagePreview(
+  "adminMemberImage",
+  "adminMemberImagePreview",
+  "adminMemberPreviewImage"
+);
+
+connectImagePreview(
+  "adminSettingHeroImage",
+  "adminSettingHeroPreview",
+  "adminSettingHeroPreviewImage"
+);
+
+
+/* =========================
+   YOUTUBE PREVIEW
+========================= */
+
+function getYoutubeEmbedUrl(url) {
+  if (!url) return "";
+
+  try {
+    const parsedUrl = new URL(url);
+
+    let videoId = "";
+
+    if (
+      parsedUrl.hostname.includes(
+        "youtu.be"
+      )
+    ) {
+      videoId =
+        parsedUrl.pathname
+          .replace("/", "")
+          .trim();
+    }
+
+    if (
+      parsedUrl.hostname.includes(
+        "youtube.com"
+      )
+    ) {
+      if (
+        parsedUrl.pathname === "/watch"
+      ) {
+        videoId =
+          parsedUrl.searchParams.get("v") ||
+          "";
+      }
+
+      if (
+        parsedUrl.pathname.startsWith(
+          "/shorts/"
+        )
+      ) {
+        videoId =
+          parsedUrl.pathname
+            .split("/shorts/")[1]
+            ?.split("/")[0] || "";
+      }
+
+      if (
+        parsedUrl.pathname.startsWith(
+          "/embed/"
+        )
+      ) {
+        videoId =
+          parsedUrl.pathname
+            .split("/embed/")[1]
+            ?.split("/")[0] || "";
+      }
+    }
+
+    if (!videoId) return "";
+
+    return `https://www.youtube.com/embed/${videoId}`;
+  } catch {
+    return "";
+  }
+}
+
+const adminVideoUrl =
+  document.getElementById("adminVideoUrl");
+
+const adminVideoPreview =
+  document.getElementById(
+    "adminVideoPreview"
+  );
+
+const adminVideoPreviewFrame =
+  document.getElementById(
+    "adminVideoPreviewFrame"
+  );
+
+adminVideoUrl?.addEventListener(
+  "input",
+  () => {
+    const embedUrl =
+      getYoutubeEmbedUrl(
+        adminVideoUrl.value.trim()
+      );
+
+    if (
+      !embedUrl ||
+      !adminVideoPreview ||
+      !adminVideoPreviewFrame
+    ) {
+      if (adminVideoPreview) {
+        adminVideoPreview.hidden = true;
+      }
+
+      if (adminVideoPreviewFrame) {
+        adminVideoPreviewFrame.src = "";
+      }
+
+      return;
+    }
+
+    adminVideoPreviewFrame.src =
+      embedUrl;
+
+    adminVideoPreview.hidden = false;
   }
 );
+
+
+/* =========================
+   ESCAPE KEY
+========================= */
 
 document.addEventListener(
   "keydown",
   (event) => {
+    if (event.key !== "Escape") {
+      return;
+    }
+
     if (
-      event.key === "Escape" &&
-      adminLoginModal?.classList.contains("is-open")
+      adminLoginModal?.classList.contains(
+        "is-open"
+      )
     ) {
       closeAdminLogin();
+      return;
+    }
+
+    if (
+      adminDashboard?.classList.contains(
+        "is-open"
+      )
+    ) {
+      closeAdminDashboard();
     }
   }
 );
