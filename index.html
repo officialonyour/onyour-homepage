@@ -24,6 +24,9 @@
   />
 
   <link rel="stylesheet" href="style.css" />
+
+
+  
 </head>
 
 <body>
@@ -31,6 +34,18 @@
     <a class="header-logo" href="#home" aria-label="홈으로 이동">
       ONYOUR
     </a>
+
+    <button
+
+    class="admin-open-button"
+    id="adminOpenButton"
+    type="button"
+    aria-label="관리자 페이지 열기"
+    >
+    Admin
+
+</button>
+
 
     <button
       class="menu-button"
@@ -315,8 +330,7 @@
 
       <div class="music-description">
         <p>
-          ONYOUR의 프로듀서이자 작곡가 이휘근의 최근 발매 음원을
-          만나보세요.
+          ONYOUR의 프로듀서이자 작곡가 이휘근이 발매한 다양한 음악을 들어보세요.
         </p>
       </div>
 
@@ -326,9 +340,9 @@
         href="https://youtube.com/channel/UCA05duT3IUBs3Wozk9htniQ?si=tqTAs_QqkP2XL0qZ"
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="이휘근 최근 발매 음원 듣기"
+        aria-label="이휘근 발매 음원 채널 열기"
       >
-        Listen Now
+        음원 듣기
         <span>↗</span>
       </a>
     </article>
@@ -585,5 +599,93 @@
   </footer>
 
   <script src="script.js"></script>
+
+<!-- ADMIN LOGIN -->
+<div
+  class="admin-modal"
+  id="adminLoginModal"
+  aria-hidden="true"
+>
+  <div
+    class="admin-modal-backdrop"
+    id="adminLoginBackdrop"
+  ></div>
+
+  <section
+    class="admin-login-panel"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="adminLoginTitle"
+  >
+    <button
+      class="admin-close-button"
+      id="adminLoginCloseButton"
+      type="button"
+      aria-label="관리자 로그인 닫기"
+    >
+      ×
+    </button>
+
+    <div class="admin-login-heading">
+      <p>ONYOUR ADMIN</p>
+
+      <h2 id="adminLoginTitle">
+        관리자 로그인
+      </h2>
+
+      <span>
+        홈페이지의 소식, 공연, 영상과 음원을 관리합니다.
+      </span>
+    </div>
+
+    <form
+      class="admin-login-form"
+      id="adminLoginForm"
+    >
+      <label for="adminPassword">
+        Password
+      </label>
+
+      <div class="admin-password-field">
+        <input
+          id="adminPassword"
+          name="password"
+          type="password"
+          placeholder="관리자 비밀번호"
+          autocomplete="current-password"
+          required
+        />
+
+        <button
+          id="adminPasswordToggle"
+          type="button"
+          aria-label="비밀번호 표시"
+        >
+          보기
+        </button>
+      </div>
+
+      <p
+        class="admin-login-message"
+        id="adminLoginMessage"
+        aria-live="polite"
+      ></p>
+
+      <button
+        class="admin-login-submit"
+        type="submit"
+      >
+        로그인
+      </button>
+    </form>
+
+    <p class="admin-login-notice">
+      현재는 관리자 화면 구축 단계입니다.
+      실제 로그인 인증은 Cloudflare 서버와 연결됩니다.
+    </p>
+  </section>
+</div>
+
+  
 </body>
 </html>

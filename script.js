@@ -189,3 +189,127 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+/* =========================
+   ADMIN LOGIN MODAL
+========================= */
+
+const adminOpenButton =
+  document.getElementById("adminOpenButton");
+
+const adminLoginModal =
+  document.getElementById("adminLoginModal");
+
+const adminLoginBackdrop =
+  document.getElementById("adminLoginBackdrop");
+
+const adminLoginCloseButton =
+  document.getElementById("adminLoginCloseButton");
+
+const adminLoginForm =
+  document.getElementById("adminLoginForm");
+
+const adminPassword =
+  document.getElementById("adminPassword");
+
+const adminPasswordToggle =
+  document.getElementById("adminPasswordToggle");
+
+const adminLoginMessage =
+  document.getElementById("adminLoginMessage");
+
+function openAdminLogin() {
+  if (!adminLoginModal) return;
+
+  adminLoginModal.classList.add("is-open");
+  adminLoginModal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("admin-modal-open");
+
+  adminLoginMessage.textContent = "";
+  adminPassword.value = "";
+
+  window.setTimeout(() => {
+    adminPassword.focus();
+  }, 100);
+}
+
+function closeAdminLogin() {
+  if (!adminLoginModal) return;
+
+  adminLoginModal.classList.remove("is-open");
+  adminLoginModal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("admin-modal-open");
+
+  adminLoginMessage.textContent = "";
+  adminPassword.value = "";
+}
+
+function toggleAdminPassword() {
+  if (!adminPassword) return;
+
+  const isPassword =
+    adminPassword.type === "password";
+
+  adminPassword.type =
+    isPassword ? "text" : "password";
+
+  adminPasswordToggle.textContent =
+    isPassword ? "숨기기" : "보기";
+
+  adminPasswordToggle.setAttribute(
+    "aria-label",
+    isPassword
+      ? "비밀번호 숨기기"
+      : "비밀번호 표시"
+  );
+}
+
+adminOpenButton?.addEventListener(
+  "click",
+  openAdminLogin
+);
+
+adminLoginCloseButton?.addEventListener(
+  "click",
+  closeAdminLogin
+);
+
+adminLoginBackdrop?.addEventListener(
+  "click",
+  closeAdminLogin
+);
+
+adminPasswordToggle?.addEventListener(
+  "click",
+  toggleAdminPassword
+);
+
+adminLoginForm?.addEventListener(
+  "submit",
+  (event) => {
+    event.preventDefault();
+
+    if (!adminPassword.value.trim()) {
+      adminLoginMessage.textContent =
+        "비밀번호를 입력해주세요.";
+
+      adminPassword.focus();
+      return;
+    }
+
+    adminLoginMessage.textContent =
+      "서버 로그인 연결 준비 중입니다.";
+  }
+);
+
+document.addEventListener(
+  "keydown",
+  (event) => {
+    if (
+      event.key === "Escape" &&
+      adminLoginModal?.classList.contains("is-open")
+    ) {
+      closeAdminLogin();
+    }
+  }
+);
