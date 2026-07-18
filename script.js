@@ -640,35 +640,983 @@ document
   });
 
 
+/* =========================================================
+   ADMIN TEMPORARY DATA / CRUD
+   D1 연결 전 브라우저 화면에서 작동
+========================================================= */
+
+const adminData = {
+  news: [
+    {
+      id: "news-1",
+      category: "Release",
+      title: "가을 첫 정규앨범 발매 예정",
+      date: "2026 Autumn",
+      description: "",
+      published: true,
+      featured: true,
+    },
+    {
+      id: "news-2",
+      category: "Performance",
+      title: "강릉 버스킹 전국대회 본선",
+      date: "2026.07.25",
+      description: "",
+      published: true,
+      featured: false,
+    },
+    {
+      id: "news-3",
+      category: "Video",
+      title: "새로운 라이브 영상 공개",
+      date: "New",
+      description: "",
+      published: true,
+      featured: false,
+    },
+  ],
+
+  performance: [
+    {
+      id: "performance-1",
+      title: "강릉 버스킹 전국대회",
+      date: "2026-07-25",
+      time: "",
+      location: "강릉",
+      address: "",
+      description: "",
+      setlist: "",
+      ticketUrl: "",
+      published: true,
+    },
+  ],
+
+  video: [
+    {
+      id: "video-1",
+      title: "ONYOUR Live Session",
+      url: "",
+      description: "",
+      featured: true,
+      published: true,
+    },
+  ],
+
+  music: [
+    {
+      id: "music-1",
+      type: "Upcoming Album",
+      title: "ONYOUR 1st Full Album",
+      artist: "ONYOUR",
+      releaseDate: "2026 Autumn",
+      description: "",
+      youtubeUrl: "",
+      spotifyUrl: "",
+      appleUrl: "",
+      published: true,
+    },
+    {
+      id: "music-2",
+      type: "Latest Release",
+      title: "최근 발매 음원",
+      artist: "이휘근",
+      releaseDate: "",
+      description: "",
+      youtubeUrl: "",
+      spotifyUrl: "",
+      appleUrl: "",
+      published: true,
+    },
+  ],
+
+  members: [
+    {
+      id: "member-1",
+      name: "이휘근",
+      englishName: "",
+      role: "Producer · Rap",
+      description: "",
+      instagram: "",
+      order: 1,
+      published: true,
+    },
+    {
+      id: "member-2",
+      name: "이루니",
+      englishName: "",
+      role: "Vocal · Rap",
+      description: "",
+      instagram: "",
+      order: 2,
+      published: true,
+    },
+    {
+      id: "member-3",
+      name: "이체린",
+      englishName: "",
+      role: "Guitar",
+      description: "",
+      instagram: "",
+      order: 3,
+      published: true,
+    },
+  ],
+};
+
+
 /* =========================
-   TEMPORARY FORM SUBMIT
+   COMMON HELPERS
 ========================= */
 
-document
-  .querySelectorAll(
-    "#adminDashboard form"
-  )
-  .forEach((form) => {
-    if (form.id === "adminSettingsForm") {
+function createAdminId(sectionName) {
+  return `${sectionName}-${Date.now()}`;
+}
+
+function escapeAdminHtml(value = "") {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function getAdminItem(sectionName, itemId) {
+  return adminData[sectionName]?.find(
+    (item) => item.id === itemId
+  );
+}
+
+function getAdminFormElement(id) {
+  return document.getElementById(id);
+}
+
+function setAdminFormValue(id, value = "") {
+  const element = getAdminFormElement(id);
+
+  if (!element) return;
+
+  if (element.type === "checkbox") {
+    element.checked = Boolean(value);
+    return;
+  }
+
+  element.value = value ?? "";
+}
+
+function getAdminFormValue(id) {
+  const element = getAdminFormElement(id);
+
+  if (!element) return "";
+
+  if (element.type === "checkbox") {
+    return element.checked;
+  }
+
+  return element.value.trim();
+}
+
+
+/* =========================
+   LIST RENDERING
+========================= */
+
+function createAdminListItem({
+  sectionName,
+  id,
+  category,
+  title,
+  meta,
+}) {
+  return `
+    <article
+      class="admin-content-item"
+      data-content-id="${escapeAdminHtml(id)}"
+    >
+      <div class="admin-content-item-main">
+        <span class="admin-content-category">
+          ${escapeAdminHtml(category)}
+        </span>
+
+        <strong>
+          ${escapeAdminHtml(title)}
+        </strong>
+
+        <small>
+          ${escapeAdminHtml(meta)}
+        </small>
+      </div>
+
+      <div class="admin-content-actions">
+        <button
+          type="button"
+          data-action="edit"
+          data-content-type="${escapeAdminHtml(sectionName)}"
+          data-content-id="${escapeAdminHtml(id)}"
+        >
+          수정
+        </button>
+
+        <button
+          type="button"
+          data-action="delete"
+          data-content-type="${escapeAdminHtml(sectionName)}"
+          data-content-id="${escapeAdminHtml(id)}"
+        >
+          삭제
+        </button>
+      </div>
+    </article>
+  `;
+}
+
+function renderAdminNewsList() {
+  const list = document.getElementById(
+    "adminNewsList"
+  );
+
+  if (!list) return;
+
+  list.innerHTML = adminData.news
+    .map((item) =>
+      createAdminListItem({
+        sectionName: "news",
+        id: item.id,
+        category: item.category,
+        title: item.title,
+        meta: item.date,
+      })
+    )
+    .join("");
+}
+
+function renderAdminPerformanceList() {
+  const list = document.getElementById(
+    "adminPerformanceList"
+  );
+
+  if (!list) return;
+
+  list.innerHTML = adminData.performance
+    .map((item) =>
+      createAdminListItem({
+        sectionName: "performance",
+        id: item.id,
+        category: item.published
+          ? "Published"
+          : "Private",
+        title: item.title,
+        meta: [item.date, item.location]
+          .filter(Boolean)
+          .join(" · "),
+      })
+    )
+    .join("");
+}
+
+function renderAdminVideoList() {
+  const list = document.getElementById(
+    "adminVideoList"
+  );
+
+  if (!list) return;
+
+  list.innerHTML = adminData.video
+    .map((item) =>
+      createAdminListItem({
+        sectionName: "video",
+        id: item.id,
+        category: item.featured
+          ? "Featured"
+          : "Video",
+        title: item.title,
+        meta: item.published
+          ? "공개"
+          : "비공개",
+      })
+    )
+    .join("");
+}
+
+function renderAdminMusicList() {
+  const list = document.getElementById(
+    "adminMusicList"
+  );
+
+  if (!list) return;
+
+  list.innerHTML = adminData.music
+    .map((item) =>
+      createAdminListItem({
+        sectionName: "music",
+        id: item.id,
+        category: item.type,
+        title: item.title,
+        meta: [
+          item.artist,
+          item.releaseDate,
+        ]
+          .filter(Boolean)
+          .join(" · "),
+      })
+    )
+    .join("");
+}
+
+function renderAdminMembersList() {
+  const list = document.getElementById(
+    "adminMembersList"
+  );
+
+  if (!list) return;
+
+  const sortedMembers = [
+    ...adminData.members,
+  ].sort(
+    (a, b) =>
+      Number(a.order) - Number(b.order)
+  );
+
+  list.innerHTML = sortedMembers
+    .map((item) =>
+      createAdminListItem({
+        sectionName: "members",
+        id: item.id,
+        category: item.role,
+        title: item.name,
+        meta:
+          item.englishName ||
+          (item.published
+            ? "공개"
+            : "비공개"),
+      })
+    )
+    .join("");
+}
+
+function renderAllAdminLists() {
+  renderAdminNewsList();
+  renderAdminPerformanceList();
+  renderAdminVideoList();
+  renderAdminMusicList();
+  renderAdminMembersList();
+}
+
+
+/* =========================
+   FORM TITLE
+========================= */
+
+const ADMIN_FORM_TITLES = {
+  news: {
+    add: "새 소식",
+    edit: "소식 수정",
+  },
+  performance: {
+    add: "새 공연",
+    edit: "공연 수정",
+  },
+  video: {
+    add: "새 영상",
+    edit: "영상 수정",
+  },
+  music: {
+    add: "새 음원",
+    edit: "음원 수정",
+  },
+  members: {
+    add: "새 멤버",
+    edit: "멤버 수정",
+  },
+};
+
+function setAdminFormTitle(
+  sectionName,
+  mode
+) {
+  const titleIdMap = {
+    news: "adminNewsFormTitle",
+    performance:
+      "adminPerformanceFormTitle",
+    video: "adminVideoFormTitle",
+    music: "adminMusicFormTitle",
+    members: "adminMembersFormTitle",
+  };
+
+  const titleElement =
+    document.getElementById(
+      titleIdMap[sectionName]
+    );
+
+  if (!titleElement) return;
+
+  titleElement.textContent =
+    ADMIN_FORM_TITLES[sectionName]?.[
+      mode
+    ] || "콘텐츠 작성";
+}
+
+
+/* =========================
+   EDIT FORM POPULATION
+========================= */
+
+function fillAdminNewsForm(item) {
+  setAdminFormValue(
+    "adminNewsId",
+    item.id
+  );
+  setAdminFormValue(
+    "adminNewsCategory",
+    item.category
+  );
+  setAdminFormValue(
+    "adminNewsTitle",
+    item.title
+  );
+  setAdminFormValue(
+    "adminNewsDate",
+    item.date
+  );
+  setAdminFormValue(
+    "adminNewsDescription",
+    item.description
+  );
+  setAdminFormValue(
+    "adminNewsPublished",
+    item.published
+  );
+  setAdminFormValue(
+    "adminNewsFeatured",
+    item.featured
+  );
+}
+
+function fillAdminPerformanceForm(item) {
+  setAdminFormValue(
+    "adminPerformanceId",
+    item.id
+  );
+  setAdminFormValue(
+    "adminPerformanceTitle",
+    item.title
+  );
+  setAdminFormValue(
+    "adminPerformanceDate",
+    item.date
+  );
+  setAdminFormValue(
+    "adminPerformanceTime",
+    item.time
+  );
+  setAdminFormValue(
+    "adminPerformanceLocation",
+    item.location
+  );
+  setAdminFormValue(
+    "adminPerformanceAddress",
+    item.address
+  );
+  setAdminFormValue(
+    "adminPerformanceDescription",
+    item.description
+  );
+  setAdminFormValue(
+    "adminPerformanceSetlist",
+    item.setlist
+  );
+  setAdminFormValue(
+    "adminPerformanceTicketUrl",
+    item.ticketUrl
+  );
+  setAdminFormValue(
+    "adminPerformancePublished",
+    item.published
+  );
+}
+
+function fillAdminVideoForm(item) {
+  setAdminFormValue(
+    "adminVideoId",
+    item.id
+  );
+  setAdminFormValue(
+    "adminVideoTitle",
+    item.title
+  );
+  setAdminFormValue(
+    "adminVideoUrl",
+    item.url
+  );
+  setAdminFormValue(
+    "adminVideoDescription",
+    item.description
+  );
+  setAdminFormValue(
+    "adminVideoFeatured",
+    item.featured
+  );
+  setAdminFormValue(
+    "adminVideoPublished",
+    item.published
+  );
+
+  adminVideoUrl?.dispatchEvent(
+    new Event("input")
+  );
+}
+
+function fillAdminMusicForm(item) {
+  setAdminFormValue(
+    "adminMusicId",
+    item.id
+  );
+  setAdminFormValue(
+    "adminMusicType",
+    item.type
+  );
+  setAdminFormValue(
+    "adminMusicTitle",
+    item.title
+  );
+  setAdminFormValue(
+    "adminMusicArtist",
+    item.artist
+  );
+  setAdminFormValue(
+    "adminMusicReleaseDate",
+    item.releaseDate
+  );
+  setAdminFormValue(
+    "adminMusicDescription",
+    item.description
+  );
+  setAdminFormValue(
+    "adminMusicYoutubeUrl",
+    item.youtubeUrl
+  );
+  setAdminFormValue(
+    "adminMusicSpotifyUrl",
+    item.spotifyUrl
+  );
+  setAdminFormValue(
+    "adminMusicAppleUrl",
+    item.appleUrl
+  );
+  setAdminFormValue(
+    "adminMusicPublished",
+    item.published
+  );
+}
+
+function fillAdminMembersForm(item) {
+  setAdminFormValue(
+    "adminMemberId",
+    item.id
+  );
+  setAdminFormValue(
+    "adminMemberName",
+    item.name
+  );
+  setAdminFormValue(
+    "adminMemberEnglishName",
+    item.englishName
+  );
+  setAdminFormValue(
+    "adminMemberRole",
+    item.role
+  );
+  setAdminFormValue(
+    "adminMemberDescription",
+    item.description
+  );
+  setAdminFormValue(
+    "adminMemberInstagram",
+    item.instagram
+  );
+  setAdminFormValue(
+    "adminMemberOrder",
+    item.order
+  );
+  setAdminFormValue(
+    "adminMemberPublished",
+    item.published
+  );
+}
+
+function openAdminEditForm(
+  sectionName,
+  itemId
+) {
+  const item = getAdminItem(
+    sectionName,
+    itemId
+  );
+
+  if (!item) {
+    alert(
+      "수정할 항목을 찾을 수 없습니다."
+    );
+    return;
+  }
+
+  resetAdminForm(sectionName);
+  setAdminFormTitle(
+    sectionName,
+    "edit"
+  );
+
+  const fillFunctions = {
+    news: fillAdminNewsForm,
+    performance:
+      fillAdminPerformanceForm,
+    video: fillAdminVideoForm,
+    music: fillAdminMusicForm,
+    members: fillAdminMembersForm,
+  };
+
+  fillFunctions[sectionName]?.(item);
+
+  openAdminView(
+    `${sectionName}-form`
+  );
+}
+
+
+/* =========================
+   EDIT / DELETE CLICK
+   이벤트 위임 방식
+========================= */
+
+adminDashboard?.addEventListener(
+  "click",
+  (event) => {
+    const actionButton =
+      event.target.closest(
+        "[data-action]"
+      );
+
+    if (!actionButton) return;
+
+    const action =
+      actionButton.dataset.action;
+
+    const sectionName =
+      actionButton.dataset.contentType;
+
+    const itemId =
+      actionButton.dataset.contentId;
+
+    if (
+      !action ||
+      !sectionName ||
+      !itemId
+    ) {
       return;
     }
 
-    form.addEventListener(
-      "submit",
-      (event) => {
-        event.preventDefault();
+    if (action === "edit") {
+      openAdminEditForm(
+        sectionName,
+        itemId
+      );
+      return;
+    }
 
-        /*
-          다음 단계에서 실제 추가/수정 저장 기능을
-          연결할 예정입니다.
-        */
+    if (action === "delete") {
+      deleteAdminItem(
+        sectionName,
+        itemId
+      );
+    }
+  }
+);
 
-        alert(
-          "화면 이동 기능은 정상입니다.\n저장 기능은 다음 단계에서 연결합니다."
-        );
-      }
+function deleteAdminItem(
+  sectionName,
+  itemId
+) {
+  const item = getAdminItem(
+    sectionName,
+    itemId
+  );
+
+  if (!item) return;
+
+  const itemName =
+    item.title || item.name || "이 항목";
+
+  const confirmed = window.confirm(
+    `"${itemName}"을(를) 삭제할까요?\n삭제 후에는 현재 화면에서 복구할 수 없습니다.`
+  );
+
+  if (!confirmed) return;
+
+  adminData[sectionName] =
+    adminData[sectionName].filter(
+      (entry) => entry.id !== itemId
     );
-  });
+
+  renderAllAdminLists();
+}
+
+
+/* =========================
+   FORM SUBMIT
+========================= */
+
+document
+  .getElementById("adminNewsForm")
+  ?.addEventListener(
+    "submit",
+    (event) => {
+      event.preventDefault();
+
+      const id = getAdminFormValue(
+        "adminNewsId"
+      );
+
+      const data = {
+        id: id || createAdminId("news"),
+        category: getAdminFormValue(
+          "adminNewsCategory"
+        ),
+        title: getAdminFormValue(
+          "adminNewsTitle"
+        ),
+        date: getAdminFormValue(
+          "adminNewsDate"
+        ),
+        description: getAdminFormValue(
+          "adminNewsDescription"
+        ),
+        published: getAdminFormValue(
+          "adminNewsPublished"
+        ),
+        featured: getAdminFormValue(
+          "adminNewsFeatured"
+        ),
+      };
+
+      saveAdminItem("news", data);
+    }
+  );
+
+document
+  .getElementById(
+    "adminPerformanceForm"
+  )
+  ?.addEventListener(
+    "submit",
+    (event) => {
+      event.preventDefault();
+
+      const id = getAdminFormValue(
+        "adminPerformanceId"
+      );
+
+      const data = {
+        id:
+          id ||
+          createAdminId(
+            "performance"
+          ),
+        title: getAdminFormValue(
+          "adminPerformanceTitle"
+        ),
+        date: getAdminFormValue(
+          "adminPerformanceDate"
+        ),
+        time: getAdminFormValue(
+          "adminPerformanceTime"
+        ),
+        location: getAdminFormValue(
+          "adminPerformanceLocation"
+        ),
+        address: getAdminFormValue(
+          "adminPerformanceAddress"
+        ),
+        description:
+          getAdminFormValue(
+            "adminPerformanceDescription"
+          ),
+        setlist: getAdminFormValue(
+          "adminPerformanceSetlist"
+        ),
+        ticketUrl: getAdminFormValue(
+          "adminPerformanceTicketUrl"
+        ),
+        published: getAdminFormValue(
+          "adminPerformancePublished"
+        ),
+      };
+
+      saveAdminItem(
+        "performance",
+        data
+      );
+    }
+  );
+
+document
+  .getElementById("adminVideoForm")
+  ?.addEventListener(
+    "submit",
+    (event) => {
+      event.preventDefault();
+
+      const id = getAdminFormValue(
+        "adminVideoId"
+      );
+
+      const data = {
+        id: id || createAdminId("video"),
+        title: getAdminFormValue(
+          "adminVideoTitle"
+        ),
+        url: getAdminFormValue(
+          "adminVideoUrl"
+        ),
+        description: getAdminFormValue(
+          "adminVideoDescription"
+        ),
+        featured: getAdminFormValue(
+          "adminVideoFeatured"
+        ),
+        published: getAdminFormValue(
+          "adminVideoPublished"
+        ),
+      };
+
+      saveAdminItem("video", data);
+    }
+  );
+
+document
+  .getElementById("adminMusicForm")
+  ?.addEventListener(
+    "submit",
+    (event) => {
+      event.preventDefault();
+
+      const id = getAdminFormValue(
+        "adminMusicId"
+      );
+
+      const data = {
+        id: id || createAdminId("music"),
+        type: getAdminFormValue(
+          "adminMusicType"
+        ),
+        title: getAdminFormValue(
+          "adminMusicTitle"
+        ),
+        artist: getAdminFormValue(
+          "adminMusicArtist"
+        ),
+        releaseDate: getAdminFormValue(
+          "adminMusicReleaseDate"
+        ),
+        description: getAdminFormValue(
+          "adminMusicDescription"
+        ),
+        youtubeUrl: getAdminFormValue(
+          "adminMusicYoutubeUrl"
+        ),
+        spotifyUrl: getAdminFormValue(
+          "adminMusicSpotifyUrl"
+        ),
+        appleUrl: getAdminFormValue(
+          "adminMusicAppleUrl"
+        ),
+        published: getAdminFormValue(
+          "adminMusicPublished"
+        ),
+      };
+
+      saveAdminItem("music", data);
+    }
+  );
+
+document
+  .getElementById("adminMembersForm")
+  ?.addEventListener(
+    "submit",
+    (event) => {
+      event.preventDefault();
+
+      const id = getAdminFormValue(
+        "adminMemberId"
+      );
+
+      const data = {
+        id:
+          id ||
+          createAdminId("member"),
+        name: getAdminFormValue(
+          "adminMemberName"
+        ),
+        englishName:
+          getAdminFormValue(
+            "adminMemberEnglishName"
+          ),
+        role: getAdminFormValue(
+          "adminMemberRole"
+        ),
+        description:
+          getAdminFormValue(
+            "adminMemberDescription"
+          ),
+        instagram: getAdminFormValue(
+          "adminMemberInstagram"
+        ),
+        order:
+          Number(
+            getAdminFormValue(
+              "adminMemberOrder"
+            )
+          ) || 1,
+        published: getAdminFormValue(
+          "adminMemberPublished"
+        ),
+      };
+
+      saveAdminItem("members", data);
+    }
+  );
+
+
+/* =========================
+   SAVE ADD / EDIT
+========================= */
+
+function saveAdminItem(
+  sectionName,
+  data
+) {
+  const items = adminData[sectionName];
+
+  if (!items) return;
+
+  const existingIndex =
+    items.findIndex(
+      (item) => item.id === data.id
+    );
+
+  if (existingIndex >= 0) {
+    items[existingIndex] = data;
+  } else {
+    items.unshift(data);
+  }
+
+  renderAllAdminLists();
+  openAdminView(sectionName);
+}
+
+
+/* =========================
+   SETTINGS TEMPORARY SAVE
+========================= */
 
 document
   .getElementById("adminSettingsForm")
@@ -678,11 +1626,45 @@ document
       event.preventDefault();
 
       alert(
-        "설정 화면은 정상입니다.\n실제 저장 기능은 다음 단계에서 연결합니다."
+        "홈페이지 설정이 현재 화면에 임시 저장되었습니다.\n다음 단계에서 실제 홈페이지 및 D1과 연결합니다."
       );
+
+      openAdminView("home");
     }
   );
 
+
+/* =========================
+   ADD FORM TITLE RESET
+========================= */
+
+document
+  .querySelectorAll(
+    "#adminDashboard [data-open-form]"
+  )
+  .forEach((button) => {
+    button.addEventListener(
+      "click",
+      () => {
+        const sectionName =
+          button.dataset.openForm;
+
+        if (!sectionName) return;
+
+        setAdminFormTitle(
+          sectionName,
+          "add"
+        );
+      }
+    );
+  });
+
+
+/* =========================
+   INITIAL RENDER
+========================= */
+
+renderAllAdminLists();
 
 /* =========================
    IMAGE PREVIEW
