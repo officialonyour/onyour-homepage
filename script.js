@@ -861,25 +861,7 @@ async function loadAdminDataFromD1() {
       )
     );
 
-await migrateInitialAdminDataToD1(results);
-
-const refreshedResults = await Promise.all(
-  ADMIN_CONTENT_TYPES.map(
-    async (type) => {
-      const result =
-        await adminApiRequest(
-          `/api/content?type=${type}&includePrivate=true`
-        );
-
-      return {
-        type,
-        items: result.items || [],
-      };
-    }
-  )
-);
-
-refreshedResults.forEach(
+results.forEach(
   ({ type, items }) => {
     adminData[type] = items;
   }
