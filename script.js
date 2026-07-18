@@ -1735,6 +1735,20 @@ async function saveAdminItem(
     const isUpdate =
       Boolean(existingItem);
 
+      console.log("저장 확인:", {
+        sectionName,
+        data,
+        existingItem,
+        isUpdate,
+    });
+
+
+    alert(
+        `저장 방식: ${
+            isUpdate ? "수정" : "신규 등록"
+        }\nID: ${data.id}`
+    );
+
     const url = isUpdate
       ? `/api/content?type=${sectionName}&id=${encodeURIComponent(
           data.id
