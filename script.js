@@ -771,6 +771,13 @@ const adminData = {
   ],
 };
 
+const adminData = {
+  // 기존 데이터 전체
+};
+
+const initialAdminData =
+  JSON.parse(JSON.stringify(adminData));
+
 
 /* =========================
    COMMON HELPERS
@@ -854,16 +861,32 @@ async function loadAdminDataFromD1() {
       )
     );
 
+await migrateInitialAdminDataToD1(results);
 
-    results.forEach(
-        ({ type, items }) => {
-            if (items.length > 0) {
-                adminData[type] = items;
-            }
-        }
-    );
+const refreshedResults = await Promise.all(
+  ADMIN_CONTENT_TYPES.map(
+    async (type) => {
+      const result =
+        await adminApiRequest(
+          `/api/content?type=${type}&includePrivate=true`
+        );
 
-    renderAllAdminLists();
+      return {
+        type,
+        items: result.items || [],
+      };
+    }
+  )
+);
+
+refreshedResults.forEach(
+  ({ type, items }) => {
+    adminData[type] = items;
+  }
+);
+
+renderAllAdminLists();
+
   } catch (error) {
     console.error(
       "관리자 데이터 불러오기 실패:",
@@ -874,6 +897,34 @@ async function loadAdminDataFromD1() {
       error.message ||
         "저장된 콘텐츠를 불러오지 못했습니다."
     );
+  }
+}
+
+async function migrateInitialAdminDataToD1(
+  loadedResults
+) {
+  for (const { type, items } of loadedResults) {
+    const savedIds = new Set(
+      items.map((item) => item.id)
+    );
+
+    const initialItems =
+      initialAdminData[type] || [];
+
+    const missingItems =
+      initialItems.filter(
+        (item) => !savedIds.has(item.id)
+      );
+
+    for (const item of missingItems) {
+      await adminApiRequest(
+        `/api/content?type=${type}`,
+        {
+          method: "POST",
+          body: JSON.stringify(item),
+        }
+      );
+    }
   }
 }
 
