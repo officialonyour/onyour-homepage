@@ -2,32 +2,39 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
+
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
   />
 
   <meta
     name="description"
-    content="재즈 힙합 팀 ONYOUR의 공식 홈페이지입니다."
+    content="재즈 힙합 3인조 팀 ONYOUR의 공식 홈페이지입니다."
   />
 
-  <title>ONYOUR — Music that stays with you.</title>
+  <title>ONYOUR | Official</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
 
   <link rel="stylesheet" href="style.css" />
-  <script src="script.js" defer></script>
 </head>
 
 <body>
-  <div class="page-noise" aria-hidden="true"></div>
-
-  <header class="site-header">
-    <a href="#home" class="brand" aria-label="ONYOUR 홈으로 이동">
+  <header class="site-header" id="siteHeader">
+    <a class="header-logo" href="#home" aria-label="홈으로 이동">
       ONYOUR
     </a>
 
     <button
       class="menu-button"
+      id="menuButton"
       type="button"
       aria-label="메뉴 열기"
       aria-expanded="false"
@@ -36,205 +43,260 @@
       <span></span>
       <span></span>
     </button>
-
-    <nav class="desktop-nav" aria-label="주요 메뉴">
-      <a href="#about">About</a>
-      <a href="#music">Music</a>
-      <a href="#live">Live</a>
-      <a href="#members">Members</a>
-      <a href="#contact">Contact</a>
-    </nav>
   </header>
 
-  <nav id="mobileMenu" class="mobile-menu" aria-label="모바일 메뉴">
-    <a href="#about">About</a>
-    <a href="#music">Music</a>
+  <nav class="mobile-menu" id="mobileMenu" aria-label="모바일 메뉴">
     <a href="#live">Live</a>
+    <a href="#about">About</a>
     <a href="#members">Members</a>
-    <a href="#contact">Contact</a>
+    <a href="#follow">Follow</a>
   </nav>
 
   <main>
-    <section id="home" class="hero">
-      <div class="hero-glow hero-glow-one" aria-hidden="true"></div>
-      <div class="hero-glow hero-glow-two" aria-hidden="true"></div>
+    <!-- HERO -->
+    <section class="hero" id="home">
+      <div class="hero-image-wrap">
+        <img
+          class="hero-image"
+          id="heroImage"
+          src="images/team-main.jpg"
+          alt="ONYOUR 멤버 단체사진"
+          fetchpriority="high"
+        />
+
+        <div class="hero-overlay"></div>
+      </div>
 
       <div class="hero-content">
-        <p class="hero-kicker reveal">JAZZ HIPHOP COLLECTIVE</p>
-
-        <h1 class="hero-title reveal">
-          <span>ON</span>
-          <span>YOUR</span>
-        </h1>
-
-        <p class="hero-tagline reveal">
-          Music that stays with you.
+        <p class="hero-eyebrow" id="heroEyebrow">
+          JAZZ HIP-HOP TRIO
         </p>
 
-        <div class="hero-actions reveal">
-          <a href="#music" class="button button-primary">
-            Listen
+        <h1 class="hero-title" id="heroTitle">
+          Music that<br />
+          stays with you.
+        </h1>
+
+        <p class="hero-description" id="heroDescription">
+          랩, 보컬, 기타가 함께 만드는<br />
+          ONYOUR의 음악을 만나보세요.
+        </p>
+
+        <div class="hero-actions">
+          <a
+            class="button button-primary"
+            id="watchLiveButton"
+            href="#live"
+          >
+            <span class="button-icon">▶</span>
+            Watch Live
           </a>
 
-          <a href="#live" class="button button-secondary">
-            Live
+          <a
+            class="button button-secondary"
+            id="heroInstagramButton"
+            href="https://www.instagram.com/official_onyour"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Instagram
           </a>
         </div>
       </div>
 
-      <a href="#about" class="scroll-indicator" aria-label="아래로 이동">
-        <span>SCROLL</span>
-        <i></i>
+      <a class="scroll-indicator" href="#live" aria-label="아래로 이동">
+        <span>Scroll</span>
+        <span class="scroll-line"></span>
       </a>
     </section>
 
-    <section id="about" class="section section-about">
+    <!-- FEATURED LIVE -->
+    <section class="section live-section" id="live">
       <div class="section-heading reveal">
-        <p class="section-number">01</p>
+        <p class="section-label">Featured Live</p>
 
-        <div>
-          <p class="eyebrow">About us</p>
-          <h2>우리의 음악이<br />당신 곁에 머물도록.</h2>
-        </div>
+        <h2>지금, ONYOUR를<br />가장 먼저 만나보세요.</h2>
       </div>
 
-      <div class="about-grid">
-        <p class="about-lead reveal">
-          ONYOUR는 재즈 힙합을 기반으로 감정과 장면을 음악으로
-          기록하는 3인조 혼성 팀입니다.
-        </p>
-
-        <div class="about-copy reveal">
-          <p>
-            서로 다른 목소리와 연주, 프로덕션이 만나 편안하지만
-            오래 남는 음악을 만듭니다.
-          </p>
-
-          <p>
-            5월과 6월 사이에 시작된 우리의 음악은 지금도 계속
-            새로운 계절을 향해 가고 있습니다.
-          </p>
+      <article class="featured-live reveal">
+        <div class="video-frame">
+          <iframe
+            id="featuredVideo"
+            src="https://www.youtube.com/embed/S5IpxjtZPDg"
+            title="ONYOUR 대표 라이브 영상"
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>
         </div>
-      </div>
-    </section>
 
-    <section id="music" class="section section-dark">
-      <div class="section-heading reveal">
-        <p class="section-number">02</p>
-
-        <div>
-          <p class="eyebrow">Music</p>
-          <h2>Listen to<br />ONYOUR.</h2>
-        </div>
-      </div>
-
-      <article class="featured-track reveal">
-        <div class="album-art">
-          <div class="album-art-inner">
-            <p>ONYOUR</p>
-            <span>Moonlight</span>
+        <div class="live-info">
+          <div>
+            <p class="live-kicker">Latest Live</p>
+            <h3 id="liveTitle">ONYOUR Live Session</h3>
+            <p id="liveDescription">
+              ONYOUR의 첫 라이브 영상을 감상해 보세요.
+            </p>
           </div>
-        </div>
 
-        <div class="track-info">
-          <p class="track-label">Featured track</p>
-          <h3>Moonlight</h3>
-          <p>
-            아름다운 달빛과 밤공기처럼 편안하게 머무는 곡.
-          </p>
-
-          <div class="platform-links">
-            <a href="#" aria-label="Spotify에서 듣기">Spotify</a>
-            <a href="#" aria-label="YouTube에서 듣기">YouTube</a>
-            <a href="#" aria-label="Melon에서 듣기">Melon</a>
-            <a href="#" aria-label="Apple Music에서 듣기">
-              Apple Music
-            </a>
-          </div>
+          <a
+            class="text-link"
+            id="youtubeVideoButton"
+            href="https://youtube.com/shorts/S5IpxjtZPDg"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            YouTube에서 보기
+            <span>↗</span>
+          </a>
         </div>
       </article>
     </section>
 
-    <section id="live" class="section">
+    <!-- ABOUT -->
+    <section class="section about-section" id="about">
       <div class="section-heading reveal">
-        <p class="section-number">03</p>
+        <p class="section-label">About ONYOUR</p>
 
-        <div>
-          <p class="eyebrow">Live</p>
-          <h2>Meet us<br />on stage.</h2>
-        </div>
+        <h2>
+          함께 만든 음악이<br />
+          오래 머물기를.
+        </h2>
       </div>
 
-      <div class="live-card reveal">
-        <div class="live-date">
-          <strong>JUL</strong>
-          <span>2026</span>
-        </div>
-
-        <div class="live-info">
-          <p class="live-status">Upcoming show</p>
-          <h3>강릉 버스킹 전국대회 본선</h3>
-          <p>Gangneung, Korea</p>
-        </div>
-
-        <a href="#contact" class="live-link">
-          공연 문의
-          <span>↗</span>
-        </a>
-      </div>
-    </section>
-
-    <section id="members" class="section section-dark">
-      <div class="section-heading reveal">
-        <p class="section-number">04</p>
-
-        <div>
-          <p class="eyebrow">Members</p>
-          <h2>Three people.<br />One sound.</h2>
-        </div>
-      </div>
-
-      <div class="member-grid">
-        <article class="member-card reveal">
-          <span class="member-index">01</span>
-          <div>
-            <h3>Kenneth</h3>
-            <p>Producer · Rapper</p>
-          </div>
-        </article>
-
-        <article class="member-card reveal">
-          <span class="member-index">02</span>
-          <div>
-            <h3>E.Luni</h3>
-            <p>Vocal · Rapper</p>
-          </div>
-        </article>
-
-        <article class="member-card reveal">
-          <span class="member-index">03</span>
-          <div>
-            <h3>Lee Chaerin</h3>
-            <p>Guitarist</p>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section id="contact" class="section section-contact">
-      <div class="contact-content reveal">
-        <p class="eyebrow">Contact</p>
-        <h2>Let’s make<br />something memorable.</h2>
-
-        <p class="contact-description">
-          공연, 협업, 섭외 및 기타 문의는 아래 채널을 이용해주세요.
+      <div class="about-content reveal">
+        <p class="about-lead" id="aboutLead">
+          ONYOUR는 재즈 힙합을 기반으로 랩, 보컬, 기타가 함께 이야기를
+          만드는 3인조 혼성팀입니다.
         </p>
 
-        <div class="contact-links">
-          <a href="#">Instagram</a>
-          <a href="#">YouTube</a>
-          <a href="mailto:onyour.musicsound@gmail.com">
-            Email
+        <p class="about-text" id="aboutText">
+          서로 다른 음악적 색깔이 만나 편안하면서도 깊이 있는 사운드를
+          만들어갑니다. 무대가 끝난 뒤에도 오래 기억에 남는 음악을
+          들려드리고 싶습니다.
+        </p>
+      </div>
+    </section>
+
+    <!-- MEMBERS -->
+    <section class="section members-section" id="members">
+      <div class="section-heading reveal">
+        <p class="section-label">Members</p>
+
+        <h2>Three voices.<br />One sound.</h2>
+      </div>
+
+      <div class="member-list">
+        <article class="member-card reveal">
+          <div class="member-number">01</div>
+
+          <div class="member-info">
+            <p class="member-name" id="memberName1">이휘근</p>
+            <p class="member-role" id="memberRole1">
+              Producer · Rap
+            </p>
+          </div>
+
+          <a
+            class="member-link"
+            id="memberInstagram1"
+            href="https://www.instagram.com/knth_whee"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="이휘근 Instagram 열기"
+          >
+            Instagram
+            <span>↗</span>
+          </a>
+        </article>
+
+        <article class="member-card reveal">
+          <div class="member-number">02</div>
+
+          <div class="member-info">
+            <p class="member-name" id="memberName2">이루니</p>
+            <p class="member-role" id="memberRole2">
+              Vocal · Rap
+            </p>
+          </div>
+
+          <a
+            class="member-link"
+            id="memberInstagram2"
+            href="https://www.instagram.com/e.luni"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="이루니 Instagram 열기"
+          >
+            Instagram
+            <span>↗</span>
+          </a>
+        </article>
+
+        <article class="member-card reveal">
+          <div class="member-number">03</div>
+
+          <div class="member-info">
+            <p class="member-name" id="memberName3">이체린</p>
+            <p class="member-role" id="memberRole3">
+              Guitar
+            </p>
+          </div>
+
+          <a
+            class="member-link"
+            id="memberInstagram3"
+            href="https://www.instagram.com/chelini_"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="이체린 Instagram 열기"
+          >
+            Instagram
+            <span>↗</span>
+          </a>
+        </article>
+      </div>
+    </section>
+
+    <!-- FOLLOW -->
+    <section class="section follow-section" id="follow">
+      <div class="follow-card reveal">
+        <p class="section-label">Stay Connected</p>
+
+        <h2>
+          공연이 끝난 뒤에도<br />
+          우리 음악과 함께해 주세요.
+        </h2>
+
+        <div class="follow-links">
+          <a
+            class="social-button"
+            id="teamInstagramButton"
+            href="https://www.instagram.com/official_onyour"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span>
+              <small>Follow us on</small>
+              Instagram
+            </span>
+
+            <span class="social-arrow">↗</span>
+          </a>
+
+          <a
+            class="social-button"
+            id="teamYoutubeButton"
+            href="https://youtube.com/@official.onyour"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span>
+              <small>Watch us on</small>
+              YouTube
+            </span>
+
+            <span class="social-arrow">↗</span>
           </a>
         </div>
       </div>
@@ -242,8 +304,27 @@
   </main>
 
   <footer class="site-footer">
-    <p>© 2026 ONYOUR</p>
-    <p>Music that stays with you.</p>
+    <div>
+      <p class="footer-logo">ONYOUR</p>
+      <p class="footer-copy">
+        Music that stays with you.
+      </p>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© <span id="currentYear"></span> ONYOUR</p>
+
+      <button
+        class="admin-entry"
+        id="adminEntryButton"
+        type="button"
+        aria-label="관리자 페이지"
+      >
+        Admin
+      </button>
+    </div>
   </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
