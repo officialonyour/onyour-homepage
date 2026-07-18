@@ -854,37 +854,20 @@ const ADMIN_CONTENT_TYPES = [
 async function loadAdminDataFromD1() {
   try {
     const results = await Promise.all(
-      ADMIN_CONTENT_TYPES.map(
-        async (type) => {
-          const result =
-            await adminApiRequest(
-              `/api/content?type=${type}&includePrivate=true`
-            );
+      ADMIN_CONTENT_TYPES.map(async (type) => {
+        const result = await adminApiRequest(
+          `/api/content?type=${type}&includePrivate=true`
+        );
 
-          return {
-            type,
-            items: result.items || [],
-          };
-        }
-      )
+        return {
+          type,
+          items: result.items || [],
+        };
+      })
     );
 
     results.forEach(({ type, items }) => {
-      const initialItems =
-        initialAdminData[type] || [];
-
-      const mergedItems = [
-        ...items,
-        ...initialItems.filter(
-          (initialItem) =>
-            !items.some(
-              (savedItem) =>
-                savedItem.id === initialItem.id
-            )
-        ),
-      ];
-
-      adminStore[type] = mergedItems;
+      adminStore[type] = items;
     });
 
     renderAllAdminLists();
@@ -896,7 +879,7 @@ async function loadAdminDataFromD1() {
 
     alert(
       error.message ||
-        "저장된 콘텐츠를 불러오지 못했습니다."
+      "저장된 콘텐츠를 불러오지 못했습니다."
     );
   }
 }
