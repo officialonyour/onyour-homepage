@@ -1836,3 +1836,206 @@ body.admin-dashboard-open {
 .footer-admin-button:hover {
   color: #fff !important;
 }
+
+/* =========================
+   ADMIN SECTION VIEW
+========================= */
+
+.admin-section-view {
+  display: none;
+}
+
+.admin-section-view.is-open {
+  display: block;
+}
+
+.admin-dashboard-content.section-active
+  .admin-dashboard-summary,
+.admin-dashboard-content.section-active
+  .admin-menu-list,
+.admin-dashboard-content.section-active
+  .admin-logout-button {
+  display: none;
+}
+
+.admin-section-header {
+  display: grid;
+  grid-template-columns: 42px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.admin-section-header p {
+  margin: 0 0 5px;
+  color: var(--text-muted);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.admin-section-header h3 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.admin-section-back {
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: #fff;
+  background: transparent;
+  font-size: 18px;
+}
+
+.admin-add-button {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.admin-news-list {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-news-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.admin-news-item > div:first-child {
+  display: grid;
+  min-width: 0;
+}
+
+.admin-news-item span {
+  margin-bottom: 7px;
+  color: var(--text-muted);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.admin-news-item strong {
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-news-item small {
+  margin-top: 7px;
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.admin-news-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 7px;
+}
+
+.admin-news-actions button {
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  color: var(--text-soft);
+  background: transparent;
+  font-size: 10px;
+}
+
+/* =========================
+   ADMIN CONTENT FORM
+========================= */
+
+.admin-content-form {
+  display: grid;
+  gap: 18px;
+}
+
+.admin-content-form label {
+  display: grid;
+  gap: 9px;
+  color: var(--text-soft);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.admin-content-form input,
+.admin-content-form select,
+.admin-content-form textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  outline: none;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.035);
+  font: inherit;
+  font-size: 14px;
+}
+
+.admin-content-form input,
+.admin-content-form select {
+  min-height: 48px;
+  padding: 0 14px;
+}
+
+.admin-content-form textarea {
+  min-height: 140px;
+  padding: 14px;
+  line-height: 1.65;
+  resize: vertical;
+}
+
+.admin-content-form input:focus,
+.admin-content-form select:focus,
+.admin-content-form textarea:focus {
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+.admin-content-form select option {
+  color: #111;
+}
+
+.admin-form-actions {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.admin-form-actions button {
+  min-height: 50px;
+  border-radius: 13px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.admin-form-cancel {
+  border: 1px solid var(--line);
+  color: var(--text-soft);
+  background: transparent;
+}
+
+.admin-form-submit {
+  border: 1px solid #fff;
+  color: #111;
+  background: #fff;
+}

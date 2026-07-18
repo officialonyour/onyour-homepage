@@ -343,18 +343,186 @@ adminLogoutButton?.addEventListener(
   closeAdminDashboard
 );
 
+const adminDashboardContent =
+  document.querySelector(".admin-dashboard-content");
+
+const adminNewsView =
+  document.getElementById("adminNewsView");
+
+const adminNewsBackButton =
+  document.getElementById("adminNewsBackButton");
+
+const adminNewsAddButton =
+  document.getElementById("adminNewsAddButton");
+
+function openAdminSection(sectionName) {
+  if (sectionName !== "news") {
+    return;
+  }
+
+  adminDashboardContent?.classList.add(
+    "section-active"
+  );
+
+  adminNewsView?.classList.add("is-open");
+  adminNewsView?.setAttribute(
+    "aria-hidden",
+    "false"
+  );
+}
+
+function closeAdminSection() {
+  adminDashboardContent?.classList.remove(
+    "section-active"
+  );
+
+  adminNewsView?.classList.remove("is-open");
+  adminNewsView?.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+}
+
 document
   .querySelectorAll(".admin-menu-item")
   .forEach((button) => {
     button.addEventListener("click", () => {
-      const section =
-        button.dataset.adminSection;
-
-      alert(
-        `${section} 관리 화면은 다음 단계에서 연결합니다.`
+      openAdminSection(
+        button.dataset.adminSection
       );
     });
   });
+
+adminNewsBackButton?.addEventListener(
+  "click",
+  closeAdminSection
+);
+
+const adminNewsFormView =
+  document.getElementById("adminNewsFormView");
+
+const adminNewsFormBackButton =
+  document.getElementById("adminNewsFormBackButton");
+
+const adminNewsCancelButton =
+  document.getElementById("adminNewsCancelButton");
+
+const adminNewsForm =
+  document.getElementById("adminNewsForm");
+
+const adminNewsCategory =
+  document.getElementById("adminNewsCategory");
+
+const adminNewsTitle =
+  document.getElementById("adminNewsTitle");
+
+const adminNewsDate =
+  document.getElementById("adminNewsDate");
+
+const adminNewsDescription =
+  document.getElementById("adminNewsDescription");
+
+const adminNewsList =
+  document.querySelector(".admin-news-list");
+
+function openAdminNewsForm() {
+  adminNewsView?.classList.remove("is-open");
+  adminNewsView?.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+  adminNewsFormView?.classList.add("is-open");
+  adminNewsFormView?.setAttribute(
+    "aria-hidden",
+    "false"
+  );
+
+  adminNewsForm?.reset();
+
+  window.setTimeout(() => {
+    adminNewsTitle?.focus();
+  }, 100);
+}
+
+function closeAdminNewsForm() {
+  adminNewsFormView?.classList.remove("is-open");
+  adminNewsFormView?.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+  adminNewsView?.classList.add("is-open");
+  adminNewsView?.setAttribute(
+    "aria-hidden",
+    "false"
+  );
+}
+
+adminNewsAddButton?.addEventListener(
+  "click",
+  openAdminNewsForm
+);
+
+adminNewsFormBackButton?.addEventListener(
+  "click",
+  closeAdminNewsForm
+);
+
+adminNewsCancelButton?.addEventListener(
+  "click",
+  closeAdminNewsForm
+);
+
+adminNewsForm?.addEventListener(
+  "submit",
+  (event) => {
+    event.preventDefault();
+
+    const category =
+      adminNewsCategory?.value.trim();
+
+    const title =
+      adminNewsTitle?.value.trim();
+
+    const date =
+      adminNewsDate?.value.trim();
+
+    const description =
+      adminNewsDescription?.value.trim();
+
+    if (
+      !category ||
+      !title ||
+      !date ||
+      !description
+    ) {
+      return;
+    }
+
+    const newsItem =
+      document.createElement("article");
+
+    newsItem.className = "admin-news-item";
+
+    newsItem.innerHTML = `
+      <div>
+        <span>${category}</span>
+        <strong>${title}</strong>
+        <small>${date}</small>
+      </div>
+
+      <div class="admin-news-actions">
+        <button type="button">수정</button>
+        <button type="button">삭제</button>
+      </div>
+    `;
+
+    adminNewsList?.prepend(newsItem);
+
+    closeAdminNewsForm();
+  }
+);
 
 document.addEventListener(
   "keydown",
