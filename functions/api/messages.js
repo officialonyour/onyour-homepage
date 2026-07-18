@@ -551,18 +551,11 @@ function validateDeleteMessage(body) {
     );
   }
 
-  if (!password) {
-    throw new Error(
-      "비밀번호를 입력해 주세요."
-    );
-  }
-
   return {
     id,
     password,
   };
 }
-
 
 /* =========================================================
    DB 결과를 공개용 데이터로 변환
@@ -612,6 +605,36 @@ function ensureDatabase(context) {
   return context.env.DB;
 }
 
+/* =========================================================
+   관리자 요청 확인
+========================================================= */
+
+function verifyAdminRequest(context) {
+  const storedAdminPassword =
+    String(
+      context.env.ADMIN_PASSWORD || ""
+    );
+
+  const requestedAdminPassword =
+    String(
+      context.request.headers.get(
+        "X-Admin-Password"
+      ) || ""
+    );
+
+  if (!storedAdminPassword) {
+    return false;
+  }
+
+  if (!requestedAdminPassword) {
+    return false;
+  }
+
+  return timingSafeEqual(
+    requestedAdminPassword,
+    storedAdminPassword
+  );
+}
 
 /* =========================================================
    GET
@@ -1052,6 +1075,11 @@ export async function onRequestPut(
    작성자 비밀번호 확인 후 메시지 삭제
 ========================================================= */
 
+/* =========================================================
+   DELETE
+   작성자 또는 관리자 메시지 삭제
+========================================================= */
+
 export async function onRequestDelete(
   context
 ) {
@@ -1083,7 +1111,6 @@ export async function onRequestDelete(
       return jsonResponse(
         {
           success: false,
-
           message:
             "삭제할 메시지를 찾을 수 없습니다.",
         },
@@ -1091,22 +1118,37 @@ export async function onRequestDelete(
       );
     }
 
-    const isPasswordCorrect =
-      await verifyPassword(
-        data.password,
-        existingMessage.password_hash
-      );
+    const isAdmin =
+      verifyAdminRequest(context);
 
-    if (!isPasswordCorrect) {
-      return jsonResponse(
-        {
-          success: false,
+    if (!isAdmin) {
+      if (!data.password) {
+        return jsonResponse(
+          {
+            success: false,
+            message:
+              "비밀번호를 입력해 주세요.",
+          },
+          400
+        );
+      }
 
-          message:
-            "비밀번호가 올바르지 않습니다.",
-        },
-        403
-      );
+      const isPasswordCorrect =
+        await verifyPassword(
+          data.password,
+          existingMessage.password_hash
+        );
+
+      if (!isPasswordCorrect) {
+        return jsonResponse(
+          {
+            success: false,
+            message:
+              "비밀번호가 올바르지 않습니다.",
+          },
+          403
+        );
+      }
     }
 
     const deleteResult =
@@ -1126,7 +1168,6 @@ export async function onRequestDelete(
       return jsonResponse(
         {
           success: false,
-
           message:
             "메시지를 삭제하지 못했습니다.",
         },
@@ -1137,8 +1178,9 @@ export async function onRequestDelete(
     return jsonResponse({
       success: true,
 
-      message:
-        "메시지가 삭제되었습니다.",
+      message: isAdmin
+        ? "관리자 권한으로 메시지가 삭제되었습니다."
+        : "메시지가 삭제되었습니다.",
 
       id:
         data.id,
@@ -1162,6 +1204,159 @@ export async function onRequestDelete(
   }
 }
 
+/* =========================================================
+   PATCH
+   관리자 메시지 고정 / 고정 해제
+========================================================= */
+
+export async function onRequestPatch(
+  context
+) {
+  try {
+    const db =
+      ensureDatabase(context);
+
+    const isAdmin =
+      verifyAdminRequest(context);
+
+    if (!isAdmin) {
+      return jsonResponse(
+        {
+          success: false,
+          message:
+            "관리자 인증에 실패했습니다.",
+        },
+        403
+      );
+    }
+
+    const body =
+      await readJsonBody(
+        context.request
+      );
+
+    const id =
+      normalizeText(body.id);
+
+    const isPinned =
+      body.isPinned === true ||
+      body.isPinned === 1;
+
+    if (!id) {
+      return jsonResponse(
+        {
+          success: false,
+          message:
+            "메시지 ID가 없습니다.",
+        },
+        400
+      );
+    }
+
+    const existingMessage =
+      await db
+        .prepare(`
+          SELECT id
+          FROM fan_messages
+          WHERE id = ?
+        `)
+        .bind(id)
+        .first();
+
+    if (!existingMessage) {
+      return jsonResponse(
+        {
+          success: false,
+          message:
+            "메시지를 찾을 수 없습니다.",
+        },
+        404
+      );
+    }
+
+    const now =
+      new Date().toISOString();
+
+    const updateResult =
+      await db
+        .prepare(`
+          UPDATE fan_messages
+          SET
+            is_pinned = ?,
+            updated_at = ?
+          WHERE id = ?
+        `)
+        .bind(
+          isPinned ? 1 : 0,
+          now,
+          id
+        )
+        .run();
+
+    if (
+      Number(
+        updateResult.meta?.changes
+      ) < 1
+    ) {
+      return jsonResponse(
+        {
+          success: false,
+          message:
+            "고정 상태를 변경하지 못했습니다.",
+        },
+        500
+      );
+    }
+
+    const updatedMessage =
+      await db
+        .prepare(`
+          SELECT
+            id,
+            nickname,
+            performance,
+            rating,
+            message,
+            is_hidden,
+            is_pinned,
+            created_at,
+            updated_at
+          FROM fan_messages
+          WHERE id = ?
+        `)
+        .bind(id)
+        .first();
+
+    return jsonResponse({
+      success: true,
+
+      message: isPinned
+        ? "메시지가 메인에 고정되었습니다."
+        : "메시지 고정이 해제되었습니다.",
+
+      data:
+        mapPublicMessage(
+          updatedMessage
+        ),
+    });
+  } catch (error) {
+    console.error(
+      "Fan Messages PATCH 오류:",
+      error
+    );
+
+    return jsonResponse(
+      {
+        success: false,
+
+        message:
+          error.message ||
+          "고정 상태를 변경하지 못했습니다.",
+      },
+      400
+    );
+  }
+}
 
 /* =========================================================
    OPTIONS
