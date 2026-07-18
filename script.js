@@ -2066,3 +2066,716 @@ document.addEventListener(
     }
   }
 );
+
+/* =========================================================
+   FAN MESSAGES - FRONTEND UI
+   현재 단계: 화면 동작 및 임시 카드 등록
+========================================================= */
+
+const fanMessageState = {
+  isFormOpen: false,
+  editingId: null,
+};
+
+
+/**
+ * Fan Messages 요소를 한 번에 가져옵니다.
+ */
+function getFanMessageElements() {
+  return {
+    writeToggle: document.getElementById(
+      "fanMessageWriteToggle"
+    ),
+    formWrap: document.getElementById(
+      "fanMessageFormWrap"
+    ),
+    form: document.getElementById(
+      "fanMessageForm"
+    ),
+    messageId: document.getElementById(
+      "fanMessageId"
+    ),
+    nameInput: document.getElementById(
+      "fanMessageName"
+    ),
+    passwordInput: document.getElementById(
+      "fanMessagePassword"
+    ),
+    performanceSelect: document.getElementById(
+      "fanMessagePerformance"
+    ),
+    contentInput: document.getElementById(
+      "fanMessageContent"
+    ),
+    characterCount: document.getElementById(
+      "fanMessageCharacterCount"
+    ),
+    cancelButton: document.getElementById(
+      "fanMessageCancelButton"
+    ),
+    submitButton: document.getElementById(
+      "fanMessageSubmitButton"
+    ),
+    formStatus: document.getElementById(
+      "fanMessageFormStatus"
+    ),
+    messageList: document.getElementById(
+      "fanMessageList"
+    ),
+    moreButton: document.getElementById(
+      "fanMessageMoreButton"
+    ),
+  };
+}
+
+
+/**
+ * Fan Messages 작성창을 엽니다.
+ */
+function openFanMessageForm(options = {}) {
+  const elements = getFanMessageElements();
+
+  if (
+    !elements.formWrap ||
+    !elements.writeToggle
+  ) {
+    return;
+  }
+
+  fanMessageState.isFormOpen = true;
+
+  elements.formWrap.hidden = false;
+
+  elements.writeToggle.setAttribute(
+    "aria-expanded",
+    "true"
+  );
+
+  elements.writeToggle.textContent =
+    options.isEditing
+      ? "수정 중"
+      : "작성창 닫기";
+
+  if (elements.formStatus) {
+    elements.formStatus.textContent = "";
+  }
+
+  requestAnimationFrame(() => {
+    elements.formWrap.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+    });
+  });
+
+  window.setTimeout(() => {
+    elements.nameInput?.focus();
+  }, 250);
+}
+
+
+/**
+ * Fan Messages 작성창을 닫습니다.
+ */
+function closeFanMessageForm({
+  reset = true,
+} = {}) {
+  const elements = getFanMessageElements();
+
+  if (
+    !elements.formWrap ||
+    !elements.writeToggle
+  ) {
+    return;
+  }
+
+  fanMessageState.isFormOpen = false;
+  fanMessageState.editingId = null;
+
+  elements.formWrap.hidden = true;
+
+  elements.writeToggle.setAttribute(
+    "aria-expanded",
+    "false"
+  );
+
+  elements.writeToggle.textContent =
+    "메시지 남기기";
+
+  if (reset) {
+    resetFanMessageForm();
+  }
+}
+
+
+/**
+ * 작성창을 열거나 닫습니다.
+ */
+function toggleFanMessageForm() {
+  if (fanMessageState.isFormOpen) {
+    closeFanMessageForm();
+    return;
+  }
+
+  openFanMessageForm();
+}
+
+
+/**
+ * 작성 폼을 초기화합니다.
+ */
+function resetFanMessageForm() {
+  const elements = getFanMessageElements();
+
+  elements.form?.reset();
+
+  if (elements.messageId) {
+    elements.messageId.value = "";
+  }
+
+  if (elements.characterCount) {
+    elements.characterCount.textContent = "0";
+  }
+
+  if (elements.submitButton) {
+    elements.submitButton.textContent = "등록";
+    elements.submitButton.disabled = false;
+  }
+
+  if (elements.formStatus) {
+    elements.formStatus.textContent = "";
+  }
+
+  fanMessageState.editingId = null;
+}
+
+
+/**
+ * 메시지 글자 수를 표시합니다.
+ */
+function updateFanMessageCharacterCount() {
+  const elements = getFanMessageElements();
+
+  if (
+    !elements.contentInput ||
+    !elements.characterCount
+  ) {
+    return;
+  }
+
+  const currentLength =
+    elements.contentInput.value.length;
+
+  elements.characterCount.textContent =
+    String(currentLength);
+}
+
+
+/**
+ * 선택된 별점을 반환합니다.
+ */
+function getSelectedFanMessageRating() {
+  const selectedRating =
+    document.querySelector(
+      'input[name="rating"]:checked'
+    );
+
+  if (!selectedRating) {
+    return 0;
+  }
+
+  const rating = Number(
+    selectedRating.value
+  );
+
+  if (
+    !Number.isInteger(rating) ||
+    rating < 1 ||
+    rating > 5
+  ) {
+    return 0;
+  }
+
+  return rating;
+}
+
+
+/**
+ * 별점 숫자를 별 문자로 변환합니다.
+ */
+function createFanMessageRatingText(rating) {
+  const safeRating = Math.max(
+    0,
+    Math.min(5, Number(rating) || 0)
+  );
+
+  if (safeRating === 0) {
+    return "";
+  }
+
+  return (
+    "★".repeat(safeRating) +
+    "☆".repeat(5 - safeRating)
+  );
+}
+
+
+/**
+ * 입력값을 검사하고 정리합니다.
+ */
+function getFanMessageFormData() {
+  const elements = getFanMessageElements();
+
+  const name =
+    elements.nameInput?.value.trim() || "";
+
+  const password =
+    elements.passwordInput?.value || "";
+
+  const performance =
+    elements.performanceSelect?.value.trim() ||
+    "";
+
+  const message =
+    elements.contentInput?.value.trim() || "";
+
+  const rating =
+    getSelectedFanMessageRating();
+
+  if (name.length < 1) {
+    throw new Error(
+      "이름 또는 닉네임을 입력해 주세요."
+    );
+  }
+
+  if (name.length > 20) {
+    throw new Error(
+      "이름은 20자 이하로 입력해 주세요."
+    );
+  }
+
+  if (password.length < 4) {
+    throw new Error(
+      "비밀번호는 4자 이상 입력해 주세요."
+    );
+  }
+
+  if (password.length > 20) {
+    throw new Error(
+      "비밀번호는 20자 이하로 입력해 주세요."
+    );
+  }
+
+  if (message.length < 1) {
+    throw new Error(
+      "메시지를 입력해 주세요."
+    );
+  }
+
+  if (message.length > 300) {
+    throw new Error(
+      "메시지는 300자 이하로 입력해 주세요."
+    );
+  }
+
+  return {
+    id:
+      fanMessageState.editingId ||
+      createTemporaryFanMessageId(),
+
+    name,
+    password,
+    performance,
+    rating,
+    message,
+
+    createdAt: new Date().toISOString(),
+  };
+}
+
+
+/**
+ * 임시 메시지 ID를 만듭니다.
+ */
+function createTemporaryFanMessageId() {
+  if (
+    typeof crypto !== "undefined" &&
+    typeof crypto.randomUUID === "function"
+  ) {
+    return crypto.randomUUID();
+  }
+
+  return [
+    "fan",
+    Date.now(),
+    Math.random()
+      .toString(16)
+      .slice(2),
+  ].join("-");
+}
+
+
+/**
+ * 날짜를 YYYY.MM.DD 형식으로 표시합니다.
+ */
+function formatFanMessageDate(dateValue) {
+  const date = new Date(dateValue);
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  const year = date.getFullYear();
+
+  const month = String(
+    date.getMonth() + 1
+  ).padStart(2, "0");
+
+  const day = String(
+    date.getDate()
+  ).padStart(2, "0");
+
+  return `${year}.${month}.${day}`;
+}
+
+
+/**
+ * 이름의 첫 글자를 아바타 문자로 사용합니다.
+ */
+function createFanMessageAvatarText(name) {
+  const cleanName = String(name || "").trim();
+
+  if (!cleanName) {
+    return "♡";
+  }
+
+  return cleanName.slice(0, 1).toUpperCase();
+}
+
+
+/**
+ * HTML 특수문자를 안전하게 처리합니다.
+ */
+function escapeFanMessageHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+
+/**
+ * 메시지 카드 HTML을 생성합니다.
+ */
+function createFanMessageCardHtml(messageData) {
+  const safeId = escapeFanMessageHtml(
+    messageData.id
+  );
+
+  const safeName = escapeFanMessageHtml(
+    messageData.name
+  );
+
+  const safePerformance =
+    escapeFanMessageHtml(
+      messageData.performance
+    );
+
+  const safeMessage = escapeFanMessageHtml(
+    messageData.message
+  );
+
+  const avatarText =
+    escapeFanMessageHtml(
+      createFanMessageAvatarText(
+        messageData.name
+      )
+    );
+
+  const formattedDate =
+    formatFanMessageDate(
+      messageData.createdAt
+    );
+
+  const ratingText =
+    createFanMessageRatingText(
+      messageData.rating
+    );
+
+  const performanceHtml =
+    safePerformance
+      ? `
+        <span class="fan-message-performance">
+          ${safePerformance}
+        </span>
+      `
+      : "";
+
+  const ratingHtml =
+    ratingText
+      ? `
+        <div
+          class="fan-message-card-rating"
+          aria-label="별점 ${messageData.rating}점"
+        >
+          ${ratingText}
+        </div>
+      `
+      : "";
+
+  return `
+    <article
+      class="fan-message-card"
+      data-fan-message-id="${safeId}"
+    >
+      <div class="fan-message-card-header">
+        <div class="fan-message-user">
+          <span class="fan-message-avatar">
+            ${avatarText}
+          </span>
+
+          <div>
+            <strong>
+              ${safeName}
+            </strong>
+
+            ${performanceHtml}
+          </div>
+        </div>
+
+        <time datetime="${escapeFanMessageHtml(
+          messageData.createdAt
+        )}">
+          ${formattedDate}
+        </time>
+      </div>
+
+      ${ratingHtml}
+
+      <p class="fan-message-card-content">
+        ${safeMessage}
+      </p>
+
+      <div class="fan-message-card-actions">
+        <button
+          type="button"
+          data-fan-message-action="edit"
+          data-fan-message-id="${safeId}"
+        >
+          수정
+        </button>
+
+        <button
+          type="button"
+          data-fan-message-action="delete"
+          data-fan-message-id="${safeId}"
+        >
+          삭제
+        </button>
+      </div>
+    </article>
+  `;
+}
+
+
+/**
+ * 새 메시지를 목록 맨 앞에 추가합니다.
+ */
+function prependTemporaryFanMessage(
+  messageData
+) {
+  const elements = getFanMessageElements();
+
+  if (!elements.messageList) {
+    return;
+  }
+
+  elements.messageList.insertAdjacentHTML(
+    "afterbegin",
+    createFanMessageCardHtml(messageData)
+  );
+}
+
+
+/**
+ * 작성 상태 문구를 표시합니다.
+ */
+function setFanMessageFormStatus(
+  message,
+  type = "normal"
+) {
+  const elements = getFanMessageElements();
+
+  if (!elements.formStatus) {
+    return;
+  }
+
+  elements.formStatus.textContent = message;
+
+  elements.formStatus.dataset.statusType =
+    type;
+}
+
+
+/**
+ * Fan Messages 폼 제출을 처리합니다.
+ * 현재는 D1이 아닌 화면에만 임시 등록합니다.
+ */
+function handleFanMessageSubmit(event) {
+  event.preventDefault();
+
+  const elements = getFanMessageElements();
+
+  if (!elements.form) {
+    return;
+  }
+
+  try {
+    if (elements.submitButton) {
+      elements.submitButton.disabled = true;
+      elements.submitButton.textContent =
+        "등록 중...";
+    }
+
+    setFanMessageFormStatus("");
+
+    const messageData =
+      getFanMessageFormData();
+
+    prependTemporaryFanMessage(
+      messageData
+    );
+
+    setFanMessageFormStatus(
+      "메시지가 화면에 등록되었습니다. 현재는 테스트 단계이므로 새로고침하면 사라집니다.",
+      "success"
+    );
+
+    elements.form.reset();
+
+    if (elements.characterCount) {
+      elements.characterCount.textContent =
+        "0";
+    }
+
+    if (elements.submitButton) {
+      elements.submitButton.textContent =
+        "등록";
+      elements.submitButton.disabled = false;
+    }
+
+    window.setTimeout(() => {
+      closeFanMessageForm();
+    }, 900);
+  } catch (error) {
+    console.error(
+      "Fan Message 등록 실패:",
+      error
+    );
+
+    setFanMessageFormStatus(
+      error.message ||
+        "메시지를 등록하지 못했습니다.",
+      "error"
+    );
+
+    if (elements.submitButton) {
+      elements.submitButton.textContent =
+        "등록";
+      elements.submitButton.disabled = false;
+    }
+  }
+}
+
+
+/**
+ * 아직 서버가 연결되지 않은 수정/삭제 버튼을 안내합니다.
+ */
+function handleFanMessageListClick(event) {
+  const actionButton =
+    event.target.closest(
+      "[data-fan-message-action]"
+    );
+
+  if (!actionButton) {
+    return;
+  }
+
+  const action =
+    actionButton.dataset.fanMessageAction;
+
+  if (action === "edit") {
+    alert(
+      "수정 기능은 다음 단계에서 비밀번호 확인 및 D1과 함께 연결합니다."
+    );
+
+    return;
+  }
+
+  if (action === "delete") {
+    alert(
+      "삭제 기능은 다음 단계에서 비밀번호 확인 및 D1과 함께 연결합니다."
+    );
+  }
+}
+
+
+/**
+ * Fan Messages UI 이벤트를 등록합니다.
+ */
+function initializeFanMessagesUi() {
+  const elements = getFanMessageElements();
+
+  if (
+    !elements.writeToggle ||
+    !elements.formWrap ||
+    !elements.form
+  ) {
+    return;
+  }
+
+  elements.formWrap.hidden = true;
+
+  elements.writeToggle.addEventListener(
+    "click",
+    toggleFanMessageForm
+  );
+
+  elements.cancelButton?.addEventListener(
+    "click",
+    () => {
+      closeFanMessageForm();
+    }
+  );
+
+  elements.contentInput?.addEventListener(
+    "input",
+    updateFanMessageCharacterCount
+  );
+
+  elements.form.addEventListener(
+    "submit",
+    handleFanMessageSubmit
+  );
+
+  elements.messageList?.addEventListener(
+    "click",
+    handleFanMessageListClick
+  );
+
+  updateFanMessageCharacterCount();
+}
+
+
+/**
+ * 문서가 준비되면 Fan Messages 기능을 시작합니다.
+ */
+if (document.readyState === "loading") {
+  document.addEventListener(
+    "DOMContentLoaded",
+    initializeFanMessagesUi
+  );
+} else {
+  initializeFanMessagesUi();
+}
