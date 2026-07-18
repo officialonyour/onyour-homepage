@@ -45,12 +45,15 @@
     </button>
   </header>
 
-  <nav class="mobile-menu" id="mobileMenu" aria-label="모바일 메뉴">
-    <a href="#live">Live</a>
-    <a href="#about">About</a>
-    <a href="#members">Members</a>
-    <a href="#follow">Follow</a>
-  </nav>
+<nav class="mobile-menu" id="mobileMenu" aria-label="모바일 메뉴">
+  <a href="#news">News</a>
+  <a href="#live">Video</a>
+  <a href="#music">Music</a>
+  <a href="#performances">Live</a>
+  <a href="#about">About</a>
+  <a href="#members">Members</a>
+  <a href="#follow">Follow</a>
+</nav>
 
   <main>
     <!-- HERO -->
@@ -73,7 +76,7 @@
         </p>
 
         <h1 class="hero-title" id="heroTitle">
-          Music that<br />
+          Jazz Hiphop music that<br />
           stays with you.
         </h1>
 
@@ -109,6 +112,99 @@
         <span class="scroll-line"></span>
       </a>
     </section>
+
+
+    <!-- LATEST NEWS -->
+<section class="section news-section" id="news">
+  <div class="section-heading reveal">
+    <p class="section-label">Latest News</p>
+
+    <h2>
+      ONYOUR의<br />
+      새로운 이야기.
+    </h2>
+  </div>
+
+  <div class="news-list">
+    <article class="news-card news-card-featured reveal">
+      <div class="news-meta">
+        <span class="news-category">Release</span>
+        <time datetime="2026">2026 Autumn</time>
+      </div>
+
+      <div class="news-content">
+        <p class="news-icon" aria-hidden="true">◉</p>
+
+        <div>
+          <h3 id="newsTitle1">가을 첫 정규앨범 발매 예정</h3>
+
+          <p id="newsDescription1">
+            ONYOUR의 첫 번째 정규앨범을 준비하고 있습니다.
+            세 멤버가 함께 만든 새로운 음악을 곧 만나보세요.
+          </p>
+        </div>
+      </div>
+
+      <span class="news-status">Coming Soon</span>
+    </article>
+
+    <article class="news-card reveal">
+      <div class="news-meta">
+        <span class="news-category">Performance</span>
+        <time datetime="2026-07-25">2026.07.25</time>
+      </div>
+
+      <div class="news-content">
+        <p class="news-icon" aria-hidden="true">◆</p>
+
+        <div>
+          <h3 id="newsTitle2">강릉 버스킹 전국대회 본선</h3>
+
+          <p id="newsDescription2">
+            강릉의 여름밤, ONYOUR의 자작곡으로 관객 여러분을 만납니다.
+          </p>
+        </div>
+      </div>
+
+      <a
+        class="news-link"
+        href="#performances"
+        aria-label="공연 일정 확인하기"
+      >
+        공연 정보
+        <span>↓</span>
+      </a>
+    </article>
+
+    <article class="news-card reveal">
+      <div class="news-meta">
+        <span class="news-category">Video</span>
+        <time datetime="2026-07">New</time>
+      </div>
+
+      <div class="news-content">
+        <p class="news-icon" aria-hidden="true">▶</p>
+
+        <div>
+          <h3 id="newsTitle3">새로운 라이브 영상 공개</h3>
+
+          <p id="newsDescription3">
+            ONYOUR의 라이브 세션을 공식 YouTube 채널에서 확인해 보세요.
+          </p>
+        </div>
+      </div>
+
+      <a
+        class="news-link"
+        href="#live"
+        aria-label="라이브 영상 확인하기"
+      >
+        영상 보기
+        <span>↓</span>
+      </a>
+    </article>
+  </div>
+</section>
 
     <!-- FEATURED LIVE -->
     <section class="section live-section" id="live">
@@ -152,6 +248,169 @@
         </div>
       </article>
     </section>
+
+    <!-- MUSIC -->
+<section class="section music-section" id="music">
+  <div class="section-heading reveal">
+    <p class="section-label">Music</p>
+
+    <h2>
+      우리가 만든<br />
+      음악을 들어보세요.
+    </h2>
+  </div>
+
+  <div class="music-list">
+    <article class="music-card music-card-onyour reveal">
+      <div class="music-artwork">
+        <div class="music-artwork-inner">
+          <span>ONYOUR</span>
+          <small>COMING SOON</small>
+        </div>
+      </div>
+
+      <div class="music-info">
+        <div>
+          <p class="music-type">Upcoming Album</p>
+          <h3 id="musicTitle1">ONYOUR 1st Full Album</h3>
+          <p class="music-artist" id="musicArtist1">ONYOUR</p>
+        </div>
+
+        <span class="music-badge">2026 Autumn</span>
+      </div>
+
+      <div class="music-description">
+        <p>
+          재즈 힙합을 기반으로 세 멤버의 서로 다른 색깔을 담은
+          첫 정규앨범입니다.
+        </p>
+      </div>
+
+      <button
+        class="music-button music-button-disabled"
+        type="button"
+        disabled
+      >
+        Coming Soon
+      </button>
+    </article>
+
+    <article class="music-card reveal">
+      <div class="music-artwork music-artwork-personal">
+        <div class="music-artwork-inner">
+          <span>이휘근</span>
+          <small>LATEST RELEASE</small>
+        </div>
+      </div>
+
+      <div class="music-info">
+        <div>
+          <p class="music-type">Latest Release</p>
+          <h3 id="musicTitle2">최근 발매 음원</h3>
+          <p class="music-artist" id="musicArtist2">이휘근</p>
+        </div>
+
+        <span class="music-badge">Composer</span>
+      </div>
+
+      <div class="music-description">
+        <p>
+          ONYOUR의 프로듀서이자 작곡가 이휘근의 최근 발매 음원을
+          만나보세요.
+        </p>
+      </div>
+
+      <a
+        class="music-button"
+        id="leeReleaseLink"
+        href="https://youtube.com/channel/UCA05duT3IUBs3Wozk9htniQ?si=tqTAs_QqkP2XL0qZ"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="이휘근 최근 발매 음원 듣기"
+      >
+        Listen Now
+        <span>↗</span>
+      </a>
+    </article>
+  </div>
+</section>
+
+<!-- PERFORMANCES -->
+<section class="section performance-section" id="performances">
+  <div class="section-heading reveal">
+    <p class="section-label">Live Schedule</p>
+
+    <h2>
+      무대에서<br />
+      만나요.
+    </h2>
+  </div>
+
+  <div class="performance-list">
+    <article class="performance-card performance-upcoming reveal">
+      <div class="performance-date">
+        <span class="performance-month">JUL</span>
+        <strong>25</strong>
+        <span class="performance-year">2026</span>
+      </div>
+
+      <div class="performance-info">
+        <div class="performance-topline">
+          <span class="performance-status">Upcoming</span>
+          <span class="performance-dday" id="performanceDday">
+            07.25
+          </span>
+        </div>
+
+        <h3 id="performanceTitle1">
+          강릉 버스킹 전국대회
+        </h3>
+
+        <p class="performance-location" id="performanceLocation1">
+          강릉 · 본선 무대
+        </p>
+
+        <p class="performance-description" id="performanceDescription1">
+          ONYOUR가 자작곡과 함께 강릉의 여름밤 무대에 오릅니다.
+        </p>
+
+        <div class="performance-setlist">
+          <p>Set List</p>
+
+          <ol>
+            <li>
+              <span>01</span>
+              Moonlight
+            </li>
+
+            <li>
+              <span>02</span>
+              어디든
+            </li>
+          </ol>
+        </div>
+      </div>
+    </article>
+
+    <div class="performance-notice reveal">
+      <p class="performance-notice-label">Next Live</p>
+
+      <p>
+        새로운 공연 일정은 이곳과 공식 Instagram을 통해
+        가장 먼저 알려드릴게요.
+      </p>
+
+      <a
+        href="https://www.instagram.com/official_onyour"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Instagram에서 소식 받기
+        <span>↗</span>
+      </a>
+    </div>
+  </div>
+</section>
 
     <!-- ABOUT -->
     <section class="section about-section" id="about">

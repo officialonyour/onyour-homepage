@@ -907,3 +907,517 @@ button:focus-visible {
     transform: none;
   }
 }
+
+/* =========================
+   NEWS
+========================= */
+
+.news-section {
+  padding-top: 110px;
+}
+
+.news-list {
+  display: grid;
+  gap: 14px;
+}
+
+.news-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  padding: 24px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.055),
+      rgba(255, 255, 255, 0.018)
+    ),
+    var(--card);
+}
+
+.news-card-featured {
+  min-height: 320px;
+  justify-content: space-between;
+  background:
+    radial-gradient(
+      circle at 85% 15%,
+      rgba(255, 255, 255, 0.12),
+      transparent 30%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.06),
+      rgba(255, 255, 255, 0.018)
+    ),
+    var(--card);
+}
+
+.news-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.news-category {
+  display: inline-flex;
+  align-items: center;
+  min-height: 27px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--text-soft);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.news-content {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.news-icon {
+  margin: 2px 0 0;
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1;
+}
+
+.news-content h3 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.045em;
+}
+
+.news-content p:not(.news-icon) {
+  margin: 12px 0 0;
+  color: var(--text-soft);
+  font-size: 13px;
+  line-height: 1.75;
+}
+
+.news-status {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  min-height: 34px;
+  padding: 0 13px;
+  border-radius: 999px;
+  color: #090909;
+  background: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.news-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  padding: 0 15px;
+  border-top: 1px solid var(--line);
+  color: var(--text-soft);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* =========================
+   MUSIC
+========================= */
+
+.music-section {
+  padding-top: 120px;
+}
+
+.music-list {
+  display: grid;
+  gap: 16px;
+}
+
+.music-card {
+  padding: 16px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--card);
+}
+
+.music-artwork {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  padding: 22px;
+  overflow: hidden;
+  border-radius: 22px;
+  background:
+    radial-gradient(
+      circle at 72% 24%,
+      rgba(255, 255, 255, 0.24),
+      transparent 26%
+    ),
+    linear-gradient(
+      145deg,
+      #2d2d2d,
+      #0c0c0c 74%
+    );
+}
+
+.music-artwork::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.72),
+      transparent 55%
+    );
+}
+
+.music-artwork-personal {
+  background:
+    radial-gradient(
+      circle at 28% 25%,
+      rgba(255, 255, 255, 0.2),
+      transparent 24%
+    ),
+    linear-gradient(
+      145deg,
+      #232323,
+      #080808 76%
+    );
+}
+
+.music-artwork-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.music-artwork-inner span {
+  font-size: clamp(30px, 10vw, 48px);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.06em;
+}
+
+.music-artwork-inner small {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.17em;
+}
+
+.music-info {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 4px 0;
+}
+
+.music-type {
+  margin: 0 0 7px;
+  color: var(--text-muted);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.music-info h3 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.04em;
+}
+
+.music-artist {
+  margin: 5px 0 0;
+  color: var(--text-soft);
+  font-size: 12px;
+}
+
+.music-badge {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--text-muted);
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.music-description {
+  padding: 18px 4px 0;
+}
+
+.music-description p {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 13px;
+  line-height: 1.75;
+}
+
+.music-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 52px;
+  margin-top: 22px;
+  padding: 0 17px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: #090909;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.music-button-disabled {
+  justify-content: center;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.04);
+  cursor: not-allowed;
+}
+
+/* =========================
+   PERFORMANCE
+========================= */
+
+.performance-section {
+  padding-top: 120px;
+}
+
+.performance-list {
+  display: grid;
+  gap: 16px;
+}
+
+.performance-card {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 20px;
+  padding: 24px 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(255, 255, 255, 0.09),
+      transparent 30%
+    ),
+    var(--card);
+}
+
+.performance-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: start;
+  padding: 9px 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.performance-month,
+.performance-year {
+  color: var(--text-muted);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.performance-date strong {
+  margin: 2px 0;
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.06em;
+}
+
+.performance-info {
+  min-width: 0;
+}
+
+.performance-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.performance-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 27px;
+  padding: 0 10px;
+  border-radius: 999px;
+  color: #090909;
+  background: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.performance-dday {
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.performance-info h3 {
+  margin: 18px 0 0;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.045em;
+}
+
+.performance-location {
+  margin: 8px 0 0;
+  color: var(--text-soft);
+  font-size: 12px;
+}
+
+.performance-description {
+  margin: 18px 0 0;
+  color: var(--text-soft);
+  font-size: 13px;
+  line-height: 1.75;
+}
+
+.performance-setlist {
+  margin-top: 26px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.performance-setlist > p {
+  margin: 0 0 12px;
+  color: var(--text-muted);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.performance-setlist ol {
+  display: grid;
+  gap: 9px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.performance-setlist li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.performance-setlist li span {
+  color: var(--text-muted);
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.performance-notice {
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.028);
+}
+
+.performance-notice-label {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.performance-notice > p:not(.performance-notice-label) {
+  margin: 14px 0 0;
+  color: var(--text-soft);
+  font-size: 13px;
+  line-height: 1.75;
+}
+
+.performance-notice a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* =========================
+   NEW SECTIONS - TABLET
+========================= */
+
+@media (min-width: 768px) {
+  .news-list {
+    grid-template-columns: 1.1fr 0.9fr;
+  }
+
+  .news-card-featured {
+    grid-row: span 2;
+  }
+
+  .music-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .performance-card {
+    grid-template-columns: 100px minmax(0, 1fr);
+    gap: 34px;
+    padding: 34px;
+  }
+
+  .performance-date strong {
+    font-size: 44px;
+  }
+}
+
+@media (min-width: 1100px) {
+  .news-list,
+  .music-list,
+  .performance-list {
+    max-width: 1080px;
+  }
+
+  .performance-list {
+    grid-template-columns: 1.35fr 0.65fr;
+    align-items: start;
+  }
+}
