@@ -2067,61 +2067,84 @@ document.addEventListener(
   }
 );
 
-/* =========================================================
-   FAN MESSAGES - FRONTEND UI
-   현재 단계: 화면 동작 및 임시 카드 등록
+/* =========================================================/* =========================================================
+   FAN MESSAGES - D1 API CONNECTION
+   - 메시지 목록 조회
+   - 더보기
+   - 실제 메시지 등록
 ========================================================= */
+
+const FAN_MESSAGE_API_URL = "/api/messages";
+const FAN_MESSAGE_PAGE_SIZE = 6;
 
 const fanMessageState = {
   isFormOpen: false,
   editingId: null,
+  offset: 0,
+  total: 0,
+  hasMore: false,
+  isLoading: false,
 };
 
 
-/**
- * Fan Messages 요소를 한 번에 가져옵니다.
- */
+/* =========================================================
+   요소 가져오기
+========================================================= */
+
 function getFanMessageElements() {
   return {
     writeToggle: document.getElementById(
       "fanMessageWriteToggle"
     ),
+
     formWrap: document.getElementById(
       "fanMessageFormWrap"
     ),
+
     form: document.getElementById(
       "fanMessageForm"
     ),
+
     messageId: document.getElementById(
       "fanMessageId"
     ),
+
     nameInput: document.getElementById(
       "fanMessageName"
     ),
+
     passwordInput: document.getElementById(
       "fanMessagePassword"
     ),
+
     performanceSelect: document.getElementById(
       "fanMessagePerformance"
     ),
+
     contentInput: document.getElementById(
       "fanMessageContent"
     ),
+
     characterCount: document.getElementById(
       "fanMessageCharacterCount"
     ),
+
     cancelButton: document.getElementById(
       "fanMessageCancelButton"
     ),
+
     submitButton: document.getElementById(
       "fanMessageSubmitButton"
     ),
+
     formStatus: document.getElementById(
       "fanMessageFormStatus"
     ),
+
     messageList: document.getElementById(
       "fanMessageList"
     ),
+
     moreButton: document.getElementById(
       "fanMessageMoreButton"
     ),
@@ -2129,10 +2152,11 @@ function getFanMessageElements() {
 }
 
 
-/**
- * Fan Messages 작성창을 엽니다.
- */
-function openFanMessageForm(options = {}) {
+/* =========================================================
+   작성창 열기
+========================================================= */
+
+function openFanMessageForm() {
   const elements = getFanMessageElements();
 
   if (
@@ -2152,13 +2176,9 @@ function openFanMessageForm(options = {}) {
   );
 
   elements.writeToggle.textContent =
-    options.isEditing
-      ? "수정 중"
-      : "작성창 닫기";
+    "작성창 닫기";
 
-  if (elements.formStatus) {
-    elements.formStatus.textContent = "";
-  }
+  setFanMessageFormStatus("");
 
   requestAnimationFrame(() => {
     elements.formWrap.scrollIntoView({
@@ -2173,9 +2193,10 @@ function openFanMessageForm(options = {}) {
 }
 
 
-/**
- * Fan Messages 작성창을 닫습니다.
- */
+/* =========================================================
+   작성창 닫기
+========================================================= */
+
 function closeFanMessageForm({
   reset = true,
 } = {}) {
@@ -2207,9 +2228,10 @@ function closeFanMessageForm({
 }
 
 
-/**
- * 작성창을 열거나 닫습니다.
- */
+/* =========================================================
+   작성창 열기/닫기
+========================================================= */
+
 function toggleFanMessageForm() {
   if (fanMessageState.isFormOpen) {
     closeFanMessageForm();
@@ -2220,9 +2242,10 @@ function toggleFanMessageForm() {
 }
 
 
-/**
- * 작성 폼을 초기화합니다.
- */
+/* =========================================================
+   폼 초기화
+========================================================= */
+
 function resetFanMessageForm() {
   const elements = getFanMessageElements();
 
@@ -2237,21 +2260,23 @@ function resetFanMessageForm() {
   }
 
   if (elements.submitButton) {
-    elements.submitButton.textContent = "등록";
     elements.submitButton.disabled = false;
+    elements.submitButton.textContent = "등록";
   }
 
   if (elements.formStatus) {
     elements.formStatus.textContent = "";
+    delete elements.formStatus.dataset.statusType;
   }
 
   fanMessageState.editingId = null;
 }
 
 
-/**
- * 메시지 글자 수를 표시합니다.
- */
+/* =========================================================
+   글자 수 표시
+========================================================= */
+
 function updateFanMessageCharacterCount() {
   const elements = getFanMessageElements();
 
@@ -2262,17 +2287,17 @@ function updateFanMessageCharacterCount() {
     return;
   }
 
-  const currentLength =
-    elements.contentInput.value.length;
-
   elements.characterCount.textContent =
-    String(currentLength);
+    String(
+      elements.contentInput.value.length
+    );
 }
 
 
-/**
- * 선택된 별점을 반환합니다.
- */
+/* =========================================================
+   선택된 별점
+========================================================= */
+
 function getSelectedFanMessageRating() {
   const selectedRating =
     document.querySelector(
@@ -2299,33 +2324,14 @@ function getSelectedFanMessageRating() {
 }
 
 
-/**
- * 별점 숫자를 별 문자로 변환합니다.
- */
-function createFanMessageRatingText(rating) {
-  const safeRating = Math.max(
-    0,
-    Math.min(5, Number(rating) || 0)
-  );
+/* =========================================================
+   폼 입력값
+========================================================= */
 
-  if (safeRating === 0) {
-    return "";
-  }
-
-  return (
-    "★".repeat(safeRating) +
-    "☆".repeat(5 - safeRating)
-  );
-}
-
-
-/**
- * 입력값을 검사하고 정리합니다.
- */
 function getFanMessageFormData() {
   const elements = getFanMessageElements();
 
-  const name =
+  const nickname =
     elements.nameInput?.value.trim() || "";
 
   const password =
@@ -2335,21 +2341,21 @@ function getFanMessageFormData() {
     elements.performanceSelect?.value.trim() ||
     "";
 
-  const message =
-    elements.contentInput?.value.trim() || "";
-
   const rating =
     getSelectedFanMessageRating();
 
-  if (name.length < 1) {
+  const message =
+    elements.contentInput?.value.trim() || "";
+
+  if (!nickname) {
     throw new Error(
       "이름 또는 닉네임을 입력해 주세요."
     );
   }
 
-  if (name.length > 20) {
+  if (nickname.length > 20) {
     throw new Error(
-      "이름은 20자 이하로 입력해 주세요."
+      "닉네임은 20자 이하로 입력해 주세요."
     );
   }
 
@@ -2365,7 +2371,7 @@ function getFanMessageFormData() {
     );
   }
 
-  if (message.length < 1) {
+  if (!message) {
     throw new Error(
       "메시지를 입력해 주세요."
     );
@@ -2378,45 +2384,33 @@ function getFanMessageFormData() {
   }
 
   return {
-    id:
-      fanMessageState.editingId ||
-      createTemporaryFanMessageId(),
-
-    name,
+    nickname,
     password,
     performance,
     rating,
     message,
-
-    createdAt: new Date().toISOString(),
   };
 }
 
 
-/**
- * 임시 메시지 ID를 만듭니다.
- */
-function createTemporaryFanMessageId() {
-  if (
-    typeof crypto !== "undefined" &&
-    typeof crypto.randomUUID === "function"
-  ) {
-    return crypto.randomUUID();
-  }
+/* =========================================================
+   HTML 특수문자 처리
+========================================================= */
 
-  return [
-    "fan",
-    Date.now(),
-    Math.random()
-      .toString(16)
-      .slice(2),
-  ].join("-");
+function escapeFanMessageHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
 
-/**
- * 날짜를 YYYY.MM.DD 형식으로 표시합니다.
- */
+/* =========================================================
+   날짜 표시
+========================================================= */
+
 function formatFanMessageDate(dateValue) {
   const date = new Date(dateValue);
 
@@ -2438,76 +2432,97 @@ function formatFanMessageDate(dateValue) {
 }
 
 
-/**
- * 이름의 첫 글자를 아바타 문자로 사용합니다.
- */
+/* =========================================================
+   별점 표시
+========================================================= */
+
+function createFanMessageRatingText(rating) {
+  const safeRating = Math.max(
+    0,
+    Math.min(
+      5,
+      Number(rating) || 0
+    )
+  );
+
+  if (safeRating === 0) {
+    return "";
+  }
+
+  return (
+    "★".repeat(safeRating) +
+    "☆".repeat(5 - safeRating)
+  );
+}
+
+
+/* =========================================================
+   아바타 글자
+========================================================= */
+
 function createFanMessageAvatarText(name) {
-  const cleanName = String(name || "").trim();
+  const cleanName =
+    String(name || "").trim();
 
   if (!cleanName) {
     return "♡";
   }
 
-  return cleanName.slice(0, 1).toUpperCase();
+  return cleanName
+    .slice(0, 1)
+    .toUpperCase();
 }
 
 
-/**
- * HTML 특수문자를 안전하게 처리합니다.
- */
-function escapeFanMessageHtml(value) {
-  return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
+/* =========================================================
+   메시지 카드 HTML
+========================================================= */
 
-
-/**
- * 메시지 카드 HTML을 생성합니다.
- */
 function createFanMessageCardHtml(messageData) {
-  const safeId = escapeFanMessageHtml(
+  const id = escapeFanMessageHtml(
     messageData.id
   );
 
-  const safeName = escapeFanMessageHtml(
-    messageData.name
+  const name = escapeFanMessageHtml(
+    messageData.nickname ||
+    messageData.name ||
+    "익명"
   );
 
-  const safePerformance =
+  const performance =
     escapeFanMessageHtml(
-      messageData.performance
+      messageData.performance || ""
     );
 
-  const safeMessage = escapeFanMessageHtml(
-    messageData.message
-  );
-
-  const avatarText =
+  const message =
     escapeFanMessageHtml(
-      createFanMessageAvatarText(
-        messageData.name
-      )
+      messageData.message || ""
     );
+
+  const createdAt =
+    messageData.createdAt ||
+    messageData.created_at ||
+    "";
 
   const formattedDate =
-    formatFanMessageDate(
-      messageData.createdAt
+    formatFanMessageDate(createdAt);
+
+  const avatar =
+    escapeFanMessageHtml(
+      createFanMessageAvatarText(name)
     );
+
+  const rating =
+    Number(messageData.rating) || 0;
 
   const ratingText =
-    createFanMessageRatingText(
-      messageData.rating
-    );
+    createFanMessageRatingText(rating);
 
   const performanceHtml =
-    safePerformance
+    performance
       ? `
         <span class="fan-message-performance">
-          ${safePerformance}
+          ${performance}
         </span>
       `
       : "";
@@ -2517,27 +2532,36 @@ function createFanMessageCardHtml(messageData) {
       ? `
         <div
           class="fan-message-card-rating"
-          aria-label="별점 ${messageData.rating}점"
+          aria-label="별점 ${rating}점"
         >
           ${ratingText}
         </div>
       `
       : "";
 
+  const pinnedHtml =
+    messageData.isPinned
+      ? `
+        <span class="fan-message-pinned">
+          ONYOUR PICK
+        </span>
+      `
+      : "";
+
   return `
     <article
       class="fan-message-card"
-      data-fan-message-id="${safeId}"
+      data-fan-message-id="${id}"
     >
       <div class="fan-message-card-header">
         <div class="fan-message-user">
           <span class="fan-message-avatar">
-            ${avatarText}
+            ${avatar}
           </span>
 
           <div>
             <strong>
-              ${safeName}
+              ${name}
             </strong>
 
             ${performanceHtml}
@@ -2545,23 +2569,24 @@ function createFanMessageCardHtml(messageData) {
         </div>
 
         <time datetime="${escapeFanMessageHtml(
-          messageData.createdAt
+          createdAt
         )}">
           ${formattedDate}
         </time>
       </div>
 
+      ${pinnedHtml}
       ${ratingHtml}
 
       <p class="fan-message-card-content">
-        ${safeMessage}
+        ${message}
       </p>
 
       <div class="fan-message-card-actions">
         <button
           type="button"
           data-fan-message-action="edit"
-          data-fan-message-id="${safeId}"
+          data-fan-message-id="${id}"
         >
           수정
         </button>
@@ -2569,7 +2594,7 @@ function createFanMessageCardHtml(messageData) {
         <button
           type="button"
           data-fan-message-action="delete"
-          data-fan-message-id="${safeId}"
+          data-fan-message-id="${id}"
         >
           삭제
         </button>
@@ -2579,28 +2604,277 @@ function createFanMessageCardHtml(messageData) {
 }
 
 
-/**
- * 새 메시지를 목록 맨 앞에 추가합니다.
- */
-function prependTemporaryFanMessage(
-  messageData
-) {
+/* =========================================================
+   로딩 문구
+========================================================= */
+
+function showFanMessageLoading() {
   const elements = getFanMessageElements();
 
   if (!elements.messageList) {
     return;
   }
 
-  elements.messageList.insertAdjacentHTML(
-    "afterbegin",
-    createFanMessageCardHtml(messageData)
+  elements.messageList.innerHTML = `
+    <div class="fan-message-empty">
+      메시지를 불러오는 중입니다.
+    </div>
+  `;
+}
+
+
+/* =========================================================
+   빈 목록 문구
+========================================================= */
+
+function showFanMessageEmpty() {
+  const elements = getFanMessageElements();
+
+  if (!elements.messageList) {
+    return;
+  }
+
+  elements.messageList.innerHTML = `
+    <div class="fan-message-empty">
+      아직 등록된 메시지가 없습니다.<br />
+      ONYOUR에게 첫 메시지를 남겨주세요.
+    </div>
+  `;
+}
+
+
+/* =========================================================
+   오류 문구
+========================================================= */
+
+function showFanMessageLoadError(message) {
+  const elements = getFanMessageElements();
+
+  if (!elements.messageList) {
+    return;
+  }
+
+  elements.messageList.innerHTML = `
+    <div class="fan-message-empty">
+      ${escapeFanMessageHtml(message)}
+    </div>
+  `;
+}
+
+
+/* =========================================================
+   더보기 버튼 상태
+========================================================= */
+
+function updateFanMessageMoreButton() {
+  const elements = getFanMessageElements();
+
+  if (!elements.moreButton) {
+    return;
+  }
+
+  if (
+    fanMessageState.total === 0 ||
+    !fanMessageState.hasMore
+  ) {
+    elements.moreButton.hidden = true;
+    return;
+  }
+
+  elements.moreButton.hidden = false;
+
+  elements.moreButton.disabled =
+    fanMessageState.isLoading;
+
+  elements.moreButton.textContent =
+    fanMessageState.isLoading
+      ? "불러오는 중..."
+      : "더 많은 메시지 보기";
+}
+
+
+/* =========================================================
+   API 응답 처리
+========================================================= */
+
+async function parseFanMessageApiResponse(
+  response
+) {
+  let result;
+
+  try {
+    result = await response.json();
+  } catch {
+    throw new Error(
+      "서버 응답을 읽을 수 없습니다."
+    );
+  }
+
+  if (!response.ok || result.success === false) {
+    throw new Error(
+      result.message ||
+      "요청을 처리하지 못했습니다."
+    );
+  }
+
+  return result;
+}
+
+
+/* =========================================================
+   메시지 목록 불러오기
+
+   reset = true:
+   처음부터 새로 불러오기
+
+   reset = false:
+   기존 목록 아래에 추가
+========================================================= */
+
+async function loadFanMessages({
+  reset = false,
+} = {}) {
+  const elements = getFanMessageElements();
+
+  if (
+    !elements.messageList ||
+    fanMessageState.isLoading
+  ) {
+    return;
+  }
+
+  if (reset) {
+    fanMessageState.offset = 0;
+    fanMessageState.total = 0;
+    fanMessageState.hasMore = false;
+
+    showFanMessageLoading();
+  }
+
+  fanMessageState.isLoading = true;
+  updateFanMessageMoreButton();
+
+  try {
+    const requestUrl =
+      `${FAN_MESSAGE_API_URL}` +
+      `?limit=${FAN_MESSAGE_PAGE_SIZE}` +
+      `&offset=${fanMessageState.offset}`;
+
+    const response = await fetch(
+      requestUrl,
+      {
+        method: "GET",
+
+        headers: {
+          Accept: "application/json",
+        },
+
+        cache: "no-store",
+      }
+    );
+
+    const result =
+      await parseFanMessageApiResponse(
+        response
+      );
+
+    const messages =
+      Array.isArray(result.messages)
+        ? result.messages
+        : [];
+
+    const pagination =
+      result.pagination || {};
+
+    if (reset) {
+      elements.messageList.innerHTML = "";
+    }
+
+    if (
+      reset &&
+      messages.length === 0
+    ) {
+      showFanMessageEmpty();
+    } else {
+      const cardsHtml =
+        messages
+          .map(
+            createFanMessageCardHtml
+          )
+          .join("");
+
+      elements.messageList.insertAdjacentHTML(
+        "beforeend",
+        cardsHtml
+      );
+    }
+
+    fanMessageState.offset +=
+      messages.length;
+
+    fanMessageState.total =
+      Number(pagination.total) || 0;
+
+    fanMessageState.hasMore =
+      Boolean(pagination.hasMore);
+  } catch (error) {
+    console.error(
+      "Fan Messages 불러오기 실패:",
+      error
+    );
+
+    if (reset) {
+      showFanMessageLoadError(
+        error.message ||
+        "메시지를 불러오지 못했습니다."
+      );
+    } else {
+      alert(
+        error.message ||
+        "추가 메시지를 불러오지 못했습니다."
+      );
+    }
+  } finally {
+    fanMessageState.isLoading = false;
+    updateFanMessageMoreButton();
+  }
+}
+
+
+/* =========================================================
+   새 메시지 실제 등록
+========================================================= */
+
+async function createFanMessage(messageData) {
+  const response = await fetch(
+    FAN_MESSAGE_API_URL,
+    {
+      method: "POST",
+
+      headers: {
+        "Content-Type":
+          "application/json",
+
+        Accept:
+          "application/json",
+      },
+
+      body: JSON.stringify(
+        messageData
+      ),
+    }
+  );
+
+  return parseFanMessageApiResponse(
+    response
   );
 }
 
 
-/**
- * 작성 상태 문구를 표시합니다.
- */
+/* =========================================================
+   폼 상태 문구
+========================================================= */
+
 function setFanMessageFormStatus(
   message,
   type = "normal"
@@ -2611,63 +2885,62 @@ function setFanMessageFormStatus(
     return;
   }
 
-  elements.formStatus.textContent = message;
+  elements.formStatus.textContent =
+    message;
 
   elements.formStatus.dataset.statusType =
     type;
 }
 
 
-/**
- * Fan Messages 폼 제출을 처리합니다.
- * 현재는 D1이 아닌 화면에만 임시 등록합니다.
- */
-function handleFanMessageSubmit(event) {
+/* =========================================================
+   폼 제출
+========================================================= */
+
+async function handleFanMessageSubmit(event) {
   event.preventDefault();
 
   const elements = getFanMessageElements();
 
-  if (!elements.form) {
+  if (
+    !elements.form ||
+    !elements.submitButton
+  ) {
     return;
   }
 
   try {
-    if (elements.submitButton) {
-      elements.submitButton.disabled = true;
-      elements.submitButton.textContent =
-        "등록 중...";
-    }
-
-    setFanMessageFormStatus("");
-
     const messageData =
       getFanMessageFormData();
 
-    prependTemporaryFanMessage(
+    elements.submitButton.disabled = true;
+    elements.submitButton.textContent =
+      "등록 중...";
+
+    setFanMessageFormStatus(
+      "메시지를 등록하고 있습니다."
+    );
+
+    await createFanMessage(
       messageData
     );
 
     setFanMessageFormStatus(
-      "메시지가 화면에 등록되었습니다. 현재는 테스트 단계이므로 새로고침하면 사라집니다.",
+      "메시지가 등록되었습니다.",
       "success"
     );
 
     elements.form.reset();
 
-    if (elements.characterCount) {
-      elements.characterCount.textContent =
-        "0";
-    }
+    updateFanMessageCharacterCount();
 
-    if (elements.submitButton) {
-      elements.submitButton.textContent =
-        "등록";
-      elements.submitButton.disabled = false;
-    }
+    await loadFanMessages({
+      reset: true,
+    });
 
     window.setTimeout(() => {
       closeFanMessageForm();
-    }, 900);
+    }, 700);
   } catch (error) {
     console.error(
       "Fan Message 등록 실패:",
@@ -2676,22 +2949,23 @@ function handleFanMessageSubmit(event) {
 
     setFanMessageFormStatus(
       error.message ||
-        "메시지를 등록하지 못했습니다.",
+      "메시지를 등록하지 못했습니다.",
       "error"
     );
-
-    if (elements.submitButton) {
-      elements.submitButton.textContent =
-        "등록";
-      elements.submitButton.disabled = false;
-    }
+  } finally {
+    elements.submitButton.disabled = false;
+    elements.submitButton.textContent =
+      "등록";
   }
 }
 
 
-/**
- * 아직 서버가 연결되지 않은 수정/삭제 버튼을 안내합니다.
- */
+/* =========================================================
+   수정/삭제 버튼
+
+   이번 단계에서는 다음 기능 안내만 표시
+========================================================= */
+
 function handleFanMessageListClick(event) {
   const actionButton =
     event.target.closest(
@@ -2707,7 +2981,7 @@ function handleFanMessageListClick(event) {
 
   if (action === "edit") {
     alert(
-      "수정 기능은 다음 단계에서 비밀번호 확인 및 D1과 함께 연결합니다."
+      "수정 기능은 다음 단계에서 비밀번호 확인과 함께 연결합니다."
     );
 
     return;
@@ -2715,22 +2989,24 @@ function handleFanMessageListClick(event) {
 
   if (action === "delete") {
     alert(
-      "삭제 기능은 다음 단계에서 비밀번호 확인 및 D1과 함께 연결합니다."
+      "삭제 기능은 다음 단계에서 비밀번호 확인과 함께 연결합니다."
     );
   }
 }
 
 
-/**
- * Fan Messages UI 이벤트를 등록합니다.
- */
-function initializeFanMessagesUi() {
+/* =========================================================
+   초기화
+========================================================= */
+
+function initializeFanMessages() {
   const elements = getFanMessageElements();
 
   if (
     !elements.writeToggle ||
     !elements.formWrap ||
-    !elements.form
+    !elements.form ||
+    !elements.messageList
   ) {
     return;
   }
@@ -2759,23 +3035,37 @@ function initializeFanMessagesUi() {
     handleFanMessageSubmit
   );
 
-  elements.messageList?.addEventListener(
+  elements.messageList.addEventListener(
     "click",
     handleFanMessageListClick
   );
 
+  elements.moreButton?.addEventListener(
+    "click",
+    () => {
+      loadFanMessages({
+        reset: false,
+      });
+    }
+  );
+
   updateFanMessageCharacterCount();
+
+  loadFanMessages({
+    reset: true,
+  });
 }
 
 
-/**
- * 문서가 준비되면 Fan Messages 기능을 시작합니다.
- */
+/* =========================================================
+   실행
+========================================================= */
+
 if (document.readyState === "loading") {
   document.addEventListener(
     "DOMContentLoaded",
-    initializeFanMessagesUi
+    initializeFanMessages
   );
 } else {
-  initializeFanMessagesUi();
+  initializeFanMessages();
 }

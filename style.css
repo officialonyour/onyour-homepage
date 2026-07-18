@@ -3776,7 +3776,10 @@ body.admin-dashboard-open {
   line-height: 1.65;
   word-break: keep-all;
   overflow-wrap: anywhere;
+
   -webkit-box-orient: vertical;
+
+  line-clamp: 3;
   -webkit-line-clamp: 3;
 }
 
