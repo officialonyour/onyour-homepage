@@ -36,18 +36,6 @@
     </a>
 
     <button
-
-    class="admin-open-button"
-    id="adminOpenButton"
-    type="button"
-    aria-label="관리자 페이지 열기"
-    >
-    Admin
-
-</button>
-
-
-    <button
       class="menu-button"
       id="menuButton"
       type="button"
@@ -587,14 +575,17 @@
     <div class="footer-bottom">
       <p>© <span id="currentYear"></span> ONYOUR</p>
 
+
       <button
-        class="admin-entry"
-        id="adminEntryButton"
-        type="button"
-        aria-label="관리자 페이지"
-      >
-        Admin
-      </button>
+
+      id="adminOpenButton"
+      class="footer-admin-button"
+      type="button"
+
+    >
+      Admin
+
+    </button>
     </div>
   </footer>
 
@@ -686,6 +677,144 @@
   </section>
 </div>
 
+<!-- ADMIN DASHBOARD -->
+<div
+  class="admin-dashboard"
+  id="adminDashboard"
+  aria-hidden="true"
+>
+  <div class="admin-dashboard-header">
+    <div>
+      <p>ONYOUR ADMIN</p>
+      <h2>홈페이지 관리</h2>
+    </div>
+
+    <button
+      class="admin-dashboard-close"
+      id="adminDashboardClose"
+      type="button"
+      aria-label="관리자 화면 닫기"
+    >
+      ×
+    </button>
+  </div>
+
+  <div class="admin-dashboard-content">
+    <section class="admin-dashboard-summary">
+      <p>현재 관리 항목</p>
+      <strong>7</strong>
+      <span>홈페이지 콘텐츠를 휴대폰에서 관리할 수 있습니다.</span>
+    </section>
+
+    <div class="admin-menu-list">
+      <button
+        class="admin-menu-item"
+        type="button"
+        data-admin-section="news"
+      >
+        <span>
+          <small>01</small>
+          <strong>News 관리</strong>
+          <em>새 소식 추가 · 수정 · 삭제</em>
+        </span>
+
+        <b>→</b>
+      </button>
+
+      <button
+        class="admin-menu-item"
+        type="button"
+        data-admin-section="performance"
+      >
+        <span>
+          <small>02</small>
+          <strong>공연 관리</strong>
+          <em>공연 일정과 셋리스트 관리</em>
+        </span>
+
+        <b>→</b>
+      </button>
+
+      <button
+        class="admin-menu-item"
+        type="button"
+        data-admin-section="video"
+      >
+        <span>
+          <small>03</small>
+          <strong>영상 관리</strong>
+          <em>대표 영상과 YouTube 링크 관리</em>
+        </span>
+
+        <b>→</b>
+      </button>
+
+      <button
+        class="admin-menu-item"
+        type="button"
+        data-admin-section="music"
+      >
+        <span>
+          <small>04</small>
+          <strong>음원 관리</strong>
+          <em>앨범과 개인 발매 음원 관리</em>
+        </span>
+
+        <b>→</b>
+      </button>
+
+      <button
+        class="admin-menu-item"
+        type="button"
+        data-admin-section="gallery"
+      >
+        <span>
+          <small>05</small>
+          <strong>갤러리 관리</strong>
+          <em>공연 사진과 비하인드 업로드</em>
+        </span>
+
+        <b>→</b>
+      </button>
+
+      <button
+        class="admin-menu-item"
+        type="button"
+        data-admin-section="members"
+      >
+        <span>
+          <small>06</small>
+          <strong>멤버 관리</strong>
+          <em>소개와 개인 링크 수정</em>
+        </span>
+
+        <b>→</b>
+      </button>
+
+      <button
+        class="admin-menu-item"
+        type="button"
+        data-admin-section="settings"
+      >
+        <span>
+          <small>07</small>
+          <strong>홈페이지 설정</strong>
+          <em>대표 이미지와 SNS 링크 관리</em>
+        </span>
+
+        <b>→</b>
+      </button>
+    </div>
+
+    <button
+      class="admin-logout-button"
+      id="adminLogoutButton"
+      type="button"
+    >
+      로그아웃
+    </button>
+  </div>
+</div>
   
 </body>
 </html>

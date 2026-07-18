@@ -284,6 +284,35 @@ adminPasswordToggle?.addEventListener(
   toggleAdminPassword
 );
 
+const adminDashboard =
+  document.getElementById("adminDashboard");
+
+const adminDashboardClose =
+  document.getElementById("adminDashboardClose");
+
+const adminLogoutButton =
+  document.getElementById("adminLogoutButton");
+
+function openAdminDashboard() {
+  closeAdminLogin();
+
+  adminDashboard?.classList.add("is-open");
+  adminDashboard?.setAttribute("aria-hidden", "false");
+
+  document.body.classList.add(
+    "admin-dashboard-open"
+  );
+}
+
+function closeAdminDashboard() {
+  adminDashboard?.classList.remove("is-open");
+  adminDashboard?.setAttribute("aria-hidden", "true");
+
+  document.body.classList.remove(
+    "admin-dashboard-open"
+  );
+}
+
 adminLoginForm?.addEventListener(
   "submit",
   (event) => {
@@ -297,10 +326,32 @@ adminLoginForm?.addEventListener(
       return;
     }
 
-    adminLoginMessage.textContent =
-      "서버 로그인 연결 준비 중입니다.";
+    openAdminDashboard();
   }
 );
+
+adminDashboardClose?.addEventListener(
+  "click",
+  closeAdminDashboard
+);
+
+adminLogoutButton?.addEventListener(
+  "click",
+  closeAdminDashboard
+);
+
+document
+  .querySelectorAll(".admin-menu-item")
+  .forEach((button) => {
+    button.addEventListener("click", () => {
+      const section =
+        button.dataset.adminSection;
+
+      alert(
+        `${section} 관리 화면은 다음 단계에서 연결합니다.`
+      );
+    });
+  });
 
 document.addEventListener(
   "keydown",
