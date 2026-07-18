@@ -2952,7 +2952,6 @@ async function handleFanMessageSubmit(event) {
   }
 }
 
-
 /* =========================================================
    메시지 삭제 API
 ========================================================= */
@@ -2961,9 +2960,34 @@ async function deleteFanMessage(
   id,
   password
 ) {
+  const response = await fetch(
+    FAN_MESSAGE_API_URL,
+    {
+      method: "DELETE",
 
-  /* =========================================================
-   메시지 관리 팝업
+      headers: {
+        "Content-Type":
+          "application/json",
+
+        Accept:
+          "application/json",
+      },
+
+      body: JSON.stringify({
+        id,
+        password,
+      }),
+    }
+  );
+
+  return parseFanMessageApiResponse(
+    response
+  );
+}
+
+
+/* =========================================================
+   메시지 관리 팝업 닫기
 ========================================================= */
 
 function closeFanMessageManageModal() {
@@ -2977,9 +3001,14 @@ function closeFanMessageManageModal() {
   }
 
   modal.remove();
+
   document.body.style.overflow = "";
 }
 
+
+/* =========================================================
+   메시지 관리 팝업 열기
+========================================================= */
 
 function openFanMessageManageModal(
   messageId
@@ -3067,7 +3096,9 @@ function openFanMessageManageModal(
   `;
 
   document.body.appendChild(modal);
-  document.body.style.overflow = "hidden";
+
+  document.body.style.overflow =
+    "hidden";
 
   const passwordInput =
     modal.querySelector(
@@ -3103,6 +3134,10 @@ function openFanMessageManageModal(
   editButton?.addEventListener(
     "click",
     () => {
+      if (!statusElement) {
+        return;
+      }
+
       statusElement.textContent =
         "수정 기능은 다음 단계에서 연결합니다.";
 
@@ -3115,16 +3150,18 @@ function openFanMessageManageModal(
     "click",
     async () => {
       const password =
-        passwordInput.value;
+        passwordInput?.value || "";
 
       if (!password.trim()) {
-        statusElement.textContent =
-          "비밀번호를 입력해 주세요.";
+        if (statusElement) {
+          statusElement.textContent =
+            "비밀번호를 입력해 주세요.";
 
-        statusElement.dataset.statusType =
-          "error";
+          statusElement.dataset.statusType =
+            "error";
+        }
 
-        passwordInput.focus();
+        passwordInput?.focus();
         return;
       }
 
@@ -3139,16 +3176,21 @@ function openFanMessageManageModal(
 
       try {
         deleteButton.disabled = true;
-        editButton.disabled = true;
+
+        if (editButton) {
+          editButton.disabled = true;
+        }
 
         deleteButton.textContent =
           "삭제 중";
 
-        statusElement.textContent =
-          "메시지를 삭제하고 있습니다.";
+        if (statusElement) {
+          statusElement.textContent =
+            "메시지를 삭제하고 있습니다.";
 
-        statusElement.dataset.statusType =
-          "normal";
+          statusElement.dataset.statusType =
+            "normal";
+        }
 
         const result =
           await deleteFanMessage(
@@ -3172,18 +3214,22 @@ function openFanMessageManageModal(
           error
         );
 
-        statusElement.textContent =
-          error.message ||
-          "메시지를 삭제하지 못했습니다.";
+        if (statusElement) {
+          statusElement.textContent =
+            error.message ||
+            "메시지를 삭제하지 못했습니다.";
 
-        statusElement.dataset.statusType =
-          "error";
+          statusElement.dataset.statusType =
+            "error";
+        }
 
         deleteButton.disabled = false;
-        editButton.disabled = false;
-
         deleteButton.textContent =
           "삭제";
+
+        if (editButton) {
+          editButton.disabled = false;
+        }
       }
     }
   );
@@ -3192,32 +3238,6 @@ function openFanMessageManageModal(
     passwordInput?.focus();
   }, 50);
 }
-
-  const response = await fetch(
-    FAN_MESSAGE_API_URL,
-    {
-      method: "DELETE",
-
-      headers: {
-        "Content-Type":
-          "application/json",
-
-        Accept:
-          "application/json",
-      },
-
-      body: JSON.stringify({
-        id,
-        password,
-      }),
-    }
-  );
-
-  return parseFanMessageApiResponse(
-    response
-  );
-}
-
 
 /* =========================================================
    메시지 관리 버튼
