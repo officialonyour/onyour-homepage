@@ -242,6 +242,8 @@ const adminViews =
     "#adminDashboard [data-admin-view]"
   );
 
+let currentAdminPassword = "";
+  
 
 /* =========================
    ADMIN VIEW INFORMATION
@@ -418,6 +420,7 @@ function openAdminDashboard() {
   );
 
   openAdminView("home");
+  loadAdminDataFromD1();
 }
 
 function closeAdminDashboard() {
@@ -552,6 +555,8 @@ adminLoginForm?.addEventListener(
       return;
     }
 
+    currentAdminPassword = password;
+
     /*
       현재 단계에서는 비밀번호가 입력되면
       관리자 화면이 열립니다.
@@ -576,7 +581,10 @@ adminDashboardClose?.addEventListener(
 
 adminLogoutButton?.addEventListener(
   "click",
-  closeAdminDashboard
+  () => {
+    currentAdminPassword = "";
+    closeAdminDashboard();
+  }
 );
 
 
@@ -767,6 +775,104 @@ const adminData = {
 /* =========================
    COMMON HELPERS
 ========================= */
+
+async function adminApiRequest(
+  url,
+  options = {}
+) {
+  const headers = new Headers(
+    options.headers || {}
+  );
+
+  if (currentAdminPassword) {
+    headers.set(
+      "X-Admin-Password",
+      currentAdminPassword
+    );
+  }
+
+  if (
+    options.body &&
+    !(options.body instanceof FormData)
+  ) {
+    headers.set(
+      "Content-Type",
+      "application/json"
+    );
+  }
+
+  const response = await fetch(url, {
+    ...options,
+    headers,
+  });
+
+  let result;
+
+  try {
+    result = await response.json();
+  } catch {
+    result = {
+      success: false,
+      message:
+        "서버 응답을 읽을 수 없습니다.",
+    };
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      result.message ||
+        "요청 처리 중 오류가 발생했습니다."
+    );
+  }
+
+  return result;
+}
+
+const ADMIN_CONTENT_TYPES = [
+  "news",
+  "performance",
+  "video",
+  "music",
+  "members",
+];
+
+async function loadAdminDataFromD1() {
+  try {
+    const results = await Promise.all(
+      ADMIN_CONTENT_TYPES.map(
+        async (type) => {
+          const result =
+            await adminApiRequest(
+              `/api/content?type=${type}&includePrivate=true`
+            );
+
+          return {
+            type,
+            items: result.items || [],
+          };
+        }
+      )
+    );
+
+    results.forEach(
+      ({ type, items }) => {
+        adminData[type] = items;
+      }
+    );
+
+    renderAllAdminLists();
+  } catch (error) {
+    console.error(
+      "관리자 데이터 불러오기 실패:",
+      error
+    );
+
+    alert(
+      error.message ||
+        "저장된 콘텐츠를 불러오지 못했습니다."
+    );
+  }
+}
 
 function createAdminId(sectionName) {
   return `${sectionName}-${Date.now()}`;
@@ -1332,7 +1438,7 @@ adminDashboard?.addEventListener(
   }
 );
 
-function deleteAdminItem(
+async function deleteAdminItem(
   sectionName,
   itemId
 ) {
@@ -1344,20 +1450,46 @@ function deleteAdminItem(
   if (!item) return;
 
   const itemName =
-    item.title || item.name || "이 항목";
+    item.title ||
+    item.name ||
+    "이 항목";
 
   const confirmed = window.confirm(
-    `"${itemName}"을(를) 삭제할까요?\n삭제 후에는 현재 화면에서 복구할 수 없습니다.`
+    `"${itemName}"을(를) 삭제할까요?`
   );
 
   if (!confirmed) return;
 
-  adminData[sectionName] =
-    adminData[sectionName].filter(
-      (entry) => entry.id !== itemId
+  try {
+    await adminApiRequest(
+      `/api/content?type=${sectionName}&id=${encodeURIComponent(
+        itemId
+      )}`,
+      {
+        method: "DELETE",
+      }
     );
 
-  renderAllAdminLists();
+    adminData[sectionName] =
+      adminData[sectionName].filter(
+        (entry) =>
+          entry.id !== itemId
+      );
+
+    renderAllAdminLists();
+
+    alert("삭제되었습니다.");
+  } catch (error) {
+    console.error(
+      "콘텐츠 삭제 실패:",
+      error
+    );
+
+    alert(
+      error.message ||
+        "삭제하지 못했습니다."
+    );
+  }
 }
 
 
@@ -1590,27 +1722,73 @@ document
    SAVE ADD / EDIT
 ========================= */
 
-function saveAdminItem(
+async function saveAdminItem(
   sectionName,
   data
 ) {
-  const items = adminData[sectionName];
+  try {
+    const existingItem =
+      adminData[sectionName]?.find(
+        (item) => item.id === data.id
+      );
 
-  if (!items) return;
+    const isUpdate =
+      Boolean(existingItem);
 
-  const existingIndex =
-    items.findIndex(
-      (item) => item.id === data.id
+    const url = isUpdate
+      ? `/api/content?type=${sectionName}&id=${encodeURIComponent(
+          data.id
+        )}`
+      : `/api/content?type=${sectionName}`;
+
+    const result =
+      await adminApiRequest(url, {
+        method: isUpdate
+          ? "PUT"
+          : "POST",
+        body: JSON.stringify(data),
+      });
+
+    const savedItem = result.item;
+
+    if (isUpdate) {
+      const index =
+        adminData[
+          sectionName
+        ].findIndex(
+          (item) =>
+            item.id === savedItem.id
+        );
+
+      if (index >= 0) {
+        adminData[sectionName][index] =
+          savedItem;
+      }
+    } else {
+      adminData[sectionName].unshift(
+        savedItem
+      );
+    }
+
+    renderAllAdminLists();
+    openAdminView(sectionName);
+
+    alert(
+      isUpdate
+        ? "수정되었습니다."
+        : "등록되었습니다."
+    );
+  } catch (error) {
+    console.error(
+      "콘텐츠 저장 실패:",
+      error
     );
 
-  if (existingIndex >= 0) {
-    items[existingIndex] = data;
-  } else {
-    items.unshift(data);
+    alert(
+      error.message ||
+        "저장하지 못했습니다."
+    );
   }
-
-  renderAllAdminLists();
-  openAdminView(sectionName);
 }
 
 
