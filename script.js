@@ -367,37 +367,3 @@ document.addEventListener(
     }
   }
 );
-
-document.addEventListener("DOMContentLoaded", () => {
-  const adminOpenButton =
-    document.getElementById("adminOpenButton");
-
-  if (!adminOpenButton) {
-    console.error(
-      "adminOpenButton을 찾을 수 없습니다."
-    );
-    return;
-  }
-
-  adminOpenButton.addEventListener(
-    "click",
-    openAdminLogin
-  );
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  const adminOpenButton =
-    document.getElementById("adminOpenButton");
-
-  if (!adminOpenButton) {
-    console.error(
-      "adminOpenButton을 찾을 수 없습니다."
-    );
-    return;
-  }
-
-  adminOpenButton.addEventListener(
-    "click",
-    openAdminLogin
-  );
-});

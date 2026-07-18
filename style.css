@@ -1807,3 +1807,32 @@ body.admin-dashboard-open {
     margin: 0 auto;
   }
 }
+
+.footer-admin-button {
+  appearance: none !important;
+  display: inline !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: auto !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+
+  background: none !important;
+  color: #777 !important;
+
+  font: inherit !important;
+  font-size: 11px !important;
+  line-height: 1 !important;
+
+  cursor: pointer;
+}
+
+.footer-admin-button:hover {
+  color: #fff !important;
+}
