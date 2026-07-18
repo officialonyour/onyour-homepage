@@ -3261,3 +3261,707 @@ body.admin-dashboard-open {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* =========================================================
+   FAN MESSAGES
+========================================================= */
+
+.fan-messages-section {
+  position: relative;
+  overflow: hidden;
+  padding-top: clamp(72px, 9vw, 120px);
+  padding-bottom: clamp(72px, 9vw, 120px);
+  background:
+    radial-gradient(
+      circle at 12% 0%,
+      rgba(74, 92, 184, 0.14),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 90% 90%,
+      rgba(39, 56, 121, 0.12),
+      transparent 32%
+    ),
+    #08090d;
+}
+
+.fan-messages-inner {
+  width: min(1180px, calc(100% - 48px));
+  margin: 0 auto;
+}
+
+/* 제목 영역 */
+.fan-messages-heading {
+  margin-bottom: 36px;
+}
+
+.fan-messages-heading .section-label {
+  margin: 0 0 14px;
+  color: rgba(255, 255, 255, 0.48);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.2em;
+}
+
+.fan-messages-title-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.fan-messages-title-row h2 {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(42px, 6vw, 82px);
+  font-weight: 650;
+  line-height: 0.92;
+  letter-spacing: -0.055em;
+}
+
+.fan-messages-description {
+  margin: 20px 0 0;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* 작성 버튼 */
+.fan-message-write-toggle {
+  flex: 0 0 auto;
+  min-height: 46px;
+  padding: 0 22px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.fan-message-write-toggle:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.11);
+}
+
+.fan-message-write-toggle:active {
+  transform: translateY(0);
+}
+
+/* 작성 폼 */
+.fan-message-form-wrap {
+  margin-bottom: 24px;
+}
+
+.fan-message-form-wrap[hidden] {
+  display: none;
+}
+
+.fan-message-form {
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 22px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.075),
+      rgba(255, 255, 255, 0.035)
+    );
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.fan-message-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.fan-message-field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  min-width: 0;
+}
+
+.fan-message-field-wide {
+  grid-column: 1 / -1;
+}
+
+.fan-message-field > span,
+.fan-message-rating legend {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+.fan-message-field em {
+  color: #8fa1ff;
+  font-style: normal;
+}
+
+.fan-message-field input,
+.fan-message-field select,
+.fan-message-field textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 13px;
+  outline: none;
+  background: rgba(0, 0, 0, 0.22);
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 14px;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.fan-message-field input,
+.fan-message-field select {
+  height: 48px;
+  padding: 0 14px;
+}
+
+.fan-message-field textarea {
+  min-height: 100px;
+  padding: 14px 48px 28px 14px;
+  line-height: 1.65;
+  resize: vertical;
+}
+
+.fan-message-field input::placeholder,
+.fan-message-field textarea::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.fan-message-field input:focus,
+.fan-message-field select:focus,
+.fan-message-field textarea:focus {
+  border-color: rgba(132, 151, 255, 0.72);
+  background: rgba(0, 0, 0, 0.32);
+  box-shadow: 0 0 0 3px rgba(107, 127, 238, 0.12);
+}
+
+.fan-message-field select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 42px;
+  cursor: pointer;
+  background-image:
+    linear-gradient(
+      45deg,
+      transparent 50%,
+      rgba(255, 255, 255, 0.55) 50%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.55) 50%,
+      transparent 50%
+    );
+  background-position:
+    calc(100% - 19px) 20px,
+    calc(100% - 14px) 20px;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+}
+
+.fan-message-field select option {
+  background: #11131a;
+  color: #ffffff;
+}
+
+/* 글자 수 */
+.fan-message-count {
+  position: absolute;
+  right: 14px;
+  bottom: 10px;
+  color: rgba(255, 255, 255, 0.34);
+  font-size: 11px;
+}
+
+.fan-message-count strong {
+  color: rgba(255, 255, 255, 0.58);
+  font-weight: 600;
+}
+
+/* 별점 */
+.fan-message-rating {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.fan-message-rating legend {
+  margin-bottom: 11px;
+}
+
+.fan-message-rating legend small {
+  margin-left: 4px;
+  color: rgba(255, 255, 255, 0.34);
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.fan-message-stars {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 13px;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.fan-message-stars input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.fan-message-stars label {
+  padding: 3px;
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.fan-message-stars label:hover {
+  color: #dce2ff;
+  transform: scale(1.08);
+}
+
+.fan-message-stars input:checked + label {
+  color: #dce2ff;
+}
+
+.fan-message-stars:has(#fanRating1:checked)
+  label:nth-of-type(-n + 1),
+.fan-message-stars:has(#fanRating2:checked)
+  label:nth-of-type(-n + 2),
+.fan-message-stars:has(#fanRating3:checked)
+  label:nth-of-type(-n + 3),
+.fan-message-stars:has(#fanRating4:checked)
+  label:nth-of-type(-n + 4),
+.fan-message-stars:has(#fanRating5:checked)
+  label:nth-of-type(-n + 5) {
+  color: #dce2ff;
+}
+
+/* 폼 하단 */
+.fan-message-form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.fan-message-form-footer > p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.36);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.fan-message-form-actions {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.fan-message-cancel-button,
+.fan-message-submit-button {
+  min-height: 42px;
+  padding: 0 18px;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.fan-message-cancel-button {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.66);
+}
+
+.fan-message-submit-button {
+  border: 1px solid #ffffff;
+  background: #ffffff;
+  color: #090a0f;
+}
+
+.fan-message-cancel-button:hover,
+.fan-message-submit-button:hover {
+  transform: translateY(-2px);
+}
+
+.fan-message-submit-button:hover {
+  opacity: 0.88;
+}
+
+.fan-message-form-status {
+  min-height: 18px;
+  margin: 12px 0 0;
+  color: #aab7ff;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* 메시지 목록 */
+.fan-message-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+/* 카드 */
+.fan-message-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 210px;
+  padding: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 18px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.062),
+      rgba(255, 255, 255, 0.025)
+    );
+  box-shadow:
+    0 16px 42px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    background-color 0.25s ease;
+}
+
+.fan-message-card::before {
+  position: absolute;
+  top: 0;
+  left: 22px;
+  width: 48px;
+  height: 2px;
+  border-radius: 999px;
+  background: rgba(157, 171, 255, 0.68);
+  content: "";
+}
+
+.fan-message-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.16);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.082),
+      rgba(255, 255, 255, 0.032)
+    );
+}
+
+.fan-message-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.fan-message-user {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 11px;
+}
+
+.fan-message-avatar {
+  display: grid;
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 50%;
+  background: rgba(133, 150, 255, 0.11);
+  color: #d7ddff;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.fan-message-user > div {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 4px;
+}
+
+.fan-message-user strong {
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fan-message-performance {
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.36);
+  font-size: 10px;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fan-message-card time {
+  flex: 0 0 auto;
+  color: rgba(255, 255, 255, 0.28);
+  font-size: 10px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.fan-message-card-rating {
+  min-height: 14px;
+  margin-top: 16px;
+  color: #cbd4ff;
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.08em;
+}
+
+.fan-message-card-content {
+  display: -webkit-box;
+  min-height: 50px;
+  margin: 13px 0 18px;
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 13px;
+  line-height: 1.65;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.fan-message-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.fan-message-card-actions button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: rgba(255, 255, 255, 0.3);
+  font-family: inherit;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.fan-message-card-actions button:not(:disabled):hover {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.fan-message-card-actions button:disabled {
+  cursor: default;
+  opacity: 0.48;
+}
+
+/* 더보기 버튼 */
+.fan-message-more-button {
+  display: block;
+  min-height: 44px;
+  margin: 28px auto 0;
+  padding: 0 24px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.68);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.fan-message-more-button:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.26);
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+}
+
+/* 태블릿 */
+@media (max-width: 1024px) {
+  .fan-message-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .fan-message-card:nth-child(n + 3) {
+    display: none;
+  }
+}
+
+/* 모바일 */
+@media (max-width: 768px) {
+  .fan-messages-section {
+    padding-top: 68px;
+    padding-bottom: 72px;
+  }
+
+  .fan-messages-inner {
+    width: min(100% - 32px, 560px);
+  }
+
+  .fan-messages-heading {
+    margin-bottom: 26px;
+  }
+
+  .fan-messages-title-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .fan-messages-title-row h2 {
+    font-size: clamp(39px, 12vw, 58px);
+    line-height: 0.94;
+  }
+
+  .fan-messages-description {
+    margin-top: 15px;
+    font-size: 13px;
+  }
+
+  .fan-message-write-toggle {
+    align-self: flex-start;
+    min-height: 42px;
+    padding: 0 18px;
+    font-size: 12px;
+  }
+
+  .fan-message-form {
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .fan-message-form-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .fan-message-field-wide {
+    grid-column: auto;
+  }
+
+  .fan-message-field input,
+  .fan-message-field select {
+    height: 46px;
+  }
+
+  .fan-message-form-footer {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .fan-message-form-actions {
+    justify-content: flex-end;
+  }
+
+  .fan-message-list {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+  }
+
+  .fan-message-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .fan-message-card,
+  .fan-message-card:nth-child(n + 3) {
+    display: flex;
+    flex: 0 0 min(84vw, 330px);
+    min-height: 190px;
+    padding: 18px;
+    scroll-snap-align: start;
+  }
+
+  .fan-message-card-content {
+    font-size: 12px;
+    line-height: 1.65;
+  }
+
+  .fan-message-more-button {
+    min-height: 42px;
+    margin-top: 22px;
+  }
+}
+
+/* 작은 모바일 */
+@media (max-width: 420px) {
+  .fan-messages-inner {
+    width: calc(100% - 26px);
+  }
+
+  .fan-message-card,
+  .fan-message-card:nth-child(n + 3) {
+    flex-basis: 86vw;
+  }
+
+  .fan-message-card-header {
+    gap: 8px;
+  }
+
+  .fan-message-card time {
+    font-size: 9px;
+  }
+}
