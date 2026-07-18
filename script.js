@@ -539,11 +539,10 @@ adminPasswordToggle?.addEventListener(
 
 adminLoginForm?.addEventListener(
   "submit",
-  (event) => {
+  async (event) => {
     event.preventDefault();
 
-    const password =
-      adminPassword?.value.trim();
+    const password = adminPassword?.value.trim();
 
     if (!password) {
       if (adminLoginMessage) {
@@ -555,20 +554,32 @@ adminLoginForm?.addEventListener(
       return;
     }
 
-    currentAdminPassword = password;
+    try {
+      // 임시로 비밀번호 저장
+      currentAdminPassword = password;
 
-    /*
-      현재 단계에서는 비밀번호가 입력되면
-      관리자 화면이 열립니다.
+      // 서버 인증 확인
+      await adminApiRequest(
+        "/api/content?type=news&includePrivate=true"
+      );
 
-      실제 비밀번호 검증은 이후
-      Cloudflare Functions에서 처리합니다.
-    */
+      if (adminLoginMessage) {
+        adminLoginMessage.textContent = "";
+      }
 
-    openAdminDashboard();
+      openAdminDashboard();
+    } catch (error) {
+      currentAdminPassword = "";
+
+      if (adminLoginMessage) {
+        adminLoginMessage.textContent =
+          "비밀번호가 올바르지 않습니다.";
+      }
+
+      adminPassword?.select();
+    }
   }
 );
-
 
 /* =========================
    DASHBOARD EVENTS
@@ -653,7 +664,7 @@ document
    D1 연결 전 브라우저 화면에서 작동
 ========================================================= */
 
-const adminData = {
+const adminStore = {
   news: [
     {
       id: "news-1",
@@ -773,7 +784,7 @@ const adminData = {
 
 
 const initialAdminData =
-  JSON.parse(JSON.stringify(adminData));
+  JSON.parse(JSON.stringify(adminStore));
 
 
 /* =========================
@@ -873,7 +884,7 @@ async function loadAdminDataFromD1() {
         ),
       ];
 
-      adminData[type] = mergedItems;
+      adminStore[type] = mergedItems;
     });
 
     renderAllAdminLists();
@@ -932,7 +943,7 @@ function escapeAdminHtml(value = "") {
 }
 
 function getAdminItem(sectionName, itemId) {
-  return adminData[sectionName]?.find(
+  return adminStore[sectionName]?.find(
     (item) => item.id === itemId
   );
 }
@@ -1027,7 +1038,7 @@ function renderAdminNewsList() {
 
   if (!list) return;
 
-  list.innerHTML = adminData.news
+  list.innerHTML = adminStore.news
     .map((item) =>
       createAdminListItem({
         sectionName: "news",
@@ -1047,7 +1058,7 @@ function renderAdminPerformanceList() {
 
   if (!list) return;
 
-  list.innerHTML = adminData.performance
+  list.innerHTML = adminStore.performance
     .map((item) =>
       createAdminListItem({
         sectionName: "performance",
@@ -1071,7 +1082,7 @@ function renderAdminVideoList() {
 
   if (!list) return;
 
-  list.innerHTML = adminData.video
+  list.innerHTML = adminStore.video
     .map((item) =>
       createAdminListItem({
         sectionName: "video",
@@ -1095,7 +1106,7 @@ function renderAdminMusicList() {
 
   if (!list) return;
 
-  list.innerHTML = adminData.music
+  list.innerHTML = adminStore.music
     .map((item) =>
       createAdminListItem({
         sectionName: "music",
@@ -1121,7 +1132,7 @@ function renderAdminMembersList() {
   if (!list) return;
 
   const sortedMembers = [
-    ...adminData.members,
+    ...adminStore.members,
   ].sort(
     (a, b) =>
       Number(a.order) - Number(b.order)
@@ -1514,8 +1525,8 @@ async function deleteAdminItem(
       }
     );
 
-    adminData[sectionName] =
-      adminData[sectionName].filter(
+    adminStore[sectionName] =
+      adminStore[sectionName].filter(
         (entry) =>
           entry.id !== itemId
       );
@@ -1772,26 +1783,12 @@ async function saveAdminItem(
 ) {
   try {
     const existingItem =
-      adminData[sectionName]?.find(
+      adminStore[sectionName]?.find(
         (item) => item.id === data.id
       );
 
     const isUpdate =
       Boolean(existingItem);
-
-      console.log("저장 확인:", {
-        sectionName,
-        data,
-        existingItem,
-        isUpdate,
-    });
-
-
-    alert(
-        `저장 방식: ${
-            isUpdate ? "수정" : "신규 등록"
-        }\nID: ${data.id}`
-    );
 
     const url = isUpdate
       ? `/api/content?type=${sectionName}&id=${encodeURIComponent(
@@ -1811,7 +1808,7 @@ async function saveAdminItem(
 
     if (isUpdate) {
       const index =
-        adminData[
+        adminStore[
           sectionName
         ].findIndex(
           (item) =>
@@ -1819,11 +1816,11 @@ async function saveAdminItem(
         );
 
       if (index >= 0) {
-        adminData[sectionName][index] =
+        adminStore[sectionName][index] =
           savedItem;
       }
     } else {
-      adminData[sectionName].unshift(
+      adminStore[sectionName].unshift(
         savedItem
       );
     }
