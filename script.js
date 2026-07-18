@@ -783,10 +783,6 @@ const adminStore = {
 };
 
 
-const initialAdminData =
-  JSON.parse(JSON.stringify(adminStore));
-
-
 /* =========================
    COMMON HELPERS
 ========================= */
@@ -884,33 +880,6 @@ async function loadAdminDataFromD1() {
   }
 }
 
-async function migrateInitialAdminDataToD1(
-  loadedResults
-) {
-  for (const { type, items } of loadedResults) {
-    const savedIds = new Set(
-      items.map((item) => item.id)
-    );
-
-    const initialItems =
-      initialAdminData[type] || [];
-
-    const missingItems =
-      initialItems.filter(
-        (item) => !savedIds.has(item.id)
-      );
-
-    for (const item of missingItems) {
-      await adminApiRequest(
-        `/api/content?type=${type}`,
-        {
-          method: "POST",
-          body: JSON.stringify(item),
-        }
-      );
-    }
-  }
-}
 
 function createAdminId(sectionName) {
   return `${sectionName}-${Date.now()}`;
