@@ -680,10 +680,11 @@
   id="adminDashboard"
   aria-hidden="true"
 >
-  <div class="admin-dashboard-header">
+  <!-- 관리자 상단 -->
+  <header class="admin-dashboard-header">
     <div>
       <p>ONYOUR ADMIN</p>
-      <h2>홈페이지 관리</h2>
+      <h2 id="adminDashboardTitle">홈페이지 관리</h2>
     </div>
 
     <button
@@ -694,283 +695,1738 @@
     >
       ×
     </button>
-  </div>
-
-
-  <!-- NEWS ADMIN VIEW -->
-<section
-  class="admin-section-view"
-  id="adminNewsView"
-  aria-hidden="true"
->
-  <div class="admin-section-header">
-    <button
-      class="admin-section-back"
-      id="adminNewsBackButton"
-      type="button"
-    >
-      ←
-    </button>
-
-    <div>
-      <p>CONTENT MANAGEMENT</p>
-      <h3>News 관리</h3>
-    </div>
-
-    <button
-      class="admin-add-button"
-      id="adminNewsAddButton"
-      type="button"
-    >
-      + 새 소식
-    </button>
-  </div>
-
-  <div class="admin-news-list">
-    <article class="admin-news-item">
-      <div>
-        <span>Release</span>
-        <strong>가을 첫 정규앨범 발매 예정</strong>
-        <small>2026 Autumn</small>
-      </div>
-
-      <div class="admin-news-actions">
-        <button type="button">수정</button>
-        <button type="button">삭제</button>
-      </div>
-    </article>
-
-    <article class="admin-news-item">
-      <div>
-        <span>Performance</span>
-        <strong>강릉 버스킹 전국대회 본선</strong>
-        <small>2026.07.25</small>
-      </div>
-
-      <div class="admin-news-actions">
-        <button type="button">수정</button>
-        <button type="button">삭제</button>
-      </div>
-    </article>
-
-    <article class="admin-news-item">
-      <div>
-        <span>Video</span>
-        <strong>새로운 라이브 영상 공개</strong>
-        <small>New</small>
-      </div>
-
-      <div class="admin-news-actions">
-        <button type="button">수정</button>
-        <button type="button">삭제</button>
-      </div>
-    </article>
-  </div>
-</section>
-
-<!-- NEWS FORM VIEW -->
-<section
-  class="admin-section-view"
-  id="adminNewsFormView"
-  aria-hidden="true"
->
-  <div class="admin-section-header">
-    <button
-      class="admin-section-back"
-      id="adminNewsFormBackButton"
-      type="button"
-    >
-      ←
-    </button>
-
-    <div>
-      <p>CONTENT MANAGEMENT</p>
-      <h3 id="adminNewsFormTitle">새 소식</h3>
-    </div>
-  </div>
-
-  <form
-    class="admin-content-form"
-    id="adminNewsForm"
-  >
-    <label>
-      카테고리
-
-      <select id="adminNewsCategory" required>
-        <option value="">선택</option>
-        <option value="Release">Release</option>
-        <option value="Performance">Performance</option>
-        <option value="Video">Video</option>
-        <option value="Notice">Notice</option>
-      </select>
-    </label>
-
-    <label>
-      제목
-
-      <input
-        id="adminNewsTitle"
-        type="text"
-        placeholder="소식 제목"
-        required
-      />
-    </label>
-
-    <label>
-      날짜 또는 상태
-
-      <input
-        id="adminNewsDate"
-        type="text"
-        placeholder="예: 2026.07.25 또는 Coming Soon"
-        required
-      />
-    </label>
-
-    <label>
-      내용
-
-      <textarea
-        id="adminNewsDescription"
-        rows="6"
-        placeholder="소식 내용을 입력하세요."
-        required
-      ></textarea>
-    </label>
-
-    <div class="admin-form-actions">
-      <button
-        class="admin-form-cancel"
-        id="adminNewsCancelButton"
-        type="button"
-      >
-        취소
-      </button>
-
-      <button
-        class="admin-form-submit"
-        type="submit"
-      >
-        저장
-      </button>
-    </div>
-  </form>
-</section>
+  </header>
 
   <div class="admin-dashboard-content">
-    <section class="admin-dashboard-summary">
-      <p>현재 관리 항목</p>
-      <strong>7</strong>
-      <span>홈페이지 콘텐츠를 휴대폰에서 관리할 수 있습니다.</span>
+
+    <!-- =========================
+         관리자 메인 화면
+    ========================== -->
+    <main
+      class="admin-home-view admin-view is-open"
+      id="adminHomeView"
+      data-admin-view="home"
+      aria-hidden="false"
+    >
+      <section class="admin-dashboard-summary">
+        <p>현재 관리 항목</p>
+        <strong>7</strong>
+
+        <span>
+          홈페이지 콘텐츠를 휴대폰과 PC에서 관리할 수 있습니다.
+        </span>
+      </section>
+
+      <div class="admin-menu-list">
+
+        <button
+          class="admin-menu-item"
+          type="button"
+          data-admin-section="news"
+        >
+          <span>
+            <small>01</small>
+            <strong>News 관리</strong>
+            <em>새 소식 추가 · 수정 · 삭제</em>
+          </span>
+
+          <b>→</b>
+        </button>
+
+        <button
+          class="admin-menu-item"
+          type="button"
+          data-admin-section="performance"
+        >
+          <span>
+            <small>02</small>
+            <strong>공연 관리</strong>
+            <em>공연 일정과 셋리스트 관리</em>
+          </span>
+
+          <b>→</b>
+        </button>
+
+        <button
+          class="admin-menu-item"
+          type="button"
+          data-admin-section="video"
+        >
+          <span>
+            <small>03</small>
+            <strong>영상 관리</strong>
+            <em>대표 영상과 YouTube 링크 관리</em>
+          </span>
+
+          <b>→</b>
+        </button>
+
+        <button
+          class="admin-menu-item"
+          type="button"
+          data-admin-section="music"
+        >
+          <span>
+            <small>04</small>
+            <strong>음원 관리</strong>
+            <em>앨범과 개인 발매 음원 관리</em>
+          </span>
+
+          <b>→</b>
+        </button>
+
+        <button
+          class="admin-menu-item"
+          type="button"
+          data-admin-section="gallery"
+        >
+          <span>
+            <small>05</small>
+            <strong>갤러리 관리</strong>
+            <em>공연 사진과 비하인드 업로드</em>
+          </span>
+
+          <b>→</b>
+        </button>
+
+        <button
+          class="admin-menu-item"
+          type="button"
+          data-admin-section="members"
+        >
+          <span>
+            <small>06</small>
+            <strong>멤버 관리</strong>
+            <em>멤버 소개와 개인 링크 수정</em>
+          </span>
+
+          <b>→</b>
+        </button>
+
+        <button
+          class="admin-menu-item"
+          type="button"
+          data-admin-section="settings"
+        >
+          <span>
+            <small>07</small>
+            <strong>홈페이지 설정</strong>
+            <em>대표 이미지와 SNS 링크 관리</em>
+          </span>
+
+          <b>→</b>
+        </button>
+      </div>
+
+      <button
+        class="admin-logout-button"
+        id="adminLogoutButton"
+        type="button"
+      >
+        로그아웃
+      </button>
+    </main>
+
+
+    <!-- =========================
+         NEWS 목록
+    ========================== -->
+    <section
+      class="admin-section-view admin-view"
+      id="adminNewsView"
+      data-admin-view="news"
+      aria-hidden="true"
+    >
+      <div class="admin-section-header">
+        <button
+          class="admin-section-back"
+          type="button"
+          data-admin-back="home"
+          aria-label="관리자 메인으로 돌아가기"
+        >
+          ←
+        </button>
+
+        <div>
+          <p>CONTENT MANAGEMENT</p>
+          <h3>News 관리</h3>
+        </div>
+
+        <button
+          class="admin-add-button"
+          id="adminNewsAddButton"
+          type="button"
+          data-open-form="news"
+        >
+          + 새 소식
+        </button>
+      </div>
+
+      <div
+        class="admin-content-list"
+        id="adminNewsList"
+      >
+        <article
+          class="admin-content-item"
+          data-content-id="news-1"
+        >
+          <div class="admin-content-item-main">
+            <span class="admin-content-category">
+              Release
+            </span>
+
+            <strong>
+              가을 첫 정규앨범 발매 예정
+            </strong>
+
+            <small>2026 Autumn</small>
+          </div>
+
+          <div class="admin-content-actions">
+            <button
+              type="button"
+              data-action="edit"
+              data-content-type="news"
+              data-content-id="news-1"
+            >
+              수정
+            </button>
+
+            <button
+              type="button"
+              data-action="delete"
+              data-content-type="news"
+              data-content-id="news-1"
+            >
+              삭제
+            </button>
+          </div>
+        </article>
+
+        <article
+          class="admin-content-item"
+          data-content-id="news-2"
+        >
+          <div class="admin-content-item-main">
+            <span class="admin-content-category">
+              Performance
+            </span>
+
+            <strong>
+              강릉 버스킹 전국대회 본선
+            </strong>
+
+            <small>2026.07.25</small>
+          </div>
+
+          <div class="admin-content-actions">
+            <button
+              type="button"
+              data-action="edit"
+              data-content-type="news"
+              data-content-id="news-2"
+            >
+              수정
+            </button>
+
+            <button
+              type="button"
+              data-action="delete"
+              data-content-type="news"
+              data-content-id="news-2"
+            >
+              삭제
+            </button>
+          </div>
+        </article>
+
+        <article
+          class="admin-content-item"
+          data-content-id="news-3"
+        >
+          <div class="admin-content-item-main">
+            <span class="admin-content-category">
+              Video
+            </span>
+
+            <strong>
+              새로운 라이브 영상 공개
+            </strong>
+
+            <small>New</small>
+          </div>
+
+          <div class="admin-content-actions">
+            <button
+              type="button"
+              data-action="edit"
+              data-content-type="news"
+              data-content-id="news-3"
+            >
+              수정
+            </button>
+
+            <button
+              type="button"
+              data-action="delete"
+              data-content-type="news"
+              data-content-id="news-3"
+            >
+              삭제
+            </button>
+          </div>
+        </article>
+      </div>
     </section>
 
-    <div class="admin-menu-list">
-      <button
-        class="admin-menu-item"
-        type="button"
-        data-admin-section="news"
-      >
-        <span>
-          <small>01</small>
-          <strong>News 관리</strong>
-          <em>새 소식 추가 · 수정 · 삭제</em>
-        </span>
 
-        <b>→</b>
-      </button>
-
-      <button
-        class="admin-menu-item"
-        type="button"
-        data-admin-section="performance"
-      >
-        <span>
-          <small>02</small>
-          <strong>공연 관리</strong>
-          <em>공연 일정과 셋리스트 관리</em>
-        </span>
-
-        <b>→</b>
-      </button>
-
-      <button
-        class="admin-menu-item"
-        type="button"
-        data-admin-section="video"
-      >
-        <span>
-          <small>03</small>
-          <strong>영상 관리</strong>
-          <em>대표 영상과 YouTube 링크 관리</em>
-        </span>
-
-        <b>→</b>
-      </button>
-
-      <button
-        class="admin-menu-item"
-        type="button"
-        data-admin-section="music"
-      >
-        <span>
-          <small>04</small>
-          <strong>음원 관리</strong>
-          <em>앨범과 개인 발매 음원 관리</em>
-        </span>
-
-        <b>→</b>
-      </button>
-
-      <button
-        class="admin-menu-item"
-        type="button"
-        data-admin-section="gallery"
-      >
-        <span>
-          <small>05</small>
-          <strong>갤러리 관리</strong>
-          <em>공연 사진과 비하인드 업로드</em>
-        </span>
-
-        <b>→</b>
-      </button>
-
-      <button
-        class="admin-menu-item"
-        type="button"
-        data-admin-section="members"
-      >
-        <span>
-          <small>06</small>
-          <strong>멤버 관리</strong>
-          <em>소개와 개인 링크 수정</em>
-        </span>
-
-        <b>→</b>
-      </button>
-
-      <button
-        class="admin-menu-item"
-        type="button"
-        data-admin-section="settings"
-      >
-        <span>
-          <small>07</small>
-          <strong>홈페이지 설정</strong>
-          <em>대표 이미지와 SNS 링크 관리</em>
-        </span>
-
-        <b>→</b>
-      </button>
-    </div>
-
-    <button
-      class="admin-logout-button"
-      id="adminLogoutButton"
-      type="button"
+    <!-- NEWS 작성/수정 -->
+    <section
+      class="admin-section-view admin-view"
+      id="adminNewsFormView"
+      data-admin-view="news-form"
+      aria-hidden="true"
     >
-      로그아웃
-    </button>
+      <div class="admin-section-header">
+        <button
+          class="admin-section-back"
+          type="button"
+          data-admin-back="news"
+        >
+          ←
+        </button>
+
+        <div>
+          <p>CONTENT EDITOR</p>
+          <h3 id="adminNewsFormTitle">새 소식</h3>
+        </div>
+      </div>
+
+      <form
+        class="admin-content-form"
+        id="adminNewsForm"
+      >
+        <input
+          id="adminNewsId"
+          type="hidden"
+        />
+
+        <label>
+          카테고리
+
+          <select
+            id="adminNewsCategory"
+            required
+          >
+            <option value="">선택</option>
+            <option value="Release">Release</option>
+            <option value="Performance">Performance</option>
+            <option value="Video">Video</option>
+            <option value="Notice">Notice</option>
+          </select>
+        </label>
+
+        <label>
+          제목
+
+          <input
+            id="adminNewsTitle"
+            type="text"
+            placeholder="소식 제목"
+            required
+          />
+        </label>
+
+        <label>
+          날짜 또는 상태
+
+          <input
+            id="adminNewsDate"
+            type="text"
+            placeholder="예: 2026.07.25 또는 Coming Soon"
+            required
+          />
+        </label>
+
+        <label>
+          내용
+
+          <textarea
+            id="adminNewsDescription"
+            rows="6"
+            placeholder="소식 내용을 입력하세요."
+            required
+          ></textarea>
+        </label>
+
+        <label class="admin-checkbox-label">
+          <input
+            id="adminNewsPublished"
+            type="checkbox"
+            checked
+          />
+
+          <span>홈페이지에 공개</span>
+        </label>
+
+        <label class="admin-checkbox-label">
+          <input
+            id="adminNewsFeatured"
+            type="checkbox"
+          />
+
+          <span>대표 소식으로 표시</span>
+        </label>
+
+        <div class="admin-form-actions">
+          <button
+            class="admin-form-cancel"
+            type="button"
+            data-admin-back="news"
+          >
+            취소
+          </button>
+
+          <button
+            class="admin-form-submit"
+            type="submit"
+          >
+            저장
+          </button>
+        </div>
+      </form>
+    </section>
+
+
+    <!-- =========================
+         공연 목록
+    ========================== -->
+    <section
+      class="admin-section-view admin-view"
+      id="adminPerformanceView"
+      data-admin-view="performance"
+      aria-hidden="true"
+    >
+      <div class="admin-section-header">
+        <button
+          class="admin-section-back"
+          type="button"
+          data-admin-back="home"
+        >
+          ←
+        </button>
+
+        <div>
+          <p>CONTENT MANAGEMENT</p>
+          <h3>공연 관리</h3>
+        </div>
+
+        <button
+          class="admin-add-button"
+          type="button"
+          data-open-form="performance"
+        >
+          + 새 공연
+        </button>
+      </div>
+
+      <div
+        class="admin-content-list"
+        id="adminPerformanceList"
+      >
+        <article
+          class="admin-content-item"
+          data-content-id="performance-1"
+        >
+          <div class="admin-content-item-main">
+            <span class="admin-content-category">
+              Upcoming
+            </span>
+
+            <strong>
+              강릉 버스킹 전국대회
+            </strong>
+
+            <small>
+              2026.07.25 · 강릉
+            </small>
+          </div>
+
+          <div class="admin-content-actions">
+            <button
+              type="button"
+              data-action="edit"
+              data-content-type="performance"
+              data-content-id="performance-1"
+            >
+              수정
+            </button>
+
+            <button
+              type="button"
+              data-action="delete"
+              data-content-type="performance"
+              data-content-id="performance-1"
+            >
+              삭제
+            </button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+
+    <!-- 공연 작성/수정 -->
+    <section
+      class="admin-section-view admin-view"
+      id="adminPerformanceFormView"
+      data-admin-view="performance-form"
+      aria-hidden="true"
+    >
+      <div class="admin-section-header">
+        <button
+          class="admin-section-back"
+          type="button"
+          data-admin-back="performance"
+        >
+          ←
+        </button>
+
+        <div>
+          <p>CONTENT EDITOR</p>
+          <h3 id="adminPerformanceFormTitle">
+            새 공연
+          </h3>
+        </div>
+      </div>
+
+      <form
+        class="admin-content-form"
+        id="adminPerformanceForm"
+      >
+        <input
+          id="adminPerformanceId"
+          type="hidden"
+        />
+
+        <label>
+          공연명
+
+          <input
+            id="adminPerformanceTitle"
+            type="text"
+            placeholder="공연 이름"
+            required
+          />
+        </label>
+
+        <label>
+          공연 날짜
+
+          <input
+            id="adminPerformanceDate"
+            type="date"
+            required
+          />
+        </label>
+
+        <label>
+          공연 시간
+
+          <input
+            id="adminPerformanceTime"
+            type="time"
+          />
+        </label>
+
+        <label>
+          장소
+
+          <input
+            id="adminPerformanceLocation"
+            type="text"
+            placeholder="공연 장소"
+            required
+          />
+        </label>
+
+        <label>
+          장소 상세
+
+          <input
+            id="adminPerformanceAddress"
+            type="text"
+            placeholder="주소 또는 상세 위치"
+          />
+        </label>
+
+        <label>
+          공연 설명
+
+          <textarea
+            id="adminPerformanceDescription"
+            rows="5"
+            placeholder="공연 소개"
+          ></textarea>
+        </label>
+
+        <label>
+          셋리스트
+
+          <textarea
+            id="adminPerformanceSetlist"
+            rows="5"
+            placeholder="한 줄에 한 곡씩 입력하세요."
+          ></textarea>
+        </label>
+
+        <label>
+          티켓 또는 안내 링크
+
+          <input
+            id="adminPerformanceTicketUrl"
+            type="url"
+            placeholder="https://"
+          />
+        </label>
+
+        <label class="admin-checkbox-label">
+          <input
+            id="adminPerformancePublished"
+            type="checkbox"
+            checked
+          />
+
+          <span>홈페이지에 공개</span>
+        </label>
+
+        <div class="admin-form-actions">
+          <button
+            class="admin-form-cancel"
+            type="button"
+            data-admin-back="performance"
+          >
+            취소
+          </button>
+
+          <button
+            class="admin-form-submit"
+            type="submit"
+          >
+            저장
+          </button>
+        </div>
+      </form>
+    </section>
+
+
+    <!-- =========================
+         영상 목록
+    ========================== -->
+    <section
+      class="admin-section-view admin-view"
+      id="adminVideoView"
+      data-admin-view="video"
+      aria-hidden="true"
+    >
+      <div class="admin-section-header">
+        <button
+          class="admin-section-back"
+          type="button"
+          data-admin-back="home"
+        >
+          ←
+        </button>
+
+        <div>
+          <p>CONTENT MANAGEMENT</p>
+          <h3>영상 관리</h3>
+        </div>
+
+        <button
+          class="admin-add-button"
+          type="button"
+          data-open-form="video"
+        >
+          + 새 영상
+        </button>
+      </div>
+
+      <div
+        class="admin-content-list"
+        id="adminVideoList"
+      >
+        <article
+          class="admin-content-item"
+          data-content-id="video-1"
+        >
+          <div class="admin-content-item-main">
+            <span class="admin-content-category">
+              Featured
+            </span>
+
+            <strong>
+              ONYOUR Live Session
+            </strong>
+
+            <small>YouTube</small>
+          </div>
+
+          <div class="admin-content-actions">
+            <button
+              type="button"
+              data-action="edit"
+              data-content-type="video"
+              data-content-id="video-1"
+            >
+              수정
+            </button>
+
+            <button
+              type="button"
+              data-action="delete"
+              data-content-type="video"
+              data-content-id="video-1"
+            >
+              삭제
+            </button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+
+    <!-- 영상 작성/수정 -->
+    <section
+      class="admin-section-view admin-view"
+      id="adminVideoFormView"
+      data-admin-view="video-form"
+      aria-hidden="true"
+    >
+      <div class="admin-section-header">
+        <button
+          class="admin-section-back"
+          type="button"
+          data-admin-back="video"
+        >
+          ←
+        </button>
+
+        <div>
+          <p>CONTENT EDITOR</p>
+          <h3 id="adminVideoFormTitle">
+            새 영상
+          </h3>
+        </div>
+      </div>
+
+      <form
+        class="admin-content-form"
+        id="adminVideoForm"
+      >
+        <input
+          id="adminVideoId"
+          type="hidden"
+        />
+
+        <label>
+          영상 제목
+
+          <input
+            id="adminVideoTitle"
+            type="text"
+            placeholder="영상 제목"
+            required
+          />
+        </label>
+
+        <label>
+          YouTube URL
+
+          <input
+            id="adminVideoUrl"
+            type="url"
+            placeholder="https://youtube.com/..."
+            required
+          />
+        </label>
+
+        <label>
+          영상 설명
+
+          <textarea
+            id="adminVideoDescription"
+            rows="5"
+            placeholder="영상 소개"
+          ></textarea>
+        </label>
+
+        <label class="admin-checkbox-label">
+          <input
+            id="adminVideoFeatured"
+            type="checkbox"
+          />
+
+          <span>대표 영상으로 설정</span>
+        </label>
+
+        <label class="admin-checkbox-label">
+          <input
+            id="adminVideoPublished"
+            type="checkbox"
+            checked
+          />
+
+          <span>홈페이지에 공개</span>
+        </label>
+
+        <div
+          class="admin-video-preview"
+          id="adminVideoPreview"
+          hidden
+        >
+          <p>영상 미리보기</p>
+
+          <div class="admin-preview-frame">
+            <iframe
+              id="adminVideoPreviewFrame"
+              title="YouTube 영상 미리보기"
+              allowfullscreen
+            ></iframe>
+          </div>
+        </div>
+
+        <div class="admin-form-actions">
+          <button
+            class="admin-form-cancel"
+            type="button"
+            data-admin-back="video"
+          >
+            취소
+          </button>
+
+          <button
+            class="admin-form-submit"
+            type="submit"
+          >
+            저장
+          </button>
+        </div>
+      </form>
+    </section>
+
+
+    <!-- =========================
+         음원 목록
+    ========================== -->
+    <section
+      class="admin-section-view admin-view"
+      id="adminMusicView"
+      data-admin-view="music"
+      aria-hidden="true"
+    >
+      <div class="admin-section-header">
+        <button
+          class="admin-section-back"
+          type="button"
+          data-admin-back="home"
+        >
+          ←
+        </button>
+
+        <div>
+          <p>CONTENT MANAGEMENT</p>
+          <h3>음원 관리</h3>
+        </div>
+
+        <button
+          class="admin-add-button"
+          type="button"
+          data-open-form="music"
+        >
+          + 새 음원
+        </button>
+      </div>
+
+      <div
+        class="admin-content-list"
+        id="adminMusicList"
+      >
+        <article
+          class="admin-content-item"
+          data-content-id="music-1"
+        >
+          <div class="admin-content-item-main">
+            <span class="admin-content-category">
+              Upcoming Album
+            </span>
+
+            <strong>
+              ONYOUR 1st Full Album
+            </strong>
+
+            <small>ONYOUR · 2026 Autumn</small>
+          </div>
+
+          <div class="admin-content-actions">
+            <button
+              type="button"
+              data-action="edit"
+              data-content-type="music"
+              data-content-id="music-1"
+            >
+              수정
+            </button>
+
+            <button
+              type="button"
+              data-action="delete"
+              data-content-type="music"
+              data-content-id="music-1"
+            >
+              삭제
+            </button>
+          </div>
+        </article>
+
+        <article
+          class="admin-content-item"
+          data-content-id="music-2"
+        >
+          <div class="admin-content-item-main">
+            <span class="admin-content-category">
+              Latest Release
+            </span>
+
+            <strong>
+              최근 발매 음원
+            </strong>
+
+            <small>이휘근</small>
+          </div>
+
+          <div class="admin-content-actions">
+            <button
+              type="button"
+              data-action="edit"
+              data-content-type="music"
+              data-content-id="music-2"
+            >
+              수정
+            </button>
+
+            <button
+              type="button"
+              data-action="delete"
+              data-content-type="music"
+              data-content-id="music-2"
+            >
+              삭제
+            </button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+
+    <!-- 음원 작성/수정 -->
+    <section
+      class="admin-section-view admin-view"
+      id="adminMusicFormView"
+      data-admin-view="music-form"
+      aria-hidden="true"
+    >
+      <div class="admin-section-header">
+        <button
+          class="admin-section-back"
+          type="button"
+          data-admin-back="music"
+        >
+          ←
+        </button>
+
+        <div>
+          <p>CONTENT EDITOR</p>
+          <h3 id="adminMusicFormTitle">
+            새 음원
+          </h3>
+        </div>
+      </div>
+
+      <form
+        class="admin-content-form"
+        id="adminMusicForm"
+      >
+        <input
+          id="adminMusicId"
+          type="hidden"
+        />
+
+        <label>
+          구분
+
+          <select
+            id="adminMusicType"
+            required
+          >
+            <option value="">선택</option>
+            <option value="Single">Single</option>
+            <option value="EP">EP</option>
+            <option value="Album">Album</option>
+            <option value="Upcoming Album">
+              Upcoming Album
+            </option>
+            <option value="Latest Release">
+              Latest Release
+            </option>
+          </select>
+        </label>
+
+        <label>
+          음원 또는 앨범명
+
+          <input
+            id="adminMusicTitle"
+            type="text"
+            placeholder="음원 제목"
+            required
+          />
+        </label>
+
+        <label>
+          아티스트
+
+          <input
+            id="adminMusicArtist"
+            type="text"
+            placeholder="ONYOUR"
+            required
+          />
+        </label>
+
+        <label>
+          발매일 또는 상태
+
+          <input
+            id="adminMusicReleaseDate"
+            type="text"
+            placeholder="예: 2026.10.10 또는 Coming Soon"
+          />
+        </label>
+
+        <label>
+          설명
+
+          <textarea
+            id="adminMusicDescription"
+            rows="5"
+            placeholder="음원 또는 앨범 소개"
+          ></textarea>
+        </label>
+
+        <label>
+          대표 이미지
+
+          <input
+            id="adminMusicImage"
+            type="file"
+            accept="image/*"
+          />
+        </label>
+
+        <div
+          class="admin-image-preview"
+          id="adminMusicImagePreview"
+          hidden
+        >
+          <img
+            id="adminMusicPreviewImage"
+            src=""
+            alt="음원 이미지 미리보기"
+          />
+        </div>
+
+        <label>
+          YouTube 링크
+
+          <input
+            id="adminMusicYoutubeUrl"
+            type="url"
+            placeholder="https://"
+          />
+        </label>
+
+        <label>
+          Spotify 링크
+
+          <input
+            id="adminMusicSpotifyUrl"
+            type="url"
+            placeholder="https://"
+          />
+        </label>
+
+        <label>
+          Apple Music 링크
+
+          <input
+            id="adminMusicAppleUrl"
+            type="url"
+            placeholder="https://"
+          />
+        </label>
+
+        <label class="admin-checkbox-label">
+          <input
+            id="adminMusicPublished"
+            type="checkbox"
+            checked
+          />
+
+          <span>홈페이지에 공개</span>
+        </label>
+
+        <div class="admin-form-actions">
+          <button
+            class="admin-form-cancel"
+            type="button"
+            data-admin-back="music"
+          >
+            취소
+          </button>
+
+          <button
+            class="admin-form-submit"
+            type="submit"
+          >
+            저장
+          </button>
+        </div>
+      </form>
+    </section>
+
+
+    <!-- =========================
+         갤러리 목록
+    ========================== -->
+    <section
+      class="admin-section-view admin-view"
+      id="adminGalleryView"
+      data-admin-view="gallery"
+      aria-hidden="true"
+    >
+      <div class="admin-section-header">
+        <button
+          class="admin-section-back"
+          type="button"
+          data-admin-back="home"
+        >
+          ←
+        </button>
+
+        <div>
+          <p>CONTENT MANAGEMENT</p>
+          <h3>갤러리 관리</h3>
+        </div>
+
+        <button
+          class="admin-add-button"
+          type="button"
+          data-open-form="gallery"
+        >
+          + 사진 추가
+        </button>
+      </div>
+
+      <div
+        class="admin-gallery-list"
+        id="adminGalleryList"
+      >
+        <div class="admin-empty-state">
+          <strong>등록된 사진이 없습니다.</strong>
+
+          <p>
+            공연 사진이나 비하인드 사진을 추가해 주세요.
+          </p>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- 갤러리 작성/수정 -->
+    <section
+      class="admin-section-view admin-view"
+      id="adminGalleryFormView"
+      data-admin-view="gallery-form"
+      aria-hidden="true"
+    >
+      <div class="admin-section-header">
+        <button
+          class="admin-section-back"
+          type="button"
+          data-admin-back="gallery"
+        >
+          ←
+        </button>
+
+        <div>
+          <p>CONTENT EDITOR</p>
+          <h3 id="adminGalleryFormTitle">
+            사진 추가
+          </h3>
+        </div>
+      </div>
+
+      <form
+        class="admin-content-form"
+        id="adminGalleryForm"
+      >
+        <input
+          id="adminGalleryId"
+          type="hidden"
+        />
+
+        <label>
+          사진 선택
+
+          <input
+            id="adminGalleryImages"
+            type="file"
+            accept="image/*"
+            multiple
+            required
+          />
+        </label>
+
+        <div
+          class="admin-upload-dropzone"
+          id="adminGalleryDropzone"
+        >
+          <strong>
+            사진을 선택하거나 이곳에 끌어다 놓으세요.
+          </strong>
+
+          <span>
+            JPG, PNG, WEBP 형식을 사용할 수 있습니다.
+          </span>
+        </div>
+
+        <div
+          class="admin-gallery-preview"
+          id="adminGalleryPreview"
+        ></div>
+
+        <label>
+          제목
+
+          <input
+            id="adminGalleryTitle"
+            type="text"
+            placeholder="사진 또는 공연 제목"
+          />
+        </label>
+
+        <label>
+          촬영 날짜
+
+          <input
+            id="adminGalleryDate"
+            type="date"
+          />
+        </label>
+
+        <label>
+          설명
+
+          <textarea
+            id="adminGalleryDescription"
+            rows="4"
+            placeholder="사진 설명"
+          ></textarea>
+        </label>
+
+        <label class="admin-checkbox-label">
+          <input
+            id="adminGalleryPublished"
+            type="checkbox"
+            checked
+          />
+
+          <span>홈페이지에 공개</span>
+        </label>
+
+        <div class="admin-form-actions">
+          <button
+            class="admin-form-cancel"
+            type="button"
+            data-admin-back="gallery"
+          >
+            취소
+          </button>
+
+          <button
+            class="admin-form-submit"
+            type="submit"
+          >
+            저장
+          </button>
+        </div>
+      </form>
+    </section>
+
+
+    <!-- =========================
+         멤버 목록
+    ========================== -->
+    <section
+      class="admin-section-view admin-view"
+      id="adminMembersView"
+      data-admin-view="members"
+      aria-hidden="true"
+    >
+      <div class="admin-section-header">
+        <button
+          class="admin-section-back"
+          type="button"
+          data-admin-back="home"
+        >
+          ←
+        </button>
+
+        <div>
+          <p>CONTENT MANAGEMENT</p>
+          <h3>멤버 관리</h3>
+        </div>
+
+        <button
+          class="admin-add-button"
+          type="button"
+          data-open-form="members"
+        >
+          + 멤버 추가
+        </button>
+      </div>
+
+      <div
+        class="admin-content-list"
+        id="adminMembersList"
+      >
+        <article
+          class="admin-content-item"
+          data-content-id="member-1"
+        >
+          <div class="admin-content-item-main">
+            <span class="admin-content-category">
+              Producer · Rap
+            </span>
+
+            <strong>이휘근</strong>
+
+            <small>@knth_whee</small>
+          </div>
+
+          <div class="admin-content-actions">
+            <button
+              type="button"
+              data-action="edit"
+              data-content-type="members"
+              data-content-id="member-1"
+            >
+              수정
+            </button>
+
+            <button
+              type="button"
+              data-action="delete"
+              data-content-type="members"
+              data-content-id="member-1"
+            >
+              삭제
+            </button>
+          </div>
+        </article>
+
+        <article
+          class="admin-content-item"
+          data-content-id="member-2"
+        >
+          <div class="admin-content-item-main">
+            <span class="admin-content-category">
+              Vocal · Rap
+            </span>
+
+            <strong>이루니</strong>
+
+            <small>@e.luni</small>
+          </div>
+
+          <div class="admin-content-actions">
+            <button
+              type="button"
+              data-action="edit"
+              data-content-type="members"
+              data-content-id="member-2"
+            >
+              수정
+            </button>
+
+            <button
+              type="button"
+              data-action="delete"
+              data-content-type="members"
+              data-content-id="member-2"
+            >
+              삭제
+            </button>
+          </div>
+        </article>
+
+        <article
+          class="admin-content-item"
+          data-content-id="member-3"
+        >
+          <div class="admin-content-item-main">
+            <span class="admin-content-category">
+              Guitar
+            </span>
+
+            <strong>이체린</strong>
+
+            <small>@chelini_</small>
+          </div>
+
+          <div class="admin-content-actions">
+            <button
+              type="button"
+              data-action="edit"
+              data-content-type="members"
+              data-content-id="member-3"
+            >
+              수정
+            </button>
+
+            <button
+              type="button"
+              data-action="delete"
+              data-content-type="members"
+              data-content-id="member-3"
+            >
+              삭제
+            </button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+
+    <!-- 멤버 작성/수정 -->
+    <section
+      class="admin-section-view admin-view"
+      id="adminMembersFormView"
+      data-admin-view="members-form"
+      aria-hidden="true"
+    >
+      <div class="admin-section-header">
+        <button
+          class="admin-section-back"
+          type="button"
+          data-admin-back="members"
+        >
+          ←
+        </button>
+
+        <div>
+          <p>CONTENT EDITOR</p>
+          <h3 id="adminMembersFormTitle">
+            새 멤버
+          </h3>
+        </div>
+      </div>
+
+      <form
+        class="admin-content-form"
+        id="adminMembersForm"
+      >
+        <input
+          id="adminMemberId"
+          type="hidden"
+        />
+
+        <label>
+          이름
+
+          <input
+            id="adminMemberName"
+            type="text"
+            placeholder="멤버 이름"
+            required
+          />
+        </label>
+
+        <label>
+          영문 이름 또는 활동명
+
+          <input
+            id="adminMemberEnglishName"
+            type="text"
+            placeholder="영문 이름"
+          />
+        </label>
+
+        <label>
+          역할
+
+          <input
+            id="adminMemberRole"
+            type="text"
+            placeholder="예: Producer · Rap"
+            required
+          />
+        </label>
+
+        <label>
+          소개
+
+          <textarea
+            id="adminMemberDescription"
+            rows="5"
+            placeholder="멤버 소개"
+          ></textarea>
+        </label>
+
+        <label>
+          프로필 사진
+
+          <input
+            id="adminMemberImage"
+            type="file"
+            accept="image/*"
+          />
+        </label>
+
+        <div
+          class="admin-image-preview"
+          id="adminMemberImagePreview"
+          hidden
+        >
+          <img
+            id="adminMemberPreviewImage"
+            src=""
+            alt="멤버 프로필 미리보기"
+          />
+        </div>
+
+        <label>
+          Instagram URL
+
+          <input
+            id="adminMemberInstagram"
+            type="url"
+            placeholder="https://instagram.com/..."
+          />
+        </label>
+
+        <label>
+          표시 순서
+
+          <input
+            id="adminMemberOrder"
+            type="number"
+            min="1"
+            value="1"
+          />
+        </label>
+
+        <label class="admin-checkbox-label">
+          <input
+            id="adminMemberPublished"
+            type="checkbox"
+            checked
+          />
+
+          <span>홈페이지에 공개</span>
+        </label>
+
+        <div class="admin-form-actions">
+          <button
+            class="admin-form-cancel"
+            type="button"
+            data-admin-back="members"
+          >
+            취소
+          </button>
+
+          <button
+            class="admin-form-submit"
+            type="submit"
+          >
+            저장
+          </button>
+        </div>
+      </form>
+    </section>
+
+
+    <!-- =========================
+         홈페이지 설정
+    ========================== -->
+    <section
+      class="admin-section-view admin-view"
+      id="adminSettingsView"
+      data-admin-view="settings"
+      aria-hidden="true"
+    >
+      <div class="admin-section-header">
+        <button
+          class="admin-section-back"
+          type="button"
+          data-admin-back="home"
+        >
+          ←
+        </button>
+
+        <div>
+          <p>SITE SETTINGS</p>
+          <h3>홈페이지 설정</h3>
+        </div>
+      </div>
+
+      <form
+        class="admin-content-form"
+        id="adminSettingsForm"
+      >
+        <fieldset class="admin-form-group">
+          <legend>Hero 설정</legend>
+
+          <label>
+            상단 작은 문구
+
+            <input
+              id="adminSettingHeroEyebrow"
+              type="text"
+              value="JAZZ HIP-HOP TRIO"
+            />
+          </label>
+
+          <label>
+            메인 제목
+
+            <textarea
+              id="adminSettingHeroTitle"
+              rows="3"
+            >Jazz Hiphop music that stays with you.</textarea>
+          </label>
+
+          <label>
+            소개 문구
+
+            <textarea
+              id="adminSettingHeroDescription"
+              rows="4"
+            >랩, 보컬, 기타가 함께 만드는 ONYOUR의 음악을 만나보세요.</textarea>
+          </label>
+
+          <label>
+            Hero 이미지
+
+            <input
+              id="adminSettingHeroImage"
+              type="file"
+              accept="image/*"
+            />
+          </label>
+
+          <div
+            class="admin-image-preview"
+            id="adminSettingHeroPreview"
+          >
+            <img
+              id="adminSettingHeroPreviewImage"
+              src="images/team-main.jpg"
+              alt="Hero 이미지 미리보기"
+            />
+          </div>
+        </fieldset>
+
+        <fieldset class="admin-form-group">
+          <legend>팀 소개</legend>
+
+          <label>
+            About 대표 문구
+
+            <textarea
+              id="adminSettingAboutLead"
+              rows="4"
+            >ONYOUR는 재즈 힙합을 기반으로 랩, 보컬, 기타가 함께 이야기를 만드는 3인조 혼성팀입니다.</textarea>
+          </label>
+
+          <label>
+            About 상세 설명
+
+            <textarea
+              id="adminSettingAboutText"
+              rows="6"
+            >서로 다른 음악적 색깔이 만나 편안하면서도 깊이 있는 사운드를 만들어갑니다. 무대가 끝난 뒤에도 오래 기억에 남는 음악을 들려드리고 싶습니다.</textarea>
+          </label>
+        </fieldset>
+
+        <fieldset class="admin-form-group">
+          <legend>SNS 설정</legend>
+
+          <label>
+            팀 Instagram
+
+            <input
+              id="adminSettingInstagram"
+              type="url"
+              value="https://www.instagram.com/official_onyour"
+            />
+          </label>
+
+          <label>
+            팀 YouTube
+
+            <input
+              id="adminSettingYoutube"
+              type="url"
+              value="https://youtube.com/@official.onyour"
+            />
+          </label>
+        </fieldset>
+
+        <fieldset class="admin-form-group">
+          <legend>Footer 설정</legend>
+
+          <label>
+            Footer 문구
+
+            <input
+              id="adminSettingFooterText"
+              type="text"
+              value="Music that stays with you."
+            />
+          </label>
+        </fieldset>
+
+        <div class="admin-form-actions admin-settings-actions">
+          <button
+            class="admin-form-cancel"
+            type="button"
+            data-admin-back="home"
+          >
+            취소
+          </button>
+
+          <button
+            class="admin-form-submit"
+            type="submit"
+          >
+            설정 저장
+          </button>
+        </div>
+      </form>
+    </section>
+
   </div>
 </div>
   

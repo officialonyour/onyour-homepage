@@ -262,15 +262,6 @@ function toggleAdminPassword() {
   );
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const footerAdminButton =
-    document.getElementById("adminOpenButton");
-
-  footerAdminButton?.addEventListener(
-    "click",
-    openAdminLogin
-  );
-});
 
 adminLoginCloseButton?.addEventListener(
   "click",
