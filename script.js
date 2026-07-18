@@ -194,8 +194,6 @@ document.addEventListener("DOMContentLoaded", () => {
    ADMIN LOGIN MODAL
 ========================= */
 
-const adminOpenButton =
-  document.getElementById("adminOpenButton");
 
 const adminLoginModal =
   document.getElementById("adminLoginModal");
@@ -264,10 +262,15 @@ function toggleAdminPassword() {
   );
 }
 
-adminOpenButton?.addEventListener(
-  "click",
-  openAdminLogin
-);
+document.addEventListener("DOMContentLoaded", () => {
+  const footerAdminButton =
+    document.getElementById("adminOpenButton");
+
+  footerAdminButton?.addEventListener(
+    "click",
+    openAdminLogin
+  );
+});
 
 adminLoginCloseButton?.addEventListener(
   "click",
@@ -364,3 +367,37 @@ document.addEventListener(
     }
   }
 );
+
+document.addEventListener("DOMContentLoaded", () => {
+  const adminOpenButton =
+    document.getElementById("adminOpenButton");
+
+  if (!adminOpenButton) {
+    console.error(
+      "adminOpenButton을 찾을 수 없습니다."
+    );
+    return;
+  }
+
+  adminOpenButton.addEventListener(
+    "click",
+    openAdminLogin
+  );
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const adminOpenButton =
+    document.getElementById("adminOpenButton");
+
+  if (!adminOpenButton) {
+    console.error(
+      "adminOpenButton을 찾을 수 없습니다."
+    );
+    return;
+  }
+
+  adminOpenButton.addEventListener(
+    "click",
+    openAdminLogin
+  );
+});
