@@ -858,14 +858,25 @@ async function loadAdminDataFromD1() {
       )
     );
 
-results.forEach(
-  ({ type, items }) => {
-    adminData[type] = items;
-  }
-);
+    results.forEach(({ type, items }) => {
+      const initialItems =
+        initialAdminData[type] || [];
 
-renderAllAdminLists();
+      const mergedItems = [
+        ...items,
+        ...initialItems.filter(
+          (initialItem) =>
+            !items.some(
+              (savedItem) =>
+                savedItem.id === initialItem.id
+            )
+        ),
+      ];
 
+      adminData[type] = mergedItems;
+    });
+
+    renderAllAdminLists();
   } catch (error) {
     console.error(
       "관리자 데이터 불러오기 실패:",
