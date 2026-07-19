@@ -7290,7 +7290,7 @@ body.admin-dashboard-open {
 @media (max-width: 767px) {
   .hero-v2 {
     position: relative;
-    min-height: 92svh;
+    min-height: 85svh;
     overflow: hidden;
   }
 
