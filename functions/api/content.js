@@ -51,7 +51,7 @@ const CONTENT_CONFIG = {
   },
 
 
-  music: {
+music: {
   table: "music",
   orderBy: "created_at DESC",
 
@@ -60,6 +60,7 @@ const CONTENT_CONFIG = {
     type: "release_type",
     title: "title",
     artist: "artist",
+    artworkTitle: "artwork_title",
     displayLabel: "display_label",
     trackCount: "track_count",
     releaseDate: "release_date",

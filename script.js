@@ -1686,9 +1686,18 @@ function fillAdminMusicForm(item) {
     item.title
   );
 
+  /*
+   * 관리자 수정창 상단의 프로필 이름
+   * 기존 artist 값을 이 입력칸에서 수정합니다.
+   */
   setAdminFormValue(
-    "adminMusicArtist",
+    "adminMusicEditorName",
     item.artist
+  );
+
+  setAdminFormValue(
+    "adminMusicArtworkTitle",
+    item.artworkTitle
   );
 
   setAdminFormValue(
@@ -1748,11 +1757,14 @@ function fillAdminMusicForm(item) {
   ) {
     previewImage.src = item.coverUrl;
     previewBox.hidden = false;
-  } else if (previewBox) {
+  } else if (
+    previewBox &&
+    previewImage
+  ) {
+    previewImage.removeAttribute("src");
     previewBox.hidden = true;
   }
 }
-
 
 /* =========================
    음악 프로필 수정 화면 열기
@@ -2151,159 +2163,130 @@ document
   .getElementById("adminMusicForm")
   ?.addEventListener(
     "submit",
-    async (event) => {
+    (event) => {
       event.preventDefault();
 
-      const form =
-        event.currentTarget;
-
-      const submitButton =
-        form.querySelector(
-          ".admin-form-submit"
-        );
+      const id = getAdminFormValue(
+        "adminMusicId"
+      );
 
       const profileKey =
         getAdminFormValue(
           "adminMusicProfileKey"
         );
 
-      const id =
+      const artist =
         getAdminFormValue(
-          "adminMusicId"
-        ) ||
-        profileKey;
-
-      const imageInput =
-        document.getElementById(
-          "adminMusicImage"
+          "adminMusicEditorName"
         );
 
-      let coverUrl =
+      const artworkTitle =
         getAdminFormValue(
-          "adminMusicCoverUrl"
+          "adminMusicArtworkTitle"
         );
 
-      if (!profileKey) {
+      const displayLabel =
+        getAdminFormValue(
+          "adminMusicDisplayLabel"
+        );
+
+      if (!artist) {
         alert(
-          "음원 프로필 정보를 찾을 수 없습니다."
+          "프로필 이름을 입력해 주세요."
         );
+
+        document
+          .getElementById(
+            "adminMusicEditorName"
+          )
+          ?.focus();
 
         return;
       }
 
-      try {
-        if (submitButton) {
-          submitButton.disabled = true;
-
-          submitButton.textContent =
-            "저장 중...";
-        }
-
-        const selectedFile =
-          imageInput?.files?.[0];
-
-        if (selectedFile) {
-          coverUrl =
-            await uploadAdminImage(
-              selectedFile,
-              "music"
-            );
-
-          setAdminFormValue(
-            "adminMusicCoverUrl",
-            coverUrl
-          );
-        }
-
-        const trackCount =
-          Math.max(
-            0,
-            Number(
-              getAdminFormValue(
-                "adminMusicTrackCount"
-              )
-            ) || 0
-          );
-
-        const data = {
-          id,
-
-          profileKey,
-
-          type:
-            getAdminFormValue(
-              "adminMusicType"
-            ),
-
-          title:
-            getAdminFormValue(
-              "adminMusicTitle"
-            ),
-
-          artist:
-            getAdminFormValue(
-              "adminMusicArtist"
-            ),
-
-          trackCount,
-
-          releaseDate:
-            getAdminFormValue(
-              "adminMusicReleaseDate"
-            ),
-
-          description:
-            getAdminFormValue(
-              "adminMusicDescription"
-            ),
-
-          coverUrl,
-
-          youtubeUrl:
-            getAdminFormValue(
-              "adminMusicYoutubeUrl"
-            ),
-
-          spotifyUrl:
-            getAdminFormValue(
-              "adminMusicSpotifyUrl"
-            ),
-
-          appleUrl:
-            getAdminFormValue(
-              "adminMusicAppleUrl"
-            ),
-
-          published:
-            getAdminFormValue(
-              "adminMusicPublished"
-            ),
-        };
-
-        await saveAdminItem(
-          "music",
-          data
-        );
-
-        await loadPublicMusic();
-      } catch (error) {
-        console.error(
-          "음원 프로필 저장 실패:",
-          error
-        );
-
+      if (!artworkTitle) {
         alert(
-          error.message ||
-          "음원 정보를 저장하지 못했습니다."
+          "자켓 안 큰 제목을 입력해 주세요."
         );
-      } finally {
-        if (submitButton) {
-          submitButton.disabled = false;
 
-          submitButton.textContent =
-            "저장";
-        }
+        document
+          .getElementById(
+            "adminMusicArtworkTitle"
+          )
+          ?.focus();
+
+        return;
       }
+
+      const data = {
+        id:
+          id ||
+          profileKey ||
+          createAdminId("music"),
+
+        profileKey,
+
+        type: getAdminFormValue(
+          "adminMusicType"
+        ),
+
+        title: getAdminFormValue(
+          "adminMusicTitle"
+        ),
+
+        artist,
+
+        artworkTitle,
+
+        displayLabel,
+
+        trackCount:
+          Number(
+            getAdminFormValue(
+              "adminMusicTrackCount"
+            )
+          ) || 0,
+
+        releaseDate:
+          getAdminFormValue(
+            "adminMusicReleaseDate"
+          ),
+
+        description:
+          getAdminFormValue(
+            "adminMusicDescription"
+          ),
+
+        coverUrl:
+          getAdminFormValue(
+            "adminMusicCoverUrl"
+          ),
+
+        youtubeUrl:
+          getAdminFormValue(
+            "adminMusicYoutubeUrl"
+          ),
+
+        spotifyUrl:
+          getAdminFormValue(
+            "adminMusicSpotifyUrl"
+          ),
+
+        appleUrl:
+          getAdminFormValue(
+            "adminMusicAppleUrl"
+          ),
+
+        published:
+          getAdminFormValue(
+            "adminMusicPublished"
+          ),
+      };
+
+      saveAdminItem(
+        "music",
+        data
+      );
     }
   );
 
