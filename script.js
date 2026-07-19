@@ -1416,6 +1416,32 @@ function createPublicMusicCardHtml(item) {
   `;
 }
 
+function fitMusicCardTitle(element) {
+  if (!element) return;
+
+  element.style.fontSize = "";
+  element.style.whiteSpace = "nowrap";
+
+  const maxSize = 28;
+  const minSize = 15;
+
+  let fontSize = maxSize;
+
+  element.style.fontSize =
+    `${fontSize}px`;
+
+  while (
+    element.scrollWidth >
+      element.clientWidth &&
+    fontSize > minSize
+  ) {
+    fontSize -= 1;
+
+    element.style.fontSize =
+      `${fontSize}px`;
+  }
+}
+
 async function loadPublicMusic() {
   const musicProfileList =
     document.getElementById(
@@ -1632,12 +1658,15 @@ async function loadPublicMusic() {
 
         if (title) {
           title.textContent =
-            savedTitle || "제목 없음";
+            artistName ||
+            setting.defaultArtworkTitle;
+
+          fitMusicCardTitle(title);
         }
 
         if (artist) {
           artist.textContent =
-            artistName;
+            savedTitle || "제목 없음";
         }
 
         if (trackCount) {
