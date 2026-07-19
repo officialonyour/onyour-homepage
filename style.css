@@ -4511,55 +4511,89 @@ body.admin-dashboard-open {
    모바일
 ========================================================= */
 
+/* =========================================================
+   모바일 — 4개 카드 한 화면 2 × 2 구성
+========================================================= */
+
 @media (max-width: 560px) {
   .admin-music-guide {
-    margin-bottom: 16px;
-    font-size: 12px;
+    margin: 0 0 10px;
+    font-size: 10px;
+    line-height: 1.45;
   }
 
   .admin-music-profile-grid {
-    gap: 10px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
   }
 
   .admin-music-profile-card {
-    grid-template-columns: 68px minmax(0, 1fr) auto;
-    gap: 12px;
-    padding: 11px;
-    border-radius: 13px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    min-width: 0;
+    padding: 8px;
+    border-radius: 12px;
+    text-align: left;
   }
 
   .admin-music-profile-cover {
-    width: 68px;
-    border-radius: 11px;
+    width: 100%;
+    aspect-ratio: 1 / 0.72;
+    border-radius: 9px;
     font-size: 10px;
   }
 
+  .admin-music-profile-cover span {
+    padding: 6px;
+  }
+
+  .admin-music-profile-info {
+    width: 100%;
+    min-width: 0;
+    padding-top: 8px;
+  }
+
   .admin-music-profile-info > span {
-    margin-bottom: 4px;
-    font-size: 8px;
+    margin-bottom: 3px;
+    font-size: 7px;
+    line-height: 1;
+    letter-spacing: 0.08em;
   }
 
   .admin-music-profile-info > strong {
-    font-size: 15px;
+    font-size: 13px;
+    line-height: 1.2;
   }
 
   .admin-music-profile-info > small {
+    display: block;
     margin-top: 3px;
-    font-size: 11px;
+    overflow: hidden;
+    font-size: 9px;
+    line-height: 1.35;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .admin-music-profile-info > em {
-    margin-top: 7px;
-    padding: 4px 7px;
-    font-size: 9px;
+    margin-top: 5px;
+    padding: 3px 6px;
+    font-size: 8px;
   }
 
   .admin-music-profile-card > b {
+    position: absolute;
+    right: 9px;
+    bottom: 9px;
     font-size: 0;
   }
 
   .admin-music-profile-card > b::after {
-    font-size: 18px;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 15px;
     line-height: 1;
     content: "›";
   }
