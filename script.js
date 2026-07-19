@@ -2513,6 +2513,39 @@ document
           "adminMusicProfileKey"
         );
 
+      const profileSetting =
+        ADMIN_MUSIC_PROFILES[
+          profileKey
+        ];
+
+      const existingItem =
+        adminStore.music.find(
+          (musicItem) => {
+            const savedProfileKey =
+              musicItem.profileKey ||
+              musicItem.profile_key ||
+              musicItem.id;
+
+            return (
+              savedProfileKey ===
+              profileKey
+            );
+          }
+        );
+
+      /*
+       * 별도의 아티스트 입력칸을 사용하지 않고
+       * MUSIC PROFILE 이름을 자동으로 사용
+       */
+      const artist =
+        getAdminFormValue(
+          "adminMusicEditorName"
+        ) ||
+        existingItem?.artist ||
+        existingItem?.artist_name ||
+        profileSetting?.name ||
+        "";
+
       const artworkTitle =
         getAdminFormValue(
           "adminMusicArtworkTitle"
