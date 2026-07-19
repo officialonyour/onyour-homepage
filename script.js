@@ -2513,11 +2513,6 @@ document
           "adminMusicProfileKey"
         );
 
-      const artist =
-        getAdminFormValue(
-          "adminMusicArtist"
-        );
-
       const artworkTitle =
         getAdminFormValue(
           "adminMusicArtworkTitle"
@@ -2537,20 +2532,6 @@ document
         getAdminFormValue(
           "adminMusicCoverUrl"
         );
-
-      if (!artist) {
-        alert(
-          "아티스트 또는 팀 이름을 입력해 주세요."
-        );
-
-        document
-          .getElementById(
-            "adminMusicArtist"
-          )
-          ?.focus();
-
-        return;
-      }
 
       if (!artworkTitle) {
         alert(
