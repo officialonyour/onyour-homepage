@@ -50,24 +50,39 @@ const CONTENT_CONFIG = {
     },
   },
 
-  music: {
-    table: "music",
-    orderBy: "created_at DESC",
+music: {
+  table: "music",
 
-    fields: {
-      type: "release_type",
-      title: "title",
-      artist: "artist",
-      releaseDate: "release_date",
-      description: "description",
-      coverUrl: "cover_url",
-      youtubeUrl: "youtube_url",
-      spotifyUrl: "spotify_url",
-      appleUrl: "apple_url",
-      published: "published",
-      publishAt: "publish_at",
-    },
+  orderBy: `
+    CASE profile_key
+      WHEN 'onyour' THEN 1
+      WHEN 'leehwigeun' THEN 2
+      WHEN 'eluni' THEN 3
+      WHEN 'leecherin' THEN 4
+      ELSE 99
+    END ASC,
+    created_at DESC
+  `,
+
+  fields: {
+    profileKey: "profile_key",
+    trackCount: "track_count",
+
+    type: "release_type",
+    title: "title",
+    artist: "artist",
+    releaseDate: "release_date",
+    description: "description",
+    coverUrl: "cover_url",
+
+    youtubeUrl: "youtube_url",
+    spotifyUrl: "spotify_url",
+    appleUrl: "apple_url",
+
+    published: "published",
+    publishAt: "publish_at",
   },
+},
 
   gallery: {
     table: "gallery",
@@ -603,30 +618,55 @@ function normalizeContentData(
   type,
   body
 ) {
-  const config = CONTENT_CONFIG[type];
+  const config =
+    CONTENT_CONFIG[type];
+
   const result = {};
 
-  Object.entries(config.fields).forEach(
-    ([clientKey, databaseColumn]) => {
-      let value = body[clientKey];
+  Object.entries(
+    config.fields
+  ).forEach(
+    ([
+      clientKey,
+      databaseColumn,
+    ]) => {
+      let value =
+        body[clientKey];
 
       if (
-        databaseColumn === "published" ||
-        databaseColumn === "featured"
-      ) {
-        value = value ? 1 : 0;
-      } else if (
-        databaseColumn === "sort_order"
+        databaseColumn ===
+          "published" ||
+        databaseColumn ===
+          "featured"
       ) {
         value =
-          Number.parseInt(value, 10) || 0;
-      } else if (value == null) {
+          value ? 1 : 0;
+      } else if (
+        databaseColumn ===
+          "sort_order" ||
+        databaseColumn ===
+          "track_count"
+      ) {
+        value =
+          Math.max(
+            0,
+            Number.parseInt(
+              value,
+              10
+            ) || 0
+          );
+      } else if (
+        value == null
+      ) {
         value = "";
       } else {
-        value = String(value).trim();
+        value =
+          String(value).trim();
       }
 
-      result[databaseColumn] = value;
+      result[
+        databaseColumn
+      ] = value;
     }
   );
 
@@ -634,7 +674,8 @@ function normalizeContentData(
     type === "video" &&
     !result.video_type
   ) {
-    result.video_type = "youtube";
+    result.video_type =
+      "youtube";
   }
 
   return result;
