@@ -1624,7 +1624,7 @@
       />
 
       <small class="admin-field-help">
-        이미지를 직접 선택하면 음원 링크에서 자동으로 가져온 자켓보다 우선 적용됩니다.
+        홈페이지에 표시할 최근 앨범 자켓 이미지를 직접 선택합니다.
       </small>
     </label>
 
@@ -1640,42 +1640,20 @@
       />
     </div>
 
-    <label>
-      YouTube 링크
+<label>
+  최근 앨범 링크
 
-      <input
-        id="adminMusicYoutubeUrl"
-        type="url"
-        placeholder="https://"
-        autocomplete="url"
-      />
-    </label>
+  <input
+    id="adminMusicReleaseUrl"
+    type="url"
+    placeholder="Spotify, Apple Music 또는 YouTube 링크"
+    autocomplete="url"
+  />
 
-    <label>
-      Spotify 링크
-
-      <input
-        id="adminMusicSpotifyUrl"
-        type="url"
-        placeholder="https://open.spotify.com/"
-        autocomplete="url"
-      />
-
-      <small class="admin-field-help">
-        자켓을 직접 등록하지 않으면 Spotify 링크의 앨범 자켓을 자동으로 사용합니다.
-      </small>
-    </label>
-
-    <label>
-      Apple Music 링크
-
-      <input
-        id="adminMusicAppleUrl"
-        type="url"
-        placeholder="https://music.apple.com/"
-        autocomplete="url"
-      />
-    </label>
+  <small class="admin-field-help">
+    홈페이지의 음원 듣기 버튼으로 연결할 주소를 하나만 입력합니다.
+  </small>
+</label>
 
     <label class="admin-checkbox-label">
       <input

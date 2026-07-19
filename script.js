@@ -1257,9 +1257,8 @@ function renderAllAdminLists() {
 
 function getPublicMusicLink(item) {
   return (
-    item.spotifyUrl ||
-    item.appleUrl ||
-    item.youtubeUrl ||
+    item.releaseUrl ||
+    item.release_url ||
     ""
   );
 }
@@ -1594,13 +1593,9 @@ async function loadPublicMusic() {
           ) || 0;
 
         const musicUrl =
-          item.spotifyUrl ||
-          item.spotify_url ||
-          item.appleUrl ||
-          item.apple_url ||
-          item.youtubeUrl ||
-          item.youtube_url ||
-          "";
+            item.releaseUrl ||
+            item.release_url ||
+            "";
 
         /*
          * 자켓 큰 제목과 작은 문구
@@ -1973,19 +1968,9 @@ function fillAdminMusicForm(item) {
     item.release_date ||
     "";
 
-  const youtubeUrl =
-    item.youtubeUrl ||
-    item.youtube_url ||
-    "";
-
-  const spotifyUrl =
-    item.spotifyUrl ||
-    item.spotify_url ||
-    "";
-
-  const appleUrl =
-    item.appleUrl ||
-    item.apple_url ||
+  const releaseUrl =
+    item.releaseUrl ||
+    item.release_url ||
     "";
 
   setAdminFormValue(
@@ -2046,18 +2031,8 @@ function fillAdminMusicForm(item) {
   );
 
   setAdminFormValue(
-    "adminMusicYoutubeUrl",
-    youtubeUrl
-  );
-
-  setAdminFormValue(
-    "adminMusicSpotifyUrl",
-    spotifyUrl
-  );
-
-  setAdminFormValue(
-    "adminMusicAppleUrl",
-    appleUrl
+    "adminMusicReleaseUrl",
+    releaseUrl
   );
 
   setAdminFormValue(
@@ -2628,19 +2603,9 @@ document
 
           coverUrl,
 
-          youtubeUrl:
+          releaseUrl:
             getAdminFormValue(
-              "adminMusicYoutubeUrl"
-            ),
-
-          spotifyUrl:
-            getAdminFormValue(
-              "adminMusicSpotifyUrl"
-            ),
-
-          appleUrl:
-            getAdminFormValue(
-              "adminMusicAppleUrl"
+              "adminMusicReleaseUrl"
             ),
 
           published:
