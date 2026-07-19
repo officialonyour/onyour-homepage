@@ -66,9 +66,7 @@ music: {
     releaseDate: "release_date",
     description: "description",
     coverUrl: "cover_url",
-    youtubeUrl: "youtube_url",
-    spotifyUrl: "spotify_url",
-    appleUrl: "apple_url",
+    releaseUrl: "release_url",
     published: "published",
     publishAt: "publish_at",
   },
@@ -862,22 +860,20 @@ function unauthorizedResponse() {
 }
 
 async function resolveMusicCoverUrl(body) {
-  const spotifyUrl = String(
-    body.spotifyUrl || ""
+  const releaseUrl = String(
+    body.releaseUrl ||
+    body.release_url ||
+    ""
   ).trim();
 
-  const appleUrl = String(
-    body.appleUrl || ""
-  ).trim();
+  if (!releaseUrl) {
+    return "";
+  }
 
-  const youtubeUrl = String(
-    body.youtubeUrl || ""
-  ).trim();
-
-  if (spotifyUrl) {
+  if (isSpotifyUrl(releaseUrl)) {
     const spotifyCover =
       await fetchSpotifyCoverUrl(
-        spotifyUrl
+        releaseUrl
       );
 
     if (spotifyCover) {
@@ -885,21 +881,10 @@ async function resolveMusicCoverUrl(body) {
     }
   }
 
-  if (appleUrl) {
-    const appleCover =
-      await fetchOpenGraphImage(
-        appleUrl
-      );
-
-    if (appleCover) {
-      return appleCover;
-    }
-  }
-
-  if (youtubeUrl) {
+  if (isYouTubeUrl(releaseUrl)) {
     const youtubeCover =
       getYouTubeThumbnailUrl(
-        youtubeUrl
+        releaseUrl
       );
 
     if (youtubeCover) {
@@ -907,7 +892,9 @@ async function resolveMusicCoverUrl(body) {
     }
   }
 
-  return "";
+  return await fetchOpenGraphImage(
+    releaseUrl
+  );
 }
 
 
