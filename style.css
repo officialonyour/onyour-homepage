@@ -7315,19 +7315,19 @@ body.admin-dashboard-open {
     padding-bottom: 94px;
   }
 
-  .hero-v2 .scroll-indicator {
-    position: absolute;
-    left: 50%;
-    bottom: 18px;
-    z-index: 5;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 7px;
-    width: auto;
-    color: rgba(255, 255, 255, 0.82);
-    transform: translateX(-50%);
-  }
+.hero-v2 .scroll-indicator {
+  position: absolute;
+  left: 50%;
+  bottom: 72px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  width: auto;
+  color: rgba(255, 255, 255, 0.82);
+  transform: translateX(-50%);
+}
 
   .hero-v2 .scroll-indicator span:first-child {
     font-size: 8px;
