@@ -2253,7 +2253,8 @@ document
       const artworkTitle =
         getAdminFormValue(
           "adminMusicArtworkTitle"
-        );
+        ) ||
+        artist;
 
       const displayLabel =
         getAdminFormValue(
@@ -2274,19 +2275,6 @@ document
         return;
       }
 
-      if (!artworkTitle) {
-        alert(
-          "자켓 안 큰 제목을 입력해 주세요."
-        );
-
-        document
-          .getElementById(
-            "adminMusicArtworkTitle"
-          )
-          ?.focus();
-
-        return;
-      }
 
       const data = {
         id:
