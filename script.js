@@ -1264,11 +1264,25 @@ function getPublicMusicLink(item) {
   );
 }
 
-function createPublicMusicCardHtml(
-  item
-) {
-  const coverUrl =
-    String(item.coverUrl || "").trim();
+function createPublicMusicCardHtml(item) {
+  const coverUrl = String(
+    item.coverUrl ||
+    item.cover_url ||
+    ""
+  ).trim();
+
+  const artworkTitle = String(
+    item.artworkTitle ||
+    item.artwork_title ||
+    item.artist ||
+    "ONYOUR"
+  ).trim();
+
+  const artistName = String(
+    item.artist ||
+    item.artist_name ||
+    ""
+  ).trim();
 
   const musicLink =
     getPublicMusicLink(item);
@@ -1277,7 +1291,11 @@ function createPublicMusicCardHtml(
     String(item.type || "")
       .toLowerCase()
       .includes("upcoming") ||
-    String(item.releaseDate || "")
+    String(
+      item.releaseDate ||
+      item.release_date ||
+      ""
+    )
       .toLowerCase()
       .includes("coming");
 
@@ -1287,7 +1305,7 @@ function createPublicMusicCardHtml(
         class="music-artwork-image"
         src="${escapeAdminHtml(coverUrl)}"
         alt="${escapeAdminHtml(
-          item.title
+          item.title || artworkTitle
         )} 앨범 자켓"
         loading="lazy"
       />
@@ -1298,14 +1316,16 @@ function createPublicMusicCardHtml(
       <div class="music-artwork-inner">
         <span>
           ${escapeAdminHtml(
-            item.artist || "ONYOUR"
+            artworkTitle
           )}
         </span>
 
         <small>
-          ${isUpcoming
-            ? "COMING SOON"
-            : "LATEST RELEASE"}
+          ${
+            isUpcoming
+              ? "COMING SOON"
+              : "LATEST RELEASE"
+          }
         </small>
       </div>
     `;
@@ -1330,11 +1350,18 @@ function createPublicMusicCardHtml(
         type="button"
         disabled
       >
-        ${isUpcoming
-          ? "Coming Soon"
-          : "링크 준비 중"}
+        ${
+          isUpcoming
+            ? "Coming Soon"
+            : "링크 준비 중"
+        }
       </button>
     `;
+
+  const releaseDate =
+    item.releaseDate ||
+    item.release_date ||
+    "";
 
   return `
     <article class="music-card visible">
@@ -1358,17 +1385,17 @@ function createPublicMusicCardHtml(
 
           <p class="music-artist">
             ${escapeAdminHtml(
-              item.artist || ""
+              artistName
             )}
           </p>
         </div>
 
         ${
-          item.releaseDate
+          releaseDate
             ? `
               <span class="music-badge">
                 ${escapeAdminHtml(
-                  item.releaseDate
+                  releaseDate
                 )}
               </span>
             `
@@ -1661,6 +1688,51 @@ const ADMIN_MUSIC_PROFILES = {
 ========================= */
 
 function fillAdminMusicForm(item) {
+  const profileKey =
+    item.profileKey ||
+    item.profile_key ||
+    "";
+
+  const coverUrl =
+    item.coverUrl ||
+    item.cover_url ||
+    "";
+
+  const artworkTitle =
+    item.artworkTitle ||
+    item.artwork_title ||
+    "";
+
+  const displayLabel =
+    item.displayLabel ||
+    item.display_label ||
+    "";
+
+  const trackCount =
+    item.trackCount ??
+    item.track_count ??
+    0;
+
+  const releaseDate =
+    item.releaseDate ||
+    item.release_date ||
+    "";
+
+  const youtubeUrl =
+    item.youtubeUrl ||
+    item.youtube_url ||
+    "";
+
+  const spotifyUrl =
+    item.spotifyUrl ||
+    item.spotify_url ||
+    "";
+
+  const appleUrl =
+    item.appleUrl ||
+    item.apple_url ||
+    "";
+
   setAdminFormValue(
     "adminMusicId",
     item.id
@@ -1668,71 +1740,69 @@ function fillAdminMusicForm(item) {
 
   setAdminFormValue(
     "adminMusicProfileKey",
-    item.profileKey
+    profileKey
   );
 
   setAdminFormValue(
     "adminMusicCoverUrl",
-    item.coverUrl
+    coverUrl
   );
 
   setAdminFormValue(
     "adminMusicType",
-    item.type
+    item.type || ""
   );
 
   setAdminFormValue(
     "adminMusicTitle",
-    item.title
+    item.title || ""
   );
 
-  /*
-   * 관리자 수정창 상단의 프로필 이름
-   * 기존 artist 값을 이 입력칸에서 수정합니다.
-   */
   setAdminFormValue(
     "adminMusicEditorName",
-    item.artist
+    item.artist ||
+    item.artist_name ||
+    ""
   );
 
   setAdminFormValue(
     "adminMusicArtworkTitle",
-    item.artworkTitle
+    artworkTitle
   );
 
   setAdminFormValue(
     "adminMusicDisplayLabel",
-    item.displayLabel
+    displayLabel
   );
 
   setAdminFormValue(
     "adminMusicTrackCount",
-    Number(item.trackCount) || 0
+    Number(trackCount) || 0
   );
 
   setAdminFormValue(
     "adminMusicReleaseDate",
-    item.releaseDate
+    releaseDate
   );
 
   setAdminFormValue(
     "adminMusicDescription",
-    item.description
+    item.description || ""
   );
 
   setAdminFormValue(
     "adminMusicYoutubeUrl",
-    item.youtubeUrl
+    youtubeUrl
   );
 
   setAdminFormValue(
     "adminMusicSpotifyUrl",
-    item.spotifyUrl
+    spotifyUrl
   );
 
   setAdminFormValue(
     "adminMusicAppleUrl",
-    item.appleUrl
+    appleUrl
   );
 
   setAdminFormValue(
@@ -1753,9 +1823,9 @@ function fillAdminMusicForm(item) {
   if (
     previewBox &&
     previewImage &&
-    item.coverUrl
+    coverUrl
   ) {
-    previewImage.src = item.coverUrl;
+    previewImage.src = coverUrl;
     previewBox.hidden = false;
   } else if (
     previewBox &&
