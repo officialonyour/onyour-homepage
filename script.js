@@ -1661,19 +1661,6 @@ const ADMIN_MUSIC_PROFILES = {
 ========================= */
 
 function fillAdminMusicForm(item) {
-  const profileKey =
-    item.profileKey ||
-    item.profile_key ||
-    item.id ||
-    "";
-
-  const profile =
-    ADMIN_MUSIC_PROFILES[profileKey] || {
-      name: item.artist || "음원",
-      category: "MUSIC PROFILE",
-      defaultType: item.type || "TEAM",
-    };
-
   setAdminFormValue(
     "adminMusicId",
     item.id
@@ -1681,20 +1668,17 @@ function fillAdminMusicForm(item) {
 
   setAdminFormValue(
     "adminMusicProfileKey",
-    profileKey
+    item.profileKey
   );
 
   setAdminFormValue(
     "adminMusicCoverUrl",
-    item.coverUrl || item.cover_url
+    item.coverUrl
   );
 
   setAdminFormValue(
     "adminMusicType",
-    item.type ||
-      item.releaseType ||
-      item.release_type ||
-      profile.defaultType
+    item.type
   );
 
   setAdminFormValue(
@@ -1704,20 +1688,22 @@ function fillAdminMusicForm(item) {
 
   setAdminFormValue(
     "adminMusicArtist",
-    item.artist || profile.name
+    item.artist
+  );
+
+  setAdminFormValue(
+    "adminMusicDisplayLabel",
+    item.displayLabel
   );
 
   setAdminFormValue(
     "adminMusicTrackCount",
-    item.trackCount ??
-      item.track_count ??
-      0
+    Number(item.trackCount) || 0
   );
 
   setAdminFormValue(
     "adminMusicReleaseDate",
-    item.releaseDate ||
-      item.release_date
+    item.releaseDate
   );
 
   setAdminFormValue(
@@ -1727,56 +1713,23 @@ function fillAdminMusicForm(item) {
 
   setAdminFormValue(
     "adminMusicYoutubeUrl",
-    item.youtubeUrl ||
-      item.youtube_url
+    item.youtubeUrl
   );
 
   setAdminFormValue(
     "adminMusicSpotifyUrl",
-    item.spotifyUrl ||
-      item.spotify_url
+    item.spotifyUrl
   );
 
   setAdminFormValue(
     "adminMusicAppleUrl",
-    item.appleUrl ||
-      item.apple_url
+    item.appleUrl
   );
 
   setAdminFormValue(
     "adminMusicPublished",
     item.published
   );
-
-  const formTitle =
-    document.getElementById(
-      "adminMusicFormTitle"
-    );
-
-  const editorCategory =
-    document.getElementById(
-      "adminMusicEditorCategory"
-    );
-
-  const editorName =
-    document.getElementById(
-      "adminMusicEditorName"
-    );
-
-  if (formTitle) {
-    formTitle.textContent =
-      `${profile.name} 음원 정보 수정`;
-  }
-
-  if (editorCategory) {
-    editorCategory.textContent =
-      profile.category;
-  }
-
-  if (editorName) {
-    editorName.textContent =
-      profile.name;
-  }
 
   const previewBox =
     document.getElementById(
@@ -1788,40 +1741,15 @@ function fillAdminMusicForm(item) {
       "adminMusicPreviewImage"
     );
 
-  const coverUrl =
-    String(
-      item.coverUrl ||
-      item.cover_url ||
-      ""
-    ).trim();
-
   if (
-    coverUrl &&
     previewBox &&
-    previewImage
+    previewImage &&
+    item.coverUrl
   ) {
-    previewImage.src = coverUrl;
-
-    previewImage.alt =
-      `${profile.name} 음원 자켓 미리보기`;
-
+    previewImage.src = item.coverUrl;
     previewBox.hidden = false;
-  } else if (
-    previewBox &&
-    previewImage
-  ) {
-    previewImage.removeAttribute("src");
-    previewImage.alt = "";
+  } else if (previewBox) {
     previewBox.hidden = true;
-  }
-
-  const imageInput =
-    document.getElementById(
-      "adminMusicImage"
-    );
-
-  if (imageInput) {
-    imageInput.value = "";
   }
 }
 
