@@ -1935,299 +1935,397 @@
     </section>
 
 
-    <!-- =========================
-         음원 목록
-    ========================== -->
-    <section
-      class="admin-section-view admin-view"
-      id="adminMusicView"
-      data-admin-view="music"
-      aria-hidden="true"
+<!-- =========================
+     음원 프로필 관리
+========================== -->
+<section
+  class="admin-section-view admin-view"
+  id="adminMusicView"
+  data-admin-view="music"
+  aria-hidden="true"
+>
+  <div class="admin-section-header">
+    <button
+      class="admin-section-back"
+      type="button"
+      data-admin-back="home"
+      aria-label="관리자 메인으로 돌아가기"
     >
-      <div class="admin-section-header">
-        <button
-          class="admin-section-back"
-          type="button"
-          data-admin-back="home"
-        >
-          ←
-        </button>
+      ←
+    </button>
 
-        <div>
-          <p>CONTENT MANAGEMENT</p>
-          <h3>음원 관리</h3>
-        </div>
+    <div>
+      <p>PROFILE MUSIC MANAGEMENT</p>
+      <h3>음원 관리</h3>
+    </div>
+  </div>
 
-        <button
-          class="admin-add-button"
-          type="button"
-          data-open-form="music"
-        >
-          + 새 음원
-        </button>
-      </div>
+  <p class="admin-music-guide">
+    홈페이지에 표시되는 네 개의 음원 카드를 관리합니다.
+  </p>
 
-      <div
-        class="admin-content-list"
-        id="adminMusicList"
-      >
-        <article
-          class="admin-content-item"
-          data-content-id="music-1"
-        >
-          <div class="admin-content-item-main">
-            <span class="admin-content-category">
-              Upcoming Album
-            </span>
-
-            <strong>
-              ONYOUR 1st Full Album
-            </strong>
-
-            <small>ONYOUR · 2026 Autumn</small>
-          </div>
-
-          <div class="admin-content-actions">
-            <button
-              type="button"
-              data-action="edit"
-              data-content-type="music"
-              data-content-id="music-1"
-            >
-              수정
-            </button>
-
-            <button
-              type="button"
-              data-action="delete"
-              data-content-type="music"
-              data-content-id="music-1"
-            >
-              삭제
-            </button>
-          </div>
-        </article>
-
-        <article
-          class="admin-content-item"
-          data-content-id="music-2"
-        >
-          <div class="admin-content-item-main">
-            <span class="admin-content-category">
-              Latest Release
-            </span>
-
-            <strong>
-              최근 발매 음원
-            </strong>
-
-            <small>이휘근</small>
-          </div>
-
-          <div class="admin-content-actions">
-            <button
-              type="button"
-              data-action="edit"
-              data-content-type="music"
-              data-content-id="music-2"
-            >
-              수정
-            </button>
-
-            <button
-              type="button"
-              data-action="delete"
-              data-content-type="music"
-              data-content-id="music-2"
-            >
-              삭제
-            </button>
-          </div>
-        </article>
-      </div>
-    </section>
-
-
-    <!-- 음원 작성/수정 -->
-    <section
-      class="admin-section-view admin-view"
-      id="adminMusicFormView"
-      data-admin-view="music-form"
-      aria-hidden="true"
+  <div
+    class="admin-music-profile-grid"
+    id="adminMusicProfileGrid"
+  >
+    <!-- ONYOUR -->
+    <button
+      class="admin-music-profile-card"
+      type="button"
+      data-music-profile="onyour"
     >
-      <div class="admin-section-header">
-        <button
-          class="admin-section-back"
-          type="button"
-          data-admin-back="music"
-        >
-          ←
-        </button>
-
-        <div>
-          <p>CONTENT EDITOR</p>
-          <h3 id="adminMusicFormTitle">
-            새 음원
-          </h3>
-        </div>
-      </div>
-
-      <form
-        class="admin-content-form"
-        id="adminMusicForm"
-      >
-        <input
-          id="adminMusicId"
-          type="hidden"
-        />
-
-        <input
-        id="adminMusicCoverUrl"
-        type="hidden"
-        />
-
-        <label>
-          구분
-
-          <select
-            id="adminMusicType"
-            required
-          >
-            <option value="">선택</option>
-            <option value="Single">Single</option>
-            <option value="EP">EP</option>
-            <option value="Album">Album</option>
-            <option value="Upcoming Album">
-              Upcoming Album
-            </option>
-            <option value="Latest Release">
-              Latest Release
-            </option>
-          </select>
-        </label>
-
-        <label>
-          음원 또는 앨범명
-
-          <input
-            id="adminMusicTitle"
-            type="text"
-            placeholder="음원 제목"
-            required
-          />
-        </label>
-
-        <label>
-          아티스트
-
-          <input
-            id="adminMusicArtist"
-            type="text"
-            placeholder="ONYOUR"
-            required
-          />
-        </label>
-
-        <label>
-          발매일 또는 상태
-
-          <input
-            id="adminMusicReleaseDate"
-            type="text"
-            placeholder="예: 2026.10.10 또는 Coming Soon"
-          />
-        </label>
-
-        <label>
-          설명
-
-          <textarea
-            id="adminMusicDescription"
-            rows="5"
-            placeholder="음원 또는 앨범 소개"
-          ></textarea>
-        </label>
-
-        <label>
-          대표 이미지
-
-          <input
-            id="adminMusicImage"
-            type="file"
-            accept="image/*"
-          />
-        </label>
-
-        <div
-          class="admin-image-preview"
-          id="adminMusicImagePreview"
+      <div class="admin-music-profile-cover">
+        <img
+          id="adminMusicCardImageOnyour"
+          src=""
+          alt=""
           hidden
-        >
-          <img
-            id="adminMusicPreviewImage"
-            src=""
-            alt="음원 이미지 미리보기"
-          />
-        </div>
+        />
 
-        <label>
-          YouTube 링크
+        <span id="adminMusicCardFallbackOnyour">
+          ONYOUR
+        </span>
+      </div>
 
-          <input
-            id="adminMusicYoutubeUrl"
-            type="url"
-            placeholder="https://"
-          />
-        </label>
+      <div class="admin-music-profile-info">
+        <span>TEAM</span>
 
-        <label>
-          Spotify 링크
+        <strong>ONYOUR</strong>
 
-          <input
-            id="adminMusicSpotifyUrl"
-            type="url"
-            placeholder="https://"
-          />
-        </label>
+        <small id="adminMusicCardTitleOnyour">
+          음원 정보를 불러오는 중
+        </small>
 
-        <label>
-          Apple Music 링크
+        <em id="adminMusicCardCountOnyour">
+          발매 0곡
+        </em>
+      </div>
 
-          <input
-            id="adminMusicAppleUrl"
-            type="url"
-            placeholder="https://"
-          />
-        </label>
+      <b>수정 →</b>
+    </button>
 
-        <label class="admin-checkbox-label">
-          <input
-            id="adminMusicPublished"
-            type="checkbox"
-            checked
-          />
+    <!-- 이휘근 -->
+    <button
+      class="admin-music-profile-card"
+      type="button"
+      data-music-profile="leehwigeun"
+    >
+      <div class="admin-music-profile-cover">
+        <img
+          id="adminMusicCardImageLeehwigeun"
+          src=""
+          alt=""
+          hidden
+        />
 
-          <span>홈페이지에 공개</span>
-        </label>
+        <span id="adminMusicCardFallbackLeehwigeun">
+          이휘근
+        </span>
+      </div>
 
-        <div class="admin-form-actions">
-          <button
-            class="admin-form-cancel"
-            type="button"
-            data-admin-back="music"
-          >
-            취소
-          </button>
+      <div class="admin-music-profile-info">
+        <span>ARTIST</span>
 
-          <button
-            class="admin-form-submit"
-            type="submit"
-          >
-            저장
-          </button>
-        </div>
-      </form>
-    </section>
+        <strong>이휘근</strong>
+
+        <small id="adminMusicCardTitleLeehwigeun">
+          음원 정보를 불러오는 중
+        </small>
+
+        <em id="adminMusicCardCountLeehwigeun">
+          발매 0곡
+        </em>
+      </div>
+
+      <b>수정 →</b>
+    </button>
+
+    <!-- 이루니 -->
+    <button
+      class="admin-music-profile-card"
+      type="button"
+      data-music-profile="eluni"
+    >
+      <div class="admin-music-profile-cover">
+        <img
+          id="adminMusicCardImageEluni"
+          src=""
+          alt=""
+          hidden
+        />
+
+        <span id="adminMusicCardFallbackEluni">
+          이루니
+        </span>
+      </div>
+
+      <div class="admin-music-profile-info">
+        <span>PARTICIPATION</span>
+
+        <strong>이루니</strong>
+
+        <small id="adminMusicCardTitleEluni">
+          음원 정보를 불러오는 중
+        </small>
+
+        <em id="adminMusicCardCountEluni">
+          참여 0곡
+        </em>
+      </div>
+
+      <b>수정 →</b>
+    </button>
+
+    <!-- 이체린 -->
+    <button
+      class="admin-music-profile-card"
+      type="button"
+      data-music-profile="leecherin"
+    >
+      <div class="admin-music-profile-cover">
+        <img
+          id="adminMusicCardImageLeecherin"
+          src=""
+          alt=""
+          hidden
+        />
+
+        <span id="adminMusicCardFallbackLeecherin">
+          이체린
+        </span>
+      </div>
+
+      <div class="admin-music-profile-info">
+        <span>PARTICIPATION</span>
+
+        <strong>이체린</strong>
+
+        <small id="adminMusicCardTitleLeecherin">
+          음원 정보를 불러오는 중
+        </small>
+
+        <em id="adminMusicCardCountLeecherin">
+          참여 0곡
+        </em>
+      </div>
+
+      <b>수정 →</b>
+    </button>
+  </div>
+</section>
+
+
+<!-- =========================
+     음원 프로필 수정
+========================== -->
+<section
+  class="admin-section-view admin-view"
+  id="adminMusicFormView"
+  data-admin-view="music-form"
+  aria-hidden="true"
+>
+  <div class="admin-section-header">
+    <button
+      class="admin-section-back"
+      type="button"
+      data-admin-back="music"
+      aria-label="음원 관리로 돌아가기"
+    >
+      ←
+    </button>
+
+    <div>
+      <p>MUSIC PROFILE EDITOR</p>
+
+      <h3 id="adminMusicFormTitle">
+        음원 정보 수정
+      </h3>
+    </div>
+  </div>
+
+  <form
+    class="admin-content-form"
+    id="adminMusicForm"
+  >
+    <input
+      id="adminMusicId"
+      type="hidden"
+    />
+
+    <input
+      id="adminMusicProfileKey"
+      type="hidden"
+    />
+
+    <input
+      id="adminMusicCoverUrl"
+      type="hidden"
+    />
+
+    <div class="admin-music-editor-profile">
+      <span id="adminMusicEditorCategory">
+        MUSIC PROFILE
+      </span>
+
+      <strong id="adminMusicEditorName">
+        ONYOUR
+      </strong>
+
+      <small>
+        홈페이지 Music 영역에 표시되는 대표 정보입니다.
+      </small>
+    </div>
+
+    <label>
+      표시 구분
+
+      <select
+        id="adminMusicType"
+        required
+      >
+        <option value="TEAM">TEAM</option>
+        <option value="ARTIST">ARTIST</option>
+        <option value="PARTICIPATION">
+          PARTICIPATION
+        </option>
+      </select>
+    </label>
+
+    <label>
+      최근 앨범 또는 참여곡 제목
+
+      <input
+        id="adminMusicTitle"
+        type="text"
+        placeholder="앨범 또는 참여곡 제목"
+        required
+      />
+    </label>
+
+    <label>
+      표시 이름
+
+      <input
+        id="adminMusicArtist"
+        type="text"
+        placeholder="아티스트 또는 팀 이름"
+        required
+      />
+    </label>
+
+    <label>
+      총 발매·참여 곡 수
+
+      <input
+        id="adminMusicTrackCount"
+        type="number"
+        min="0"
+        step="1"
+        value="0"
+        required
+      />
+    </label>
+
+    <label>
+      발매일 또는 상태
+
+      <input
+        id="adminMusicReleaseDate"
+        type="text"
+        placeholder="예: 2026.05.01 또는 Coming Soon"
+      />
+    </label>
+
+    <label>
+      설명
+
+      <textarea
+        id="adminMusicDescription"
+        rows="4"
+        placeholder="앨범 또는 참여곡 설명"
+      ></textarea>
+    </label>
+
+    <label>
+      최근 앨범·참여곡 자켓
+
+      <input
+        id="adminMusicImage"
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/gif"
+      />
+    </label>
+
+    <div
+      class="admin-image-preview"
+      id="adminMusicImagePreview"
+      hidden
+    >
+      <img
+        id="adminMusicPreviewImage"
+        src=""
+        alt="음원 자켓 미리보기"
+      />
+    </div>
+
+    <label>
+      YouTube 링크
+
+      <input
+        id="adminMusicYoutubeUrl"
+        type="url"
+        placeholder="https://"
+      />
+    </label>
+
+    <label>
+      Spotify 링크
+
+      <input
+        id="adminMusicSpotifyUrl"
+        type="url"
+        placeholder="https://"
+      />
+    </label>
+
+    <label>
+      Apple Music 링크
+
+      <input
+        id="adminMusicAppleUrl"
+        type="url"
+        placeholder="https://"
+      />
+    </label>
+
+    <label class="admin-checkbox-label">
+      <input
+        id="adminMusicPublished"
+        type="checkbox"
+        checked
+      />
+
+      <span>홈페이지에 공개</span>
+    </label>
+
+    <div class="admin-form-actions">
+      <button
+        class="admin-form-cancel"
+        type="button"
+        data-admin-back="music"
+      >
+        취소
+      </button>
+
+      <button
+        class="admin-form-submit"
+        type="submit"
+      >
+        저장
+      </button>
+    </div>
+  </form>
+</section>
 
 
     <!-- =========================
