@@ -303,27 +303,36 @@
 </section>
 
 <!-- MUSIC -->
-<section class="section music-section" id="music">
-  <div class="section-heading reveal">
-    <p class="section-label">
-      Music
-    </p>
+<section class="section music-section music-section-v2" id="music">
+  <div class="music-section-glow" aria-hidden="true"></div>
 
-    <h2>
-      우리가 만든<br />
-      음악을 들어보세요.
-    </h2>
+  <div class="section-heading music-section-heading reveal">
+    <div>
+      <p class="section-label">Selected Music</p>
+
+      <h2>
+        네 개의 색으로<br />
+        이어지는 음악.
+      </h2>
+    </div>
+
+    <p class="music-heading-description">
+      ONYOUR와 세 멤버의 가장 최근 음악을 한곳에서 만나보세요.
+      각 카드에는 현재 선택된 대표 음원 한 개만 표시됩니다.
+    </p>
   </div>
 
-  <div
-    class="music-list"
-    id="musicProfileList"
-  >
+  <div class="music-list music-gallery" id="musicProfileList">
+
     <!-- ONYOUR -->
     <article
       class="music-card music-card-onyour reveal"
       data-music-profile="onyour"
     >
+      <div class="music-card-number" aria-hidden="true">
+        01
+      </div>
+
       <div class="music-artwork">
         <img
           class="music-cover-image"
@@ -340,46 +349,48 @@
           <span>ONYOUR</span>
           <small>COMING SOON</small>
         </div>
+
+        <div class="music-artwork-overlay" aria-hidden="true"></div>
+
+        <span class="music-artwork-label">
+          Team Release
+        </span>
       </div>
 
-      <div class="music-info">
-        <div>
-          <p
-            class="music-type"
-            id="musicTypeOnyour"
-          >
-            TEAM
-          </p>
+      <div class="music-card-body">
+        <div class="music-info">
+          <div>
+            <p class="music-type" id="musicTypeOnyour">
+              TEAM
+            </p>
 
-          <h3 id="musicTitleOnyour">
-            ONYOUR 1st Full Album
-          </h3>
+            <h3 id="musicTitleOnyour">
+              ONYOUR
+            </h3>
 
-          <p
-            class="music-artist"
-            id="musicArtistOnyour"
+            <p class="music-artist" id="musicArtistOnyour">
+              ONYOUR 1st Full Album
+            </p>
+          </div>
+
+          <span
+            class="music-track-count"
+            id="musicTrackCountOnyour"
           >
-            ONYOUR
-          </p>
+            발매 8곡
+          </span>
         </div>
+
+        <a
+          class="music-button music-button-disabled"
+          id="musicLinkOnyour"
+          href="#"
+          aria-disabled="true"
+          tabindex="-1"
+        >
+          Coming Soon
+        </a>
       </div>
-
-      <p
-        class="music-track-count"
-        id="musicTrackCountOnyour"
-      >
-        발매 8곡
-      </p>
-
-      <a
-        class="music-button music-button-disabled"
-        id="musicLinkOnyour"
-        href="#"
-        aria-disabled="true"
-        tabindex="-1"
-      >
-        Coming Soon
-      </a>
     </article>
 
 
@@ -388,6 +399,10 @@
       class="music-card reveal"
       data-music-profile="leehwigeun"
     >
+      <div class="music-card-number" aria-hidden="true">
+        02
+      </div>
+
       <div class="music-artwork music-artwork-personal">
         <img
           class="music-cover-image"
@@ -404,46 +419,48 @@
           <span>이휘근</span>
           <small>LATEST RELEASE</small>
         </div>
+
+        <div class="music-artwork-overlay" aria-hidden="true"></div>
+
+        <span class="music-artwork-label">
+          Artist Release
+        </span>
       </div>
 
-      <div class="music-info">
-        <div>
-          <p
-            class="music-type"
-            id="musicTypeLeehwigeun"
-          >
-            ARTIST
-          </p>
+      <div class="music-card-body">
+        <div class="music-info">
+          <div>
+            <p class="music-type" id="musicTypeLeehwigeun">
+              ARTIST
+            </p>
 
-          <h3 id="musicTitleLeehwigeun">
-            Side by Side
-          </h3>
+            <h3 id="musicTitleLeehwigeun">
+              이휘근
+            </h3>
 
-          <p
-            class="music-artist"
-            id="musicArtistLeehwigeun"
+            <p class="music-artist" id="musicArtistLeehwigeun">
+              Side by Side
+            </p>
+          </div>
+
+          <span
+            class="music-track-count"
+            id="musicTrackCountLeehwigeun"
           >
-            이휘근
-          </p>
+            발매 12곡
+          </span>
         </div>
+
+        <a
+          class="music-button music-button-disabled"
+          id="musicLinkLeehwigeun"
+          href="#"
+          aria-disabled="true"
+          tabindex="-1"
+        >
+          링크 준비 중
+        </a>
       </div>
-
-      <p
-        class="music-track-count"
-        id="musicTrackCountLeehwigeun"
-      >
-        발매 12곡
-      </p>
-
-      <a
-        class="music-button music-button-disabled"
-        id="musicLinkLeehwigeun"
-        href="#"
-        aria-disabled="true"
-        tabindex="-1"
-      >
-        링크 준비 중
-      </a>
     </article>
 
 
@@ -452,6 +469,10 @@
       class="music-card reveal"
       data-music-profile="eluni"
     >
+      <div class="music-card-number" aria-hidden="true">
+        03
+      </div>
+
       <div class="music-artwork music-artwork-personal">
         <img
           class="music-cover-image"
@@ -468,46 +489,48 @@
           <span>이루니</span>
           <small>LATEST RELEASE</small>
         </div>
+
+        <div class="music-artwork-overlay" aria-hidden="true"></div>
+
+        <span class="music-artwork-label">
+          Vocal Release
+        </span>
       </div>
 
-      <div class="music-info">
-        <div>
-          <p
-            class="music-type"
-            id="musicTypeEluni"
-          >
-            PARTICIPATION
-          </p>
+      <div class="music-card-body">
+        <div class="music-info">
+          <div>
+            <p class="music-type" id="musicTypeEluni">
+              PARTICIPATION
+            </p>
 
-          <h3 id="musicTitleEluni">
-            참여 음원
-          </h3>
+            <h3 id="musicTitleEluni">
+              이루니
+            </h3>
 
-          <p
-            class="music-artist"
-            id="musicArtistEluni"
+            <p class="music-artist" id="musicArtistEluni">
+              참여 음원
+            </p>
+          </div>
+
+          <span
+            class="music-track-count"
+            id="musicTrackCountEluni"
           >
-            이루니
-          </p>
+            참여 3곡
+          </span>
         </div>
+
+        <a
+          class="music-button music-button-disabled"
+          id="musicLinkEluni"
+          href="#"
+          aria-disabled="true"
+          tabindex="-1"
+        >
+          링크 준비 중
+        </a>
       </div>
-
-      <p
-        class="music-track-count"
-        id="musicTrackCountEluni"
-      >
-        참여 3곡
-      </p>
-
-      <a
-        class="music-button music-button-disabled"
-        id="musicLinkEluni"
-        href="#"
-        aria-disabled="true"
-        tabindex="-1"
-      >
-        링크 준비 중
-      </a>
     </article>
 
 
@@ -516,6 +539,10 @@
       class="music-card reveal"
       data-music-profile="leecherin"
     >
+      <div class="music-card-number" aria-hidden="true">
+        04
+      </div>
+
       <div class="music-artwork music-artwork-personal">
         <img
           class="music-cover-image"
@@ -532,47 +559,50 @@
           <span>이체린</span>
           <small>LATEST RELEASE</small>
         </div>
+
+        <div class="music-artwork-overlay" aria-hidden="true"></div>
+
+        <span class="music-artwork-label">
+          Guitar Release
+        </span>
       </div>
 
-      <div class="music-info">
-        <div>
-          <p
-            class="music-type"
-            id="musicTypeLeecherin"
-          >
-            PARTICIPATION
-          </p>
+      <div class="music-card-body">
+        <div class="music-info">
+          <div>
+            <p class="music-type" id="musicTypeLeecherin">
+              PARTICIPATION
+            </p>
 
-          <h3 id="musicTitleLeecherin">
-            참여 음원
-          </h3>
+            <h3 id="musicTitleLeecherin">
+              이체린
+            </h3>
 
-          <p
-            class="music-artist"
-            id="musicArtistLeecherin"
+            <p class="music-artist" id="musicArtistLeecherin">
+              참여 음원
+            </p>
+          </div>
+
+          <span
+            class="music-track-count"
+            id="musicTrackCountLeecherin"
           >
-            이체린
-          </p>
+            참여 5곡
+          </span>
         </div>
+
+        <a
+          class="music-button music-button-disabled"
+          id="musicLinkLeecherin"
+          href="#"
+          aria-disabled="true"
+          tabindex="-1"
+        >
+          링크 준비 중
+        </a>
       </div>
-
-      <p
-        class="music-track-count"
-        id="musicTrackCountLeecherin"
-      >
-        참여 5곡
-      </p>
-
-      <a
-        class="music-button music-button-disabled"
-        id="musicLinkLeecherin"
-        href="#"
-        aria-disabled="true"
-        tabindex="-1"
-      >
-        링크 준비 중
-      </a>
     </article>
+
   </div>
 </section>
 
