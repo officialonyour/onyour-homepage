@@ -7290,7 +7290,7 @@ body.admin-dashboard-open {
 @media (max-width: 767px) {
   .hero-v2 {
     position: relative;
-    min-height: 85svh;
+    min-height: 100svh;
     overflow: hidden;
   }
 
@@ -7310,7 +7310,7 @@ body.admin-dashboard-open {
   }
 
   .hero-v2 .hero-content {
-    min-height: 92svh;
+    min-height: 100svh;
     padding-top: 92px;
     padding-bottom: 94px;
   }
