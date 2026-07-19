@@ -1169,6 +1169,216 @@ function renderAllAdminLists() {
   renderAdminMembersList();
 }
 
+/* =========================================================
+   PUBLIC MUSIC RENDERING
+========================================================= */
+
+function getPublicMusicLink(item) {
+  return (
+    item.spotifyUrl ||
+    item.appleUrl ||
+    item.youtubeUrl ||
+    ""
+  );
+}
+
+function createPublicMusicCardHtml(
+  item
+) {
+  const coverUrl =
+    String(item.coverUrl || "").trim();
+
+  const musicLink =
+    getPublicMusicLink(item);
+
+  const isUpcoming =
+    String(item.type || "")
+      .toLowerCase()
+      .includes("upcoming") ||
+    String(item.releaseDate || "")
+      .toLowerCase()
+      .includes("coming");
+
+  const artworkHtml = coverUrl
+    ? `
+      <img
+        class="music-artwork-image"
+        src="${escapeAdminHtml(coverUrl)}"
+        alt="${escapeAdminHtml(
+          item.title
+        )} 앨범 자켓"
+        loading="lazy"
+      />
+
+      <div class="music-artwork-shade"></div>
+    `
+    : `
+      <div class="music-artwork-inner">
+        <span>
+          ${escapeAdminHtml(
+            item.artist || "ONYOUR"
+          )}
+        </span>
+
+        <small>
+          ${isUpcoming
+            ? "COMING SOON"
+            : "LATEST RELEASE"}
+        </small>
+      </div>
+    `;
+
+  const buttonHtml = musicLink
+    ? `
+      <a
+        class="music-button"
+        href="${escapeAdminHtml(
+          musicLink
+        )}"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        음원 듣기
+        <span>↗</span>
+      </a>
+    `
+    : `
+      <button
+        class="music-button music-button-disabled"
+        type="button"
+        disabled
+      >
+        ${isUpcoming
+          ? "Coming Soon"
+          : "링크 준비 중"}
+      </button>
+    `;
+
+  return `
+    <article class="music-card visible">
+      <div class="music-artwork">
+        ${artworkHtml}
+      </div>
+
+      <div class="music-info">
+        <div>
+          <p class="music-type">
+            ${escapeAdminHtml(
+              item.type || "Music"
+            )}
+          </p>
+
+          <h3>
+            ${escapeAdminHtml(
+              item.title || "제목 없음"
+            )}
+          </h3>
+
+          <p class="music-artist">
+            ${escapeAdminHtml(
+              item.artist || ""
+            )}
+          </p>
+        </div>
+
+        ${
+          item.releaseDate
+            ? `
+              <span class="music-badge">
+                ${escapeAdminHtml(
+                  item.releaseDate
+                )}
+              </span>
+            `
+            : ""
+        }
+      </div>
+
+      <div class="music-description">
+        <p>
+          ${escapeAdminHtml(
+            item.description ||
+            "음원 소개가 준비 중입니다."
+          )}
+        </p>
+      </div>
+
+      ${buttonHtml}
+    </article>
+  `;
+}
+
+async function loadPublicMusic() {
+  const musicList =
+    document.getElementById(
+      "publicMusicList"
+    );
+
+  if (!musicList) {
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      "/api/content?type=music",
+      {
+        method: "GET",
+
+        headers: {
+          Accept: "application/json",
+        },
+
+        cache: "no-store",
+      }
+    );
+
+    const result =
+      await response.json();
+
+    if (
+      !response.ok ||
+      result.success === false
+    ) {
+      throw new Error(
+        result.message ||
+        "음원을 불러오지 못했습니다."
+      );
+    }
+
+    const items =
+      Array.isArray(result.items)
+        ? result.items
+        : [];
+
+    if (items.length === 0) {
+      musicList.innerHTML = `
+        <div class="music-loading">
+          공개된 음원이 없습니다.
+        </div>
+      `;
+
+      return;
+    }
+
+    musicList.innerHTML =
+      items
+        .map(
+          createPublicMusicCardHtml
+        )
+        .join("");
+  } catch (error) {
+    console.error(
+      "공개 음원 불러오기 실패:",
+      error
+    );
+
+    musicList.innerHTML = `
+      <div class="music-loading">
+        음원을 불러오지 못했습니다.
+      </div>
+    `;
+  }
+}
 
 /* =========================
    FORM TITLE
@@ -3734,4 +3944,13 @@ if (document.readyState === "loading") {
   );
 } else {
   initializeFanMessages();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener(
+    "DOMContentLoaded",
+    loadPublicMusic
+  );
+} else {
+  loadPublicMusic();
 }
