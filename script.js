@@ -1418,14 +1418,48 @@ function createPublicMusicCardHtml(item) {
 }
 
 async function loadPublicMusic() {
-  const musicList =
+  const musicProfileList =
     document.getElementById(
-      "publicMusicList"
+      "musicProfileList"
     );
 
-  if (!musicList) {
+  if (!musicProfileList) {
+    console.warn(
+      "musicProfileList를 찾을 수 없습니다."
+    );
+
     return;
   }
+
+  const profileSettings = {
+    onyour: {
+      suffix: "Onyour",
+      defaultArtworkTitle: "ONYOUR",
+      defaultLabel: "COMING SOON",
+      countLabel: "발매",
+    },
+
+    leehwigeun: {
+      suffix: "Leehwigeun",
+      defaultArtworkTitle: "이휘근",
+      defaultLabel: "LATEST RELEASE",
+      countLabel: "발매",
+    },
+
+    eluni: {
+      suffix: "Eluni",
+      defaultArtworkTitle: "이루니",
+      defaultLabel: "PARTICIPATION",
+      countLabel: "참여",
+    },
+
+    leecherin: {
+      suffix: "Leecherin",
+      defaultArtworkTitle: "이체린",
+      defaultLabel: "PARTICIPATION",
+      countLabel: "참여",
+    },
+  };
 
   try {
     const response = await fetch(
@@ -1459,33 +1493,254 @@ async function loadPublicMusic() {
         ? result.items
         : [];
 
-    if (items.length === 0) {
-      musicList.innerHTML = `
-        <div class="music-loading">
-          공개된 음원이 없습니다.
-        </div>
-      `;
+    Object.entries(
+      profileSettings
+    ).forEach(
+      ([profileKey, setting]) => {
+        const item =
+          items.find(
+            (musicItem) => {
+              const savedProfileKey =
+                musicItem.profileKey ||
+                musicItem.profile_key ||
+                musicItem.id;
 
-      return;
-    }
+              return (
+                savedProfileKey ===
+                profileKey
+              );
+            }
+          );
 
-    musicList.innerHTML =
-      items
-        .map(
-          createPublicMusicCardHtml
-        )
-        .join("");
+        if (!item) {
+          return;
+        }
+
+        const suffix =
+          setting.suffix;
+
+        const coverImage =
+          document.getElementById(
+            `musicCover${suffix}`
+          );
+
+        const fallback =
+          document.getElementById(
+            `musicFallback${suffix}`
+          );
+
+        const type =
+          document.getElementById(
+            `musicType${suffix}`
+          );
+
+        const title =
+          document.getElementById(
+            `musicTitle${suffix}`
+          );
+
+        const artist =
+          document.getElementById(
+            `musicArtist${suffix}`
+          );
+
+        const trackCount =
+          document.getElementById(
+            `musicTrackCount${suffix}`
+          );
+
+        const link =
+          document.getElementById(
+            `musicLink${suffix}`
+          );
+
+        const coverUrl = String(
+          item.coverUrl ||
+          item.cover_url ||
+          ""
+        ).trim();
+
+        const artworkTitle = String(
+          item.artworkTitle ||
+          item.artwork_title ||
+          item.artist ||
+          setting.defaultArtworkTitle
+        ).trim();
+
+        const displayLabel = String(
+          item.displayLabel ||
+          item.display_label ||
+          setting.defaultLabel
+        ).trim();
+
+        const artistName = String(
+          item.artist ||
+          item.artist_name ||
+          ""
+        ).trim();
+
+        const savedType = String(
+          item.type || ""
+        ).trim();
+
+        const savedTitle = String(
+          item.title || ""
+        ).trim();
+
+        const savedTrackCount =
+          Number(
+            item.trackCount ??
+            item.track_count
+          ) || 0;
+
+        const musicUrl =
+          item.spotifyUrl ||
+          item.spotify_url ||
+          item.appleUrl ||
+          item.apple_url ||
+          item.youtubeUrl ||
+          item.youtube_url ||
+          "";
+
+        /*
+         * 자켓 큰 제목과 작은 문구
+         */
+        if (fallback) {
+          const largeTitle =
+            fallback.querySelector(
+              "span"
+            );
+
+          const smallLabel =
+            fallback.querySelector(
+              "small"
+            );
+
+          if (largeTitle) {
+            largeTitle.textContent =
+              artworkTitle;
+          }
+
+          if (smallLabel) {
+            smallLabel.textContent =
+              displayLabel;
+          }
+        }
+
+        /*
+         * 카드 정보
+         */
+        if (type) {
+          type.textContent =
+            savedType || "MUSIC";
+        }
+
+        if (title) {
+          title.textContent =
+            savedTitle || "제목 없음";
+        }
+
+        if (artist) {
+          artist.textContent =
+            artistName;
+        }
+
+        if (trackCount) {
+          trackCount.textContent =
+            `${setting.countLabel} ${savedTrackCount}곡`;
+        }
+
+        /*
+         * 자켓 이미지
+         */
+        if (
+          coverImage &&
+          fallback
+        ) {
+          if (coverUrl) {
+            coverImage.src =
+              coverUrl;
+
+            coverImage.alt =
+              `${savedTitle || artworkTitle} 자켓`;
+
+            coverImage.hidden =
+              false;
+
+            fallback.hidden =
+              true;
+          } else {
+            coverImage.removeAttribute(
+              "src"
+            );
+
+            coverImage.alt = "";
+            coverImage.hidden =
+              true;
+
+            fallback.hidden =
+              false;
+          }
+        }
+
+        /*
+         * 음원 링크
+         */
+        if (link) {
+          if (musicUrl) {
+            link.href =
+              musicUrl;
+
+            link.target =
+              "_blank";
+
+            link.rel =
+              "noopener noreferrer";
+
+            link.removeAttribute(
+              "aria-disabled"
+            );
+
+            link.removeAttribute(
+              "tabindex"
+            );
+
+            link.classList.remove(
+              "music-button-disabled"
+            );
+
+            link.innerHTML =
+              `음원 듣기 <span>↗</span>`;
+          } else {
+            link.href = "#";
+
+            link.setAttribute(
+              "aria-disabled",
+              "true"
+            );
+
+            link.setAttribute(
+              "tabindex",
+              "-1"
+            );
+
+            link.classList.add(
+              "music-button-disabled"
+            );
+
+            link.textContent =
+              profileKey === "onyour"
+                ? "Coming Soon"
+                : "링크 준비 중";
+          }
+        }
+      }
+    );
   } catch (error) {
     console.error(
       "공개 음원 불러오기 실패:",
       error
     );
-
-    musicList.innerHTML = `
-      <div class="music-loading">
-        음원을 불러오지 못했습니다.
-      </div>
-    `;
   }
 }
 
