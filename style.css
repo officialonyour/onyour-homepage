@@ -6853,3 +6853,268 @@ body.admin-dashboard-open {
     animation: none !important;
   }
 }
+
+/* =========================
+   MOBILE COMPACT GLOBAL
+========================= */
+
+@media (max-width: 767px) {
+  :root {
+    --mobile-section-gap: 72px;
+    --mobile-card-gap: 10px;
+    --mobile-card-radius: 18px;
+  }
+
+  body {
+    font-size: 14px;
+  }
+
+  .section {
+    padding-top: var(--mobile-section-gap);
+    padding-bottom: 0;
+  }
+
+  .section:first-of-type {
+    padding-top: 0;
+  }
+
+  .section-heading {
+    margin-bottom: 20px;
+  }
+
+  .section-label {
+    margin-bottom: 9px;
+    font-size: 8px;
+    letter-spacing: 0.15em;
+  }
+
+  .section-heading h2 {
+    font-size: clamp(34px, 10vw, 46px);
+    line-height: 1.03;
+  }
+
+  .section-description,
+  .news-section-description {
+    font-size: 11px;
+    line-height: 1.65;
+  }
+
+  .hero {
+    min-height: 92svh;
+  }
+
+  .hero-content {
+    padding-top: 92px;
+    padding-bottom: 48px;
+  }
+
+  .hero-title {
+    font-size: clamp(54px, 18vw, 78px);
+    line-height: 0.9;
+  }
+
+  .hero-description {
+    margin-top: 18px;
+    font-size: 12px;
+    line-height: 1.65;
+  }
+
+  .hero-actions {
+    gap: 8px;
+    margin-top: 24px;
+  }
+
+  .button,
+  .hero-button,
+  .music-link,
+  .performance-link,
+  .contact-link {
+    min-height: 44px;
+    padding: 0 15px;
+    font-size: 10px;
+  }
+
+  .news-list,
+  .music-grid,
+  .performance-list,
+  .member-list,
+  .contact-list,
+  .video-list {
+    gap: var(--mobile-card-gap);
+  }
+
+  .news-card,
+  .music-card,
+  .performance-card,
+  .member-card,
+  .contact-card,
+  .video-card {
+    border-radius: var(--mobile-card-radius);
+  }
+
+  .news-card {
+    min-height: 230px;
+    padding: 18px 17px;
+  }
+
+  .news-card-featured {
+    min-height: 320px;
+  }
+
+  .news-card-number {
+    top: 15px;
+    right: 16px;
+    font-size: 32px;
+  }
+
+  .news-meta {
+    padding-right: 42px;
+    font-size: 7px;
+  }
+
+  .news-category {
+    min-height: 24px;
+    padding: 0 9px;
+  }
+
+  .news-content {
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: 11px;
+    padding: 28px 0 22px;
+  }
+
+  .news-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 10px;
+  }
+
+  .news-kicker {
+    margin-bottom: 7px;
+    font-size: 7px;
+  }
+
+  .news-content h3 {
+    font-size: 21px;
+    line-height: 1.2;
+  }
+
+  .news-content p:not(.news-kicker) {
+    margin-top: 10px;
+    font-size: 10px;
+    line-height: 1.6;
+  }
+
+  .news-link {
+    min-height: 40px;
+    padding-top: 12px;
+    font-size: 10px;
+  }
+
+  .news-status {
+    min-height: 30px;
+    padding: 0 11px;
+    font-size: 8px;
+  }
+
+  .music-card {
+    padding: 16px;
+  }
+
+  .music-card-content {
+    gap: 12px;
+  }
+
+  .music-card h3 {
+    font-size: 18px;
+  }
+
+  .music-card p {
+    font-size: 10px;
+    line-height: 1.6;
+  }
+
+  .performance-card {
+    padding: 17px;
+  }
+
+  .performance-date {
+    font-size: 10px;
+  }
+
+  .performance-card h3 {
+    margin-top: 10px;
+    font-size: 20px;
+  }
+
+  .performance-card p {
+    margin-top: 8px;
+    font-size: 10px;
+    line-height: 1.6;
+  }
+
+  .member-card {
+    padding: 16px;
+  }
+
+  .member-card h3 {
+    font-size: 20px;
+  }
+
+  .member-role {
+    margin-top: 5px;
+    font-size: 8px;
+  }
+
+  .member-description {
+    margin-top: 10px;
+    font-size: 10px;
+    line-height: 1.6;
+  }
+
+  .contact-card {
+    min-height: 74px;
+    padding: 14px 16px;
+  }
+
+  .contact-card-label {
+    font-size: 8px;
+  }
+
+  .contact-card-value {
+    margin-top: 5px;
+    font-size: 12px;
+  }
+
+  .footer {
+    margin-top: 72px;
+    padding-top: 28px;
+    padding-bottom: 26px;
+  }
+
+  .footer-inner {
+    gap: 18px;
+  }
+
+  .footer-logo {
+    font-size: 26px;
+  }
+
+  .footer-copy {
+    font-size: 8px;
+    line-height: 1.6;
+  }
+
+  .site-header {
+    padding: 14px 16px;
+  }
+
+  .site-logo {
+    font-size: 18px;
+  }
+
+  .mobile-menu-button {
+    width: 38px;
+    height: 38px;
+  }
+}
