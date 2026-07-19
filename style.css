@@ -7315,36 +7315,51 @@ body.admin-dashboard-open {
     padding-bottom: 94px;
   }
 
-.hero-v2 .scroll-indicator {
-  position: absolute;
-  left: 50%;
-  bottom: 72px;
-  z-index: 5;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 7px;
-  width: auto;
-  color: rgba(255, 255, 255, 0.82);
-  transform: translateX(-50%);
-}
+  .hero-v2 .scroll-indicator {
+    position: absolute;
+    left: 50%;
+    bottom: calc(156px + env(safe-area-inset-bottom));
+    z-index: 20;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+
+    width: auto;
+    margin: 0;
+
+    color: rgba(255, 255, 255, 0.88);
+
+    transform: translateX(-50%);
+  }
 
   .hero-v2 .scroll-indicator span:first-child {
     font-size: 8px;
     font-weight: 700;
-    letter-spacing: 0.2em;
+    line-height: 1;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
   }
 
   .hero-v2 .scroll-indicator .scroll-line {
     position: relative;
+
     display: block;
-    width: 16px;
-    height: 16px;
-    border-right: 1.5px solid rgba(255, 255, 255, 0.85);
-    border-bottom: 1.5px solid rgba(255, 255, 255, 0.85);
+    width: 17px;
+    height: 17px;
+
+    border-right: 1.5px solid rgba(255, 255, 255, 0.92);
+    border-bottom: 1.5px solid rgba(255, 255, 255, 0.92);
+
+    background: transparent;
+
     transform: rotate(45deg);
     animation: heroScrollBounce 1.8s ease-in-out infinite;
+  }
+
+  .hero-v2 .scroll-indicator .scroll-line::after {
+    display: none;
   }
 
   .hero-v2 .hero-quick-links {
@@ -7360,7 +7375,7 @@ body.admin-dashboard-open {
   }
 
   50% {
-    transform: translateY(5px) rotate(45deg);
+    transform: translateY(6px) rotate(45deg);
     opacity: 1;
   }
 }
