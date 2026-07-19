@@ -839,6 +839,60 @@ async function adminApiRequest(
   return result;
 }
 
+async function uploadAdminImage(
+  file,
+  folder = "music"
+) {
+  if (!file) {
+    return "";
+  }
+
+  const formData = new FormData();
+
+  formData.append("file", file);
+  formData.append("folder", folder);
+
+  const headers = new Headers();
+
+  if (currentAdminPassword) {
+    headers.set(
+      "X-Admin-Password",
+      currentAdminPassword
+    );
+  }
+
+  const response = await fetch(
+    "/api/upload",
+    {
+      method: "POST",
+      headers,
+      body: formData,
+    }
+  );
+
+  let result;
+
+  try {
+    result = await response.json();
+  } catch {
+    throw new Error(
+      "이미지 업로드 응답을 읽을 수 없습니다."
+    );
+  }
+
+  if (
+    !response.ok ||
+    result.success === false
+  ) {
+    throw new Error(
+      result.message ||
+      "이미지를 업로드하지 못했습니다."
+    );
+  }
+
+  return result.file?.url || "";
+}
+
 const ADMIN_CONTENT_TYPES = [
   "news",
   "performance",
@@ -1284,42 +1338,83 @@ function fillAdminMusicForm(item) {
     "adminMusicId",
     item.id
   );
+
+  setAdminFormValue(
+    "adminMusicCoverUrl",
+    item.coverUrl
+  );
+
   setAdminFormValue(
     "adminMusicType",
     item.type
   );
+
   setAdminFormValue(
     "adminMusicTitle",
     item.title
   );
+
   setAdminFormValue(
     "adminMusicArtist",
     item.artist
   );
+
   setAdminFormValue(
     "adminMusicReleaseDate",
     item.releaseDate
   );
+
   setAdminFormValue(
     "adminMusicDescription",
     item.description
   );
+
   setAdminFormValue(
     "adminMusicYoutubeUrl",
     item.youtubeUrl
   );
+
   setAdminFormValue(
     "adminMusicSpotifyUrl",
     item.spotifyUrl
   );
+
   setAdminFormValue(
     "adminMusicAppleUrl",
     item.appleUrl
   );
+
   setAdminFormValue(
     "adminMusicPublished",
     item.published
   );
+
+  const previewBox =
+    document.getElementById(
+      "adminMusicImagePreview"
+    );
+
+  const previewImage =
+    document.getElementById(
+      "adminMusicPreviewImage"
+    );
+
+  if (
+    item.coverUrl &&
+    previewBox &&
+    previewImage
+  ) {
+    previewImage.src =
+      item.coverUrl;
+
+    previewBox.hidden = false;
+  } else if (
+    previewBox &&
+    previewImage
+  ) {
+    previewImage.removeAttribute("src");
+    previewBox.hidden = true;
+  }
 }
 
 function fillAdminMembersForm(item) {
@@ -1635,45 +1730,126 @@ document
   .getElementById("adminMusicForm")
   ?.addEventListener(
     "submit",
-    (event) => {
+    async (event) => {
       event.preventDefault();
 
-      const id = getAdminFormValue(
-        "adminMusicId"
-      );
+      const submitButton =
+        event.currentTarget.querySelector(
+          '.admin-form-submit'
+        );
 
-      const data = {
-        id: id || createAdminId("music"),
-        type: getAdminFormValue(
-          "adminMusicType"
-        ),
-        title: getAdminFormValue(
-          "adminMusicTitle"
-        ),
-        artist: getAdminFormValue(
-          "adminMusicArtist"
-        ),
-        releaseDate: getAdminFormValue(
-          "adminMusicReleaseDate"
-        ),
-        description: getAdminFormValue(
-          "adminMusicDescription"
-        ),
-        youtubeUrl: getAdminFormValue(
-          "adminMusicYoutubeUrl"
-        ),
-        spotifyUrl: getAdminFormValue(
-          "adminMusicSpotifyUrl"
-        ),
-        appleUrl: getAdminFormValue(
-          "adminMusicAppleUrl"
-        ),
-        published: getAdminFormValue(
-          "adminMusicPublished"
-        ),
-      };
+      const id =
+        getAdminFormValue(
+          "adminMusicId"
+        );
 
-      saveAdminItem("music", data);
+      const imageInput =
+        document.getElementById(
+          "adminMusicImage"
+        );
+
+      let coverUrl =
+        getAdminFormValue(
+          "adminMusicCoverUrl"
+        );
+
+      try {
+        if (submitButton) {
+          submitButton.disabled = true;
+          submitButton.textContent =
+            "저장 중...";
+        }
+
+        const selectedFile =
+          imageInput?.files?.[0];
+
+        if (selectedFile) {
+          coverUrl =
+            await uploadAdminImage(
+              selectedFile,
+              "music"
+            );
+
+          setAdminFormValue(
+            "adminMusicCoverUrl",
+            coverUrl
+          );
+        }
+
+        const data = {
+          id:
+            id ||
+            createAdminId("music"),
+
+          type:
+            getAdminFormValue(
+              "adminMusicType"
+            ),
+
+          title:
+            getAdminFormValue(
+              "adminMusicTitle"
+            ),
+
+          artist:
+            getAdminFormValue(
+              "adminMusicArtist"
+            ),
+
+          releaseDate:
+            getAdminFormValue(
+              "adminMusicReleaseDate"
+            ),
+
+          description:
+            getAdminFormValue(
+              "adminMusicDescription"
+            ),
+
+          coverUrl,
+
+          youtubeUrl:
+            getAdminFormValue(
+              "adminMusicYoutubeUrl"
+            ),
+
+          spotifyUrl:
+            getAdminFormValue(
+              "adminMusicSpotifyUrl"
+            ),
+
+          appleUrl:
+            getAdminFormValue(
+              "adminMusicAppleUrl"
+            ),
+
+          published:
+            getAdminFormValue(
+              "adminMusicPublished"
+            ),
+        };
+
+        await saveAdminItem(
+          "music",
+          data
+        );
+      } catch (error) {
+        console.error(
+          "음원 이미지 또는 콘텐츠 저장 실패:",
+          error
+        );
+
+        alert(
+          error.message ||
+          "음원을 저장하지 못했습니다."
+        );
+      } finally {
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.textContent =
+            "저장";
+        }
+      }
     }
   );
 
