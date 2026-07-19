@@ -6739,17 +6739,26 @@ body.admin-dashboard-open {
 
 .hero-v2 .scroll-indicator {
   position: absolute;
-  right: var(--page-padding);
-  bottom: calc(26px + env(safe-area-inset-bottom));
-  z-index: 4;
+  left: 50%;
+  right: auto;
+  bottom: calc(100px + env(safe-area-inset-bottom));
+  z-index: 20;
+
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
-  color: rgba(255,255,255,.46);
+  gap: 5px;
+
+  width: auto;
+  margin: 0;
+
+  color: rgba(255, 255, 255, 0.88);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: .18em;
   text-transform: uppercase;
+
+  transform: translateX(-50%);
 }
 
 .hero-v2 .scroll-line {
@@ -7329,24 +7338,6 @@ body.admin-dashboard-open {
     padding-bottom: 94px;
   }
 
-  .hero-v2 .scroll-indicator {
-    position: absolute;
-    left: 50%;
-    bottom: calc(156px + env(safe-area-inset-bottom));
-    z-index: 20;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-
-    width: auto;
-    margin: 0;
-
-    color: rgba(255, 255, 255, 0.88);
-
-    transform: translateX(-50%);
-  }
 
   .hero-v2 .scroll-indicator span:first-child {
     font-size: 8px;
@@ -7407,20 +7398,3 @@ body.admin-dashboard-open {
   }
 }
 
-/* =========================
-   MOBILE HERO FINAL POSITION
-========================= */
-
-@media (max-width: 767px) {
-  .hero-v2 .hero-content {
-    width: min(100%, 760px);
-    max-width: none;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-height: 100svh;
-    padding-top: 52px;
-    padding-bottom: 132px;
-    transform: translateY(-34px);
-  }
-}
