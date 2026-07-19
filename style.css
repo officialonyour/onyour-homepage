@@ -7289,7 +7289,8 @@ body.admin-dashboard-open {
 
 @media (max-width: 767px) {
   .hero-v2 {
-    min-height: 100svh;
+    position: relative;
+    min-height: 92svh;
     overflow: hidden;
   }
 
@@ -7309,20 +7310,20 @@ body.admin-dashboard-open {
   }
 
   .hero-v2 .hero-content {
-    min-height: 100svh;
+    min-height: 92svh;
     padding-top: 92px;
-    padding-bottom: 88px;
+    padding-bottom: 94px;
   }
 
   .hero-v2 .scroll-indicator {
     position: absolute;
     left: 50%;
-    bottom: 22px;
+    bottom: 18px;
     z-index: 5;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
     width: auto;
     color: rgba(255, 255, 255, 0.82);
     transform: translateX(-50%);
@@ -7338,8 +7339,8 @@ body.admin-dashboard-open {
   .hero-v2 .scroll-indicator .scroll-line {
     position: relative;
     display: block;
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     border-right: 1.5px solid rgba(255, 255, 255, 0.85);
     border-bottom: 1.5px solid rgba(255, 255, 255, 0.85);
     transform: rotate(45deg);
@@ -7347,7 +7348,7 @@ body.admin-dashboard-open {
   }
 
   .hero-v2 .hero-quick-links {
-    margin-bottom: 26px;
+    margin-bottom: 18px;
   }
 }
 
@@ -7359,7 +7360,7 @@ body.admin-dashboard-open {
   }
 
   50% {
-    transform: translateY(6px) rotate(45deg);
+    transform: translateY(5px) rotate(45deg);
     opacity: 1;
   }
 }
