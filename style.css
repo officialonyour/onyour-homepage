@@ -7350,11 +7350,11 @@ body.admin-dashboard-open {
   transform: none;
 }
 
-  .hero-v2 .hero-content {
-    min-height: 100svh;
-    padding-top: 92px;
-    padding-bottom: 94px;
-  }
+.hero-v2 .hero-content {
+  min-height: 100svh;
+  padding-top: 118px;
+  padding-bottom: 68px;
+}
 
 
   .hero-v2 .scroll-indicator span:first-child {
