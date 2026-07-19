@@ -1106,28 +1106,110 @@ function renderAdminVideoList() {
 }
 
 function renderAdminMusicList() {
-  const list = document.getElementById(
-    "adminMusicList"
+  const profileSettings = {
+    onyour: {
+      suffix: "Onyour",
+      defaultName: "ONYOUR",
+      countLabel: "발매",
+    },
+
+    leehwigeun: {
+      suffix: "Leehwigeun",
+      defaultName: "이휘근",
+      countLabel: "발매",
+    },
+
+    eluni: {
+      suffix: "Eluni",
+      defaultName: "이루니",
+      countLabel: "참여",
+    },
+
+    leecherin: {
+      suffix: "Leecherin",
+      defaultName: "이체린",
+      countLabel: "참여",
+    },
+  };
+
+  Object.entries(
+    profileSettings
+  ).forEach(
+    ([profileKey, setting]) => {
+      const item =
+        adminStore.music.find(
+          (musicItem) =>
+            musicItem.profileKey ===
+              profileKey ||
+            musicItem.id === profileKey
+        );
+
+      const image =
+        document.getElementById(
+          `adminMusicCardImage${setting.suffix}`
+        );
+
+      const fallback =
+        document.getElementById(
+          `adminMusicCardFallback${setting.suffix}`
+        );
+
+      const title =
+        document.getElementById(
+          `adminMusicCardTitle${setting.suffix}`
+        );
+
+      const count =
+        document.getElementById(
+          `adminMusicCardCount${setting.suffix}`
+        );
+
+      if (title) {
+        title.textContent =
+          item?.title ||
+          "음원 정보가 없습니다.";
+      }
+
+      if (count) {
+        const trackCount =
+          Number(item?.trackCount) || 0;
+
+        count.textContent =
+          `${setting.countLabel} ${trackCount}곡`;
+      }
+
+      if (
+        image &&
+        fallback
+      ) {
+        const coverUrl =
+          String(
+            item?.coverUrl || ""
+          ).trim();
+
+        if (coverUrl) {
+          image.src = coverUrl;
+
+          image.alt =
+            `${
+              item?.title ||
+              setting.defaultName
+            } 자켓`;
+
+          image.hidden = false;
+          fallback.hidden = true;
+        } else {
+          image.removeAttribute("src");
+          image.alt = "";
+          image.hidden = true;
+
+          fallback.hidden = false;
+          fallback.textContent =
+            setting.defaultName;
+        }
+      }
+    }
   );
-
-  if (!list) return;
-
-  list.innerHTML = adminStore.music
-    .map((item) =>
-      createAdminListItem({
-        sectionName: "music",
-        id: item.id,
-        category: item.type,
-        title: item.title,
-        meta: [
-          item.artist,
-          item.releaseDate,
-        ]
-          .filter(Boolean)
-          .join(" · "),
-      })
-    )
-    .join("");
 }
 
 function renderAdminMembersList() {
