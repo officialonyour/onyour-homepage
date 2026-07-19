@@ -1438,153 +1438,232 @@
     <!-- =========================
          NEWS 목록
     ========================== -->
-    <section
-      class="admin-section-view admin-view"
-      id="adminNewsView"
-      data-admin-view="news"
-      aria-hidden="true"
+    <!-- =========================
+     음원 프로필 수정
+========================== -->
+<section
+  class="admin-section-view admin-view"
+  id="adminMusicFormView"
+  data-admin-view="music-form"
+  aria-hidden="true"
+>
+  <div class="admin-section-header">
+    <button
+      class="admin-section-back"
+      type="button"
+      data-admin-back="music"
+      aria-label="음원 관리로 돌아가기"
     >
-      <div class="admin-section-header">
-        <button
-          class="admin-section-back"
-          type="button"
-          data-admin-back="home"
-          aria-label="관리자 메인으로 돌아가기"
-        >
-          ←
-        </button>
+      ←
+    </button>
 
-        <div>
-          <p>CONTENT MANAGEMENT</p>
-          <h3>News 관리</h3>
-        </div>
+    <div>
+      <p>MUSIC PROFILE EDITOR</p>
 
-        <button
-          class="admin-add-button"
-          id="adminNewsAddButton"
-          type="button"
-          data-open-form="news"
-        >
-          + 새 소식
-        </button>
-      </div>
+      <h3 id="adminMusicFormTitle">
+        음원 정보 수정
+      </h3>
+    </div>
+  </div>
 
-      <div
-        class="admin-content-list"
-        id="adminNewsList"
+  <form
+    class="admin-content-form"
+    id="adminMusicForm"
+  >
+    <input
+      id="adminMusicId"
+      type="hidden"
+    />
+
+    <input
+      id="adminMusicProfileKey"
+      type="hidden"
+    />
+
+    <input
+      id="adminMusicCoverUrl"
+      type="hidden"
+    />
+
+    <div class="admin-music-editor-profile">
+      <span id="adminMusicEditorCategory">
+        MUSIC PROFILE
+      </span>
+
+      <strong id="adminMusicEditorName">
+        ONYOUR
+      </strong>
+
+      <small>
+        홈페이지 Music 영역에 표시되는 대표 정보를 수정합니다.
+      </small>
+    </div>
+
+    <label>
+      표시 구분
+
+      <select
+        id="adminMusicType"
+        required
       >
-        <article
-          class="admin-content-item"
-          data-content-id="news-1"
-        >
-          <div class="admin-content-item-main">
-            <span class="admin-content-category">
-              Release
-            </span>
+        <option value="TEAM">TEAM</option>
+        <option value="ARTIST">ARTIST</option>
+        <option value="PARTICIPATION">
+          PARTICIPATION
+        </option>
+      </select>
+    </label>
 
-            <strong>
-              가을 첫 정규앨범 발매 예정
-            </strong>
+    <label>
+      최근 앨범 또는 참여곡 제목
 
-            <small>2026 Autumn</small>
-          </div>
+      <input
+        id="adminMusicTitle"
+        type="text"
+        placeholder="앨범 또는 참여곡 제목"
+        required
+      />
+    </label>
 
-          <div class="admin-content-actions">
-            <button
-              type="button"
-              data-action="edit"
-              data-content-type="news"
-              data-content-id="news-1"
-            >
-              수정
-            </button>
+    <label>
+      표시 이름
 
-            <button
-              type="button"
-              data-action="delete"
-              data-content-type="news"
-              data-content-id="news-1"
-            >
-              삭제
-            </button>
-          </div>
-        </article>
+      <input
+        id="adminMusicArtist"
+        type="text"
+        placeholder="아티스트 또는 팀 이름"
+        required
+      />
+    </label>
 
-        <article
-          class="admin-content-item"
-          data-content-id="news-2"
-        >
-          <div class="admin-content-item-main">
-            <span class="admin-content-category">
-              Performance
-            </span>
+    <label>
+      자켓 안 표시 문구
 
-            <strong>
-              강릉 버스킹 전국대회 본선
-            </strong>
+      <input
+        id="adminMusicDisplayLabel"
+        type="text"
+        maxlength="40"
+        placeholder="예: COMING SOON, LATEST RELEASE"
+      />
 
-            <small>2026.07.25</small>
-          </div>
+      <small class="admin-field-help">
+        앨범 자켓 안에서 이름 아래에 작게 표시되는 문구입니다.
+      </small>
+    </label>
 
-          <div class="admin-content-actions">
-            <button
-              type="button"
-              data-action="edit"
-              data-content-type="news"
-              data-content-id="news-2"
-            >
-              수정
-            </button>
+    <label>
+      총 발매·참여 곡 수
 
-            <button
-              type="button"
-              data-action="delete"
-              data-content-type="news"
-              data-content-id="news-2"
-            >
-              삭제
-            </button>
-          </div>
-        </article>
+      <input
+        id="adminMusicTrackCount"
+        type="number"
+        min="0"
+        step="1"
+        value="0"
+        required
+      />
+    </label>
 
-        <article
-          class="admin-content-item"
-          data-content-id="news-3"
-        >
-          <div class="admin-content-item-main">
-            <span class="admin-content-category">
-              Video
-            </span>
+    <label>
+      발매일 또는 상태
 
-            <strong>
-              새로운 라이브 영상 공개
-            </strong>
+      <input
+        id="adminMusicReleaseDate"
+        type="text"
+        placeholder="예: 2026.05.01 또는 Coming Soon"
+      />
+    </label>
 
-            <small>New</small>
-          </div>
+    <label>
+      설명
 
-          <div class="admin-content-actions">
-            <button
-              type="button"
-              data-action="edit"
-              data-content-type="news"
-              data-content-id="news-3"
-            >
-              수정
-            </button>
+      <textarea
+        id="adminMusicDescription"
+        rows="4"
+        placeholder="앨범 또는 참여곡 설명"
+      ></textarea>
+    </label>
 
-            <button
-              type="button"
-              data-action="delete"
-              data-content-type="news"
-              data-content-id="news-3"
-            >
-              삭제
-            </button>
-          </div>
-        </article>
-      </div>
-    </section>
+    <label>
+      최근 앨범·참여곡 자켓
+
+      <input
+        id="adminMusicImage"
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/gif"
+      />
+    </label>
+
+    <div
+      class="admin-image-preview"
+      id="adminMusicImagePreview"
+      hidden
+    >
+      <img
+        id="adminMusicPreviewImage"
+        src=""
+        alt="음원 자켓 미리보기"
+      />
+    </div>
+
+    <label>
+      YouTube 링크
+
+      <input
+        id="adminMusicYoutubeUrl"
+        type="url"
+        placeholder="https://"
+      />
+    </label>
+
+    <label>
+      Spotify 링크
+
+      <input
+        id="adminMusicSpotifyUrl"
+        type="url"
+        placeholder="https://"
+      />
+    </label>
+
+    <label>
+      Apple Music 링크
+
+      <input
+        id="adminMusicAppleUrl"
+        type="url"
+        placeholder="https://"
+      />
+    </label>
+
+    <label class="admin-checkbox-label">
+      <input
+        id="adminMusicPublished"
+        type="checkbox"
+        checked
+      />
+
+      <span>홈페이지에 공개</span>
+    </label>
+
+    <div class="admin-form-actions">
+      <button
+        class="admin-form-cancel"
+        type="button"
+        data-admin-back="music"
+      >
+        취소
+      </button>
+
+      <button
+        class="admin-form-submit"
+        type="submit"
+      >
+        저장
+      </button>
+    </div>
+  </form>
+</section>
 
 
     <!-- NEWS 작성/수정 -->

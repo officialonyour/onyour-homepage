@@ -52,32 +52,24 @@ const CONTENT_CONFIG = {
 
 
   music: {
-    table: "music",
-    orderBy: `
-    CASE profile_key
-    WHEN 'onyour' THEN 1
-    WHEN 'leehwigeun' THEN 2
-    WHEN 'eluni' THEN 3
-    WHEN 'leecherin' THEN 4
-    ELSE 5
-    END,
-    created_at ASC
-    `,
-  
-    fields: {
-      profileKey: "profile_key",
-      type: "release_type",
-      title: "title",
-      artist: "artist",
-      releaseDate: "release_date",
-      description: "description",
-      coverUrl: "cover_url",
-      youtubeUrl: "youtube_url",
-      spotifyUrl: "spotify_url",
-      appleUrl: "apple_url",
-      trackCount: "track_count",
-      published: "published",
-      publishAt: "publish_at",
+  table: "music",
+  orderBy: "created_at DESC",
+
+  fields: {
+    profileKey: "profile_key",
+    type: "release_type",
+    title: "title",
+    artist: "artist",
+    displayLabel: "display_label",
+    trackCount: "track_count",
+    releaseDate: "release_date",
+    description: "description",
+    coverUrl: "cover_url",
+    youtubeUrl: "youtube_url",
+    spotifyUrl: "spotify_url",
+    appleUrl: "apple_url",
+    published: "published",
+    publishAt: "publish_at",
   },
 },
 
@@ -632,10 +624,7 @@ function normalizeContentData(
         databaseColumn === "track_count"
       ) {
         value =
-          Math.max(
-            0,
-            Number.parseInt(value, 10) || 0
-          );
+          Number.parseInt(value, 10) || 0;
       } else if (value == null) {
         value = "";
       } else {
