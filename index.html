@@ -61,479 +61,80 @@
 
   <main>
     <!-- HERO -->
-    <section class="hero" id="home">
-      <div class="hero-image-wrap">
+    <section class="hero hero-v2" id="home">
+      <div class="hero-image-wrap" aria-hidden="true">
         <img
           class="hero-image"
           id="heroImage"
           src="images/team-main.jpg"
-          alt="ONYOUR 멤버 단체사진"
+          alt=""
           fetchpriority="high"
         />
-
         <div class="hero-overlay"></div>
+        <div class="hero-grain"></div>
+        <span class="hero-orbit hero-orbit-one"></span>
+        <span class="hero-orbit hero-orbit-two"></span>
       </div>
 
-      <div class="hero-content">
-        <p class="hero-eyebrow" id="heroEyebrow">
-          JAZZ HIP-HOP TRIO
-        </p>
+      <div class="hero-layout">
+        <div class="hero-content">
+          <p class="hero-status">
+            <span class="hero-status-dot" aria-hidden="true"></span>
+            1ST FULL ALBUM · 2026 AUTUMN
+          </p>
 
-        <h1 class="hero-title" id="heroTitle">
-          Jazz Hiphop music that<br />
-          stays with you.
-        </h1>
+          <p class="hero-eyebrow" id="heroEyebrow">
+            JAZZ HIP-HOP TRIO · SEOUL, KOREA
+          </p>
 
-        <p class="hero-description" id="heroDescription">
-          랩, 보컬, 기타가 함께 만드는<br />
-          ONYOUR의 음악을 만나보세요.
-        </p>
+          <h1 class="hero-title" id="heroTitle">
+            Music that<br />
+            <em>stays with you.</em>
+          </h1>
 
-        <div class="hero-actions">
-          <a
-            class="button button-primary"
-            id="watchLiveButton"
-            href="#live"
-          >
-            <span class="button-icon">▶</span>
-            Watch Live
-          </a>
+          <p class="hero-description" id="heroDescription">
+            랩, 보컬, 기타가 한 장면처럼 어우러지는 음악.<br />
+            ONYOUR의 첫 번째 이야기를 만나보세요.
+          </p>
 
-          <a
-            class="button button-secondary"
-            id="heroInstagramButton"
-            href="https://www.instagram.com/official_onyour"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Instagram
-          </a>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#music">
+              <span class="button-icon" aria-hidden="true">♪</span>
+              Listen to Music
+            </a>
+
+            <a class="button button-secondary" id="watchLiveButton" href="#live">
+              <span class="button-icon" aria-hidden="true">▶</span>
+              Watch Live
+            </a>
+          </div>
+
+          <div class="hero-quick-links" aria-label="ONYOUR 소셜 링크">
+            <a
+              id="heroInstagramButton"
+              href="https://www.instagram.com/official_onyour"
+              target="_blank"
+              rel="noopener noreferrer"
+            >Instagram <span>↗</span></a>
+            <a
+              href="https://youtube.com/@official.onyour"
+              target="_blank"
+              rel="noopener noreferrer"
+            >YouTube <span>↗</span></a>
+          </div>
+        </div>
+
+        <div class="hero-signature" aria-hidden="true">
+          <span>ONYOUR</span>
+          <small>OFFICIAL · 2026</small>
         </div>
       </div>
 
-      <a class="scroll-indicator" href="#live" aria-label="아래로 이동">
-        <span>Scroll</span>
+      <a class="scroll-indicator" href="#news" aria-label="새 소식으로 이동">
+        <span>Explore</span>
         <span class="scroll-line"></span>
       </a>
     </section>
-
-<!-- FAN MESSAGES -->
-<section
-  class="section fan-messages-section"
-  id="messages"
->
-  <div class="fan-messages-inner">
-
-    <div class="fan-messages-heading reveal">
-      <p class="section-label">
-        FAN MESSAGES
-      </p>
-
-      <div class="fan-messages-title-row">
-        <div>
-          <h2>
-            Messages for<br />
-            ONYOUR.
-          </h2>
-
-          <p class="fan-messages-description">
-            공연 후기와 응원의 메시지를 남겨주세요.
-          </p>
-        </div>
-
-        <button
-          class="fan-message-write-toggle"
-          id="fanMessageWriteToggle"
-          type="button"
-          aria-expanded="false"
-          aria-controls="fanMessageFormWrap"
-        >
-          메시지 남기기
-        </button>
-      </div>
-    </div>
-
-    <!-- 메시지 작성 폼 -->
-    <div
-      class="fan-message-form-wrap"
-      id="fanMessageFormWrap"
-      hidden
-    >
-      <form
-        class="fan-message-form"
-        id="fanMessageForm"
-        autocomplete="off"
-      >
-        <input
-          type="hidden"
-          id="fanMessageId"
-          value=""
-        />
-
-        <div class="fan-message-form-grid">
-
-          <label class="fan-message-field">
-            <span>
-              이름
-              <em>*</em>
-            </span>
-
-            <input
-              type="text"
-              id="fanMessageName"
-              name="name"
-              maxlength="20"
-              placeholder="이름 또는 닉네임"
-              required
-            />
-          </label>
-
-          <label class="fan-message-field">
-            <span>
-              비밀번호
-              <em>*</em>
-            </span>
-
-            <input
-              type="password"
-              id="fanMessagePassword"
-              name="password"
-              minlength="4"
-              maxlength="20"
-              placeholder="수정·삭제용 비밀번호"
-              autocomplete="new-password"
-              required
-            />
-          </label>
-
-          <label class="fan-message-field">
-            <span>
-              공연
-            </span>
-
-            <select
-              id="fanMessagePerformance"
-              name="performance"
-            >
-              <option value="">
-                공연을 선택해 주세요
-              </option>
-
-              <option value="강릉 버스킹 전국대회">
-                강릉 버스킹 전국대회
-              </option>
-
-              <option value="기타 공연">
-                기타 공연
-              </option>
-            </select>
-          </label>
-
-          <fieldset class="fan-message-rating">
-            <legend>
-              별점
-              <small>선택</small>
-            </legend>
-
-            <div
-              class="fan-message-stars"
-              id="fanMessageStars"
-              role="radiogroup"
-              aria-label="별점 선택"
-            >
-              <input
-                type="radio"
-                id="fanRating1"
-                name="rating"
-                value="1"
-              />
-              <label
-                for="fanRating1"
-                aria-label="별점 1점"
-              >
-                ★
-              </label>
-
-              <input
-                type="radio"
-                id="fanRating2"
-                name="rating"
-                value="2"
-              />
-              <label
-                for="fanRating2"
-                aria-label="별점 2점"
-              >
-                ★
-              </label>
-
-              <input
-                type="radio"
-                id="fanRating3"
-                name="rating"
-                value="3"
-              />
-              <label
-                for="fanRating3"
-                aria-label="별점 3점"
-              >
-                ★
-              </label>
-
-              <input
-                type="radio"
-                id="fanRating4"
-                name="rating"
-                value="4"
-              />
-              <label
-                for="fanRating4"
-                aria-label="별점 4점"
-              >
-                ★
-              </label>
-
-              <input
-                type="radio"
-                id="fanRating5"
-                name="rating"
-                value="5"
-              />
-              <label
-                for="fanRating5"
-                aria-label="별점 5점"
-              >
-                ★
-              </label>
-            </div>
-          </fieldset>
-
-          <label
-            class="fan-message-field fan-message-field-wide"
-          >
-            <span>
-              메시지
-              <em>*</em>
-            </span>
-
-            <textarea
-              id="fanMessageContent"
-              name="message"
-              maxlength="300"
-              rows="4"
-              placeholder="응원 메시지나 공연 후기를 남겨주세요."
-              required
-            ></textarea>
-
-            <small class="fan-message-count">
-              <strong id="fanMessageCharacterCount">
-                0
-              </strong>
-              / 300
-            </small>
-          </label>
-
-        </div>
-
-        <div class="fan-message-form-footer">
-          <p>
-            작성한 글은 비밀번호로 수정하거나 삭제할 수 있습니다.
-          </p>
-
-          <div class="fan-message-form-actions">
-            <button
-              class="fan-message-cancel-button"
-              id="fanMessageCancelButton"
-              type="button"
-            >
-              취소
-            </button>
-
-            <button
-              class="fan-message-submit-button"
-              id="fanMessageSubmitButton"
-              type="submit"
-            >
-              등록
-            </button>
-          </div>
-        </div>
-
-        <p
-          class="fan-message-form-status"
-          id="fanMessageFormStatus"
-          aria-live="polite"
-        ></p>
-      </form>
-    </div>
-
-    <!-- 메시지 목록 -->
-    <div
-      class="fan-message-list"
-      id="fanMessageList"
-      aria-live="polite"
-    >
-      <article class="fan-message-card">
-        <div class="fan-message-card-header">
-          <div class="fan-message-user">
-            <span class="fan-message-avatar">
-              M
-            </span>
-
-            <div>
-              <strong>
-                김민지
-              </strong>
-
-              <span class="fan-message-performance">
-                강릉 버스킹 전국대회
-              </span>
-            </div>
-          </div>
-
-          <time datetime="2026-07-18">
-            2026.07.18
-          </time>
-        </div>
-
-        <div
-          class="fan-message-card-rating"
-          aria-label="별점 5점"
-        >
-          ★★★★★
-        </div>
-
-        <p class="fan-message-card-content">
-          Moonlight 정말 좋았어요.
-          다음 공연도 꼭 보러 갈게요!
-        </p>
-
-        <div class="fan-message-card-actions">
-          <button
-            type="button"
-            disabled
-          >
-            수정
-          </button>
-
-          <button
-            type="button"
-            disabled
-          >
-            삭제
-          </button>
-        </div>
-      </article>
-
-      <article class="fan-message-card">
-        <div class="fan-message-card-header">
-          <div class="fan-message-user">
-            <span class="fan-message-avatar">
-              J
-            </span>
-
-            <div>
-              <strong>
-                Jazzy
-              </strong>
-
-              <span class="fan-message-performance">
-                기타 공연
-              </span>
-            </div>
-          </div>
-
-          <time datetime="2026-07-17">
-            2026.07.17
-          </time>
-        </div>
-
-        <div
-          class="fan-message-card-rating"
-          aria-label="별점 4점"
-        >
-          ★★★★☆
-        </div>
-
-        <p class="fan-message-card-content">
-          기타 연주가 정말 인상 깊었어요.
-          가을 앨범도 기대할게요!
-        </p>
-
-        <div class="fan-message-card-actions">
-          <button
-            type="button"
-            disabled
-          >
-            수정
-          </button>
-
-          <button
-            type="button"
-            disabled
-          >
-            삭제
-          </button>
-        </div>
-      </article>
-
-      <article class="fan-message-card">
-        <div class="fan-message-card-header">
-          <div class="fan-message-user">
-            <span class="fan-message-avatar">
-              달
-            </span>
-
-            <div>
-              <strong>
-                달빛
-              </strong>
-
-              <span class="fan-message-performance">
-                강릉 버스킹 전국대회
-              </span>
-            </div>
-          </div>
-
-          <time datetime="2026-07-16">
-            2026.07.16
-          </time>
-        </div>
-
-        <p class="fan-message-card-content">
-          편안하게 들을 수 있어서 좋았습니다.
-          ONYOUR 음악 오래 듣고 싶어요.
-        </p>
-
-        <div class="fan-message-card-actions">
-          <button
-            type="button"
-            disabled
-          >
-            수정
-          </button>
-
-          <button
-            type="button"
-            disabled
-          >
-            삭제
-          </button>
-        </div>
-      </article>
-    </div>
-
-    <button
-      class="fan-message-more-button"
-      id="fanMessageMoreButton"
-      type="button"
-    >
-      더 많은 메시지 보기
-    </button>
-
-  </div>
-</section>
-
 
     <!-- LATEST NEWS -->
 <section class="section news-section" id="news">
@@ -1125,6 +726,423 @@
         </article>
       </div>
     </section>
+
+<!-- FAN MESSAGES -->
+<section
+  class="section fan-messages-section"
+  id="messages"
+>
+  <div class="fan-messages-inner">
+
+    <div class="fan-messages-heading reveal">
+      <p class="section-label">
+        FAN MESSAGES
+      </p>
+
+      <div class="fan-messages-title-row">
+        <div>
+          <h2>
+            Messages for<br />
+            ONYOUR.
+          </h2>
+
+          <p class="fan-messages-description">
+            공연 후기와 응원의 메시지를 남겨주세요.
+          </p>
+        </div>
+
+        <button
+          class="fan-message-write-toggle"
+          id="fanMessageWriteToggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="fanMessageFormWrap"
+        >
+          메시지 남기기
+        </button>
+      </div>
+    </div>
+
+    <!-- 메시지 작성 폼 -->
+    <div
+      class="fan-message-form-wrap"
+      id="fanMessageFormWrap"
+      hidden
+    >
+      <form
+        class="fan-message-form"
+        id="fanMessageForm"
+        autocomplete="off"
+      >
+        <input
+          type="hidden"
+          id="fanMessageId"
+          value=""
+        />
+
+        <div class="fan-message-form-grid">
+
+          <label class="fan-message-field">
+            <span>
+              이름
+              <em>*</em>
+            </span>
+
+            <input
+              type="text"
+              id="fanMessageName"
+              name="name"
+              maxlength="20"
+              placeholder="이름 또는 닉네임"
+              required
+            />
+          </label>
+
+          <label class="fan-message-field">
+            <span>
+              비밀번호
+              <em>*</em>
+            </span>
+
+            <input
+              type="password"
+              id="fanMessagePassword"
+              name="password"
+              minlength="4"
+              maxlength="20"
+              placeholder="수정·삭제용 비밀번호"
+              autocomplete="new-password"
+              required
+            />
+          </label>
+
+          <label class="fan-message-field">
+            <span>
+              공연
+            </span>
+
+            <select
+              id="fanMessagePerformance"
+              name="performance"
+            >
+              <option value="">
+                공연을 선택해 주세요
+              </option>
+
+              <option value="강릉 버스킹 전국대회">
+                강릉 버스킹 전국대회
+              </option>
+
+              <option value="기타 공연">
+                기타 공연
+              </option>
+            </select>
+          </label>
+
+          <fieldset class="fan-message-rating">
+            <legend>
+              별점
+              <small>선택</small>
+            </legend>
+
+            <div
+              class="fan-message-stars"
+              id="fanMessageStars"
+              role="radiogroup"
+              aria-label="별점 선택"
+            >
+              <input
+                type="radio"
+                id="fanRating1"
+                name="rating"
+                value="1"
+              />
+              <label
+                for="fanRating1"
+                aria-label="별점 1점"
+              >
+                ★
+              </label>
+
+              <input
+                type="radio"
+                id="fanRating2"
+                name="rating"
+                value="2"
+              />
+              <label
+                for="fanRating2"
+                aria-label="별점 2점"
+              >
+                ★
+              </label>
+
+              <input
+                type="radio"
+                id="fanRating3"
+                name="rating"
+                value="3"
+              />
+              <label
+                for="fanRating3"
+                aria-label="별점 3점"
+              >
+                ★
+              </label>
+
+              <input
+                type="radio"
+                id="fanRating4"
+                name="rating"
+                value="4"
+              />
+              <label
+                for="fanRating4"
+                aria-label="별점 4점"
+              >
+                ★
+              </label>
+
+              <input
+                type="radio"
+                id="fanRating5"
+                name="rating"
+                value="5"
+              />
+              <label
+                for="fanRating5"
+                aria-label="별점 5점"
+              >
+                ★
+              </label>
+            </div>
+          </fieldset>
+
+          <label
+            class="fan-message-field fan-message-field-wide"
+          >
+            <span>
+              메시지
+              <em>*</em>
+            </span>
+
+            <textarea
+              id="fanMessageContent"
+              name="message"
+              maxlength="300"
+              rows="4"
+              placeholder="응원 메시지나 공연 후기를 남겨주세요."
+              required
+            ></textarea>
+
+            <small class="fan-message-count">
+              <strong id="fanMessageCharacterCount">
+                0
+              </strong>
+              / 300
+            </small>
+          </label>
+
+        </div>
+
+        <div class="fan-message-form-footer">
+          <p>
+            작성한 글은 비밀번호로 수정하거나 삭제할 수 있습니다.
+          </p>
+
+          <div class="fan-message-form-actions">
+            <button
+              class="fan-message-cancel-button"
+              id="fanMessageCancelButton"
+              type="button"
+            >
+              취소
+            </button>
+
+            <button
+              class="fan-message-submit-button"
+              id="fanMessageSubmitButton"
+              type="submit"
+            >
+              등록
+            </button>
+          </div>
+        </div>
+
+        <p
+          class="fan-message-form-status"
+          id="fanMessageFormStatus"
+          aria-live="polite"
+        ></p>
+      </form>
+    </div>
+
+    <!-- 메시지 목록 -->
+    <div
+      class="fan-message-list"
+      id="fanMessageList"
+      aria-live="polite"
+    >
+      <article class="fan-message-card">
+        <div class="fan-message-card-header">
+          <div class="fan-message-user">
+            <span class="fan-message-avatar">
+              M
+            </span>
+
+            <div>
+              <strong>
+                김민지
+              </strong>
+
+              <span class="fan-message-performance">
+                강릉 버스킹 전국대회
+              </span>
+            </div>
+          </div>
+
+          <time datetime="2026-07-18">
+            2026.07.18
+          </time>
+        </div>
+
+        <div
+          class="fan-message-card-rating"
+          aria-label="별점 5점"
+        >
+          ★★★★★
+        </div>
+
+        <p class="fan-message-card-content">
+          Moonlight 정말 좋았어요.
+          다음 공연도 꼭 보러 갈게요!
+        </p>
+
+        <div class="fan-message-card-actions">
+          <button
+            type="button"
+            disabled
+          >
+            수정
+          </button>
+
+          <button
+            type="button"
+            disabled
+          >
+            삭제
+          </button>
+        </div>
+      </article>
+
+      <article class="fan-message-card">
+        <div class="fan-message-card-header">
+          <div class="fan-message-user">
+            <span class="fan-message-avatar">
+              J
+            </span>
+
+            <div>
+              <strong>
+                Jazzy
+              </strong>
+
+              <span class="fan-message-performance">
+                기타 공연
+              </span>
+            </div>
+          </div>
+
+          <time datetime="2026-07-17">
+            2026.07.17
+          </time>
+        </div>
+
+        <div
+          class="fan-message-card-rating"
+          aria-label="별점 4점"
+        >
+          ★★★★☆
+        </div>
+
+        <p class="fan-message-card-content">
+          기타 연주가 정말 인상 깊었어요.
+          가을 앨범도 기대할게요!
+        </p>
+
+        <div class="fan-message-card-actions">
+          <button
+            type="button"
+            disabled
+          >
+            수정
+          </button>
+
+          <button
+            type="button"
+            disabled
+          >
+            삭제
+          </button>
+        </div>
+      </article>
+
+      <article class="fan-message-card">
+        <div class="fan-message-card-header">
+          <div class="fan-message-user">
+            <span class="fan-message-avatar">
+              달
+            </span>
+
+            <div>
+              <strong>
+                달빛
+              </strong>
+
+              <span class="fan-message-performance">
+                강릉 버스킹 전국대회
+              </span>
+            </div>
+          </div>
+
+          <time datetime="2026-07-16">
+            2026.07.16
+          </time>
+        </div>
+
+        <p class="fan-message-card-content">
+          편안하게 들을 수 있어서 좋았습니다.
+          ONYOUR 음악 오래 듣고 싶어요.
+        </p>
+
+        <div class="fan-message-card-actions">
+          <button
+            type="button"
+            disabled
+          >
+            수정
+          </button>
+
+          <button
+            type="button"
+            disabled
+          >
+            삭제
+          </button>
+        </div>
+      </article>
+    </div>
+
+    <button
+      class="fan-message-more-button"
+      id="fanMessageMoreButton"
+      type="button"
+    >
+      더 많은 메시지 보기
+    </button>
+
+  </div>
+</section>
 
     <!-- FOLLOW -->
     <section class="section follow-section" id="follow">
