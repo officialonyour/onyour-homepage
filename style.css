@@ -7393,3 +7393,34 @@ body.admin-dashboard-open {
     opacity: 1;
   }
 }
+
+/* =========================
+   MOBILE HERO CLEAN
+========================= */
+
+@media (max-width: 767px) {
+  .hero-badge,
+  .hero-pill,
+  .hero-highlight,
+  .hero-announcement {
+    display: none !important;
+  }
+}
+
+/* =========================
+   MOBILE HERO FINAL POSITION
+========================= */
+
+@media (max-width: 767px) {
+  .hero-v2 .hero-content {
+    width: min(100%, 760px);
+    max-width: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100svh;
+    padding-top: 52px;
+    padding-bottom: 132px;
+    transform: translateY(-34px);
+  }
+}
