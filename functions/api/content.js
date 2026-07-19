@@ -400,6 +400,14 @@ async function saveContent(
       );
     }
 
+    if (
+      type === "music" &&
+      !String(body.coverUrl || "").trim()
+    ) {
+      body.coverUrl =
+      await resolveMusicCoverUrl(body);
+    }
+
     const validationError =
       validateRequiredFields(type, body);
 
@@ -851,6 +859,219 @@ function unauthorizedResponse() {
     },
     401
   );
+}
+
+async function resolveMusicCoverUrl(body) {
+  const spotifyUrl = String(
+    body.spotifyUrl || ""
+  ).trim();
+
+  const appleUrl = String(
+    body.appleUrl || ""
+  ).trim();
+
+  const youtubeUrl = String(
+    body.youtubeUrl || ""
+  ).trim();
+
+  if (spotifyUrl) {
+    const spotifyCover =
+      await fetchSpotifyCoverUrl(
+        spotifyUrl
+      );
+
+    if (spotifyCover) {
+      return spotifyCover;
+    }
+  }
+
+  if (appleUrl) {
+    const appleCover =
+      await fetchOpenGraphImage(
+        appleUrl
+      );
+
+    if (appleCover) {
+      return appleCover;
+    }
+  }
+
+  if (youtubeUrl) {
+    const youtubeCover =
+      getYouTubeThumbnailUrl(
+        youtubeUrl
+      );
+
+    if (youtubeCover) {
+      return youtubeCover;
+    }
+  }
+
+  return "";
+}
+
+
+async function fetchSpotifyCoverUrl(
+  spotifyUrl
+) {
+  try {
+    const endpoint =
+      "https://open.spotify.com/oembed?url=" +
+      encodeURIComponent(spotifyUrl);
+
+    const response = await fetch(endpoint, {
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      console.warn(
+        "Spotify cover fetch failed:",
+        response.status
+      );
+
+      return "";
+    }
+
+    const data = await response.json();
+
+    return String(
+      data?.thumbnail_url || ""
+    ).trim();
+  } catch (error) {
+    console.error(
+      "Spotify cover fetch error:",
+      error
+    );
+
+    return "";
+  }
+}
+
+
+async function fetchOpenGraphImage(
+  pageUrl
+) {
+  try {
+    const response = await fetch(pageUrl, {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 ONYOUR-CMS",
+        Accept: "text/html",
+      },
+      redirect: "follow",
+    });
+
+    if (!response.ok) {
+      return "";
+    }
+
+    const html = await response.text();
+
+    const patterns = [
+      /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i,
+      /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i,
+      /<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["']/i,
+      /<meta[^>]+content=["']([^"']+)["'][^>]+name=["']twitter:image["']/i,
+    ];
+
+    for (const pattern of patterns) {
+      const match = html.match(pattern);
+
+      if (match?.[1]) {
+        return decodeHtmlEntities(
+          match[1]
+        );
+      }
+    }
+
+    return "";
+  } catch (error) {
+    console.error(
+      "Open Graph cover fetch error:",
+      error
+    );
+
+    return "";
+  }
+}
+
+
+function getYouTubeThumbnailUrl(
+  youtubeUrl
+) {
+  try {
+    const url = new URL(youtubeUrl);
+    let videoId = "";
+
+    if (
+      url.hostname === "youtu.be" ||
+      url.hostname.endsWith(".youtu.be")
+    ) {
+      videoId =
+        url.pathname
+          .split("/")
+          .filter(Boolean)[0] || "";
+    }
+
+    if (
+      url.hostname.includes(
+        "youtube.com"
+      )
+    ) {
+      videoId =
+        url.searchParams.get("v") || "";
+
+      if (!videoId) {
+        const parts = url.pathname
+          .split("/")
+          .filter(Boolean);
+
+        const shortsIndex =
+          parts.indexOf("shorts");
+
+        const embedIndex =
+          parts.indexOf("embed");
+
+        if (
+          shortsIndex >= 0 &&
+          parts[shortsIndex + 1]
+        ) {
+          videoId =
+            parts[shortsIndex + 1];
+        } else if (
+          embedIndex >= 0 &&
+          parts[embedIndex + 1]
+        ) {
+          videoId =
+            parts[embedIndex + 1];
+        }
+      }
+    }
+
+    if (!videoId) {
+      return "";
+    }
+
+    return (
+      "https://i.ytimg.com/vi/" +
+      encodeURIComponent(videoId) +
+      "/maxresdefault.jpg"
+    );
+  } catch {
+    return "";
+  }
+}
+
+
+function decodeHtmlEntities(value) {
+  return String(value || "")
+    .replaceAll("&amp;", "&")
+    .replaceAll("&quot;", '"')
+    .replaceAll("&#39;", "'")
+    .replaceAll("&lt;", "<")
+    .replaceAll("&gt;", ">");
 }
 
 function jsonResponse(

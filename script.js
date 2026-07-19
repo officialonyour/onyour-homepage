@@ -2488,12 +2488,21 @@ document
   .getElementById("adminMusicForm")
   ?.addEventListener(
     "submit",
-    (event) => {
+    async (event) => {
       event.preventDefault();
 
-      const id = getAdminFormValue(
-        "adminMusicId"
-      );
+      const form =
+        event.currentTarget;
+
+      const submitButton =
+        form.querySelector(
+          ".admin-form-submit"
+        );
+
+      const id =
+        getAdminFormValue(
+          "adminMusicId"
+        );
 
       const profileKey =
         getAdminFormValue(
@@ -2502,104 +2511,165 @@ document
 
       const artist =
         getAdminFormValue(
-          "adminMusicEditorName"
+          "adminMusicArtist"
         );
 
       const artworkTitle =
         getAdminFormValue(
           "adminMusicArtworkTitle"
-        ) ||
-        artist;
+        );
 
       const displayLabel =
         getAdminFormValue(
           "adminMusicDisplayLabel"
         );
 
+      const imageInput =
+        document.getElementById(
+          "adminMusicImage"
+        );
+
+      let coverUrl =
+        getAdminFormValue(
+          "adminMusicCoverUrl"
+        );
+
       if (!artist) {
         alert(
-          "프로필 이름을 입력해 주세요."
+          "아티스트 또는 팀 이름을 입력해 주세요."
         );
 
         document
           .getElementById(
-            "adminMusicEditorName"
+            "adminMusicArtist"
           )
           ?.focus();
 
         return;
       }
 
+      if (!artworkTitle) {
+        alert(
+          "자켓 안 큰 제목을 입력해 주세요."
+        );
 
-      const data = {
-        id:
-          id ||
-          profileKey ||
-          createAdminId("music"),
+        document
+          .getElementById(
+            "adminMusicArtworkTitle"
+          )
+          ?.focus();
 
-        profileKey,
+        return;
+      }
 
-        type: getAdminFormValue(
-          "adminMusicType"
-        ),
+      try {
+        if (submitButton) {
+          submitButton.disabled = true;
+          submitButton.textContent =
+            "저장 중...";
+        }
 
-        title: getAdminFormValue(
-          "adminMusicTitle"
-        ),
+        const selectedFile =
+          imageInput?.files?.[0];
 
-        artist,
+        if (selectedFile) {
+          coverUrl =
+            await uploadAdminImage(
+              selectedFile,
+              "music"
+            );
 
-        artworkTitle,
+          setAdminFormValue(
+            "adminMusicCoverUrl",
+            coverUrl
+          );
+        }
 
-        displayLabel,
+        const data = {
+          id:
+            id ||
+            profileKey ||
+            createAdminId("music"),
 
-        trackCount:
-          Number(
+          profileKey,
+
+          type:
             getAdminFormValue(
-              "adminMusicTrackCount"
-            )
-          ) || 0,
+              "adminMusicType"
+            ),
 
-        releaseDate:
-          getAdminFormValue(
-            "adminMusicReleaseDate"
-          ),
+          title:
+            getAdminFormValue(
+              "adminMusicTitle"
+            ),
 
-        description:
-          getAdminFormValue(
-            "adminMusicDescription"
-          ),
+          artist,
 
-        coverUrl:
-          getAdminFormValue(
-            "adminMusicCoverUrl"
-          ),
+          artworkTitle,
 
-        youtubeUrl:
-          getAdminFormValue(
-            "adminMusicYoutubeUrl"
-          ),
+          displayLabel,
 
-        spotifyUrl:
-          getAdminFormValue(
-            "adminMusicSpotifyUrl"
-          ),
+          trackCount:
+            Number(
+              getAdminFormValue(
+                "adminMusicTrackCount"
+              )
+            ) || 0,
 
-        appleUrl:
-          getAdminFormValue(
-            "adminMusicAppleUrl"
-          ),
+          releaseDate:
+            getAdminFormValue(
+              "adminMusicReleaseDate"
+            ),
 
-        published:
-          getAdminFormValue(
-            "adminMusicPublished"
-          ),
-      };
+          description:
+            getAdminFormValue(
+              "adminMusicDescription"
+            ),
 
-      saveAdminItem(
-        "music",
-        data
-      );
+          coverUrl,
+
+          youtubeUrl:
+            getAdminFormValue(
+              "adminMusicYoutubeUrl"
+            ),
+
+          spotifyUrl:
+            getAdminFormValue(
+              "adminMusicSpotifyUrl"
+            ),
+
+          appleUrl:
+            getAdminFormValue(
+              "adminMusicAppleUrl"
+            ),
+
+          published:
+            getAdminFormValue(
+              "adminMusicPublished"
+            ),
+        };
+
+        await saveAdminItem(
+          "music",
+          data
+        );
+      } catch (error) {
+        console.error(
+          "음원 저장 실패:",
+          error
+        );
+
+        alert(
+          error.message ||
+          "음원 정보를 저장하지 못했습니다."
+        );
+      } finally {
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.textContent =
+            "저장";
+        }
+      }
     }
   );
 

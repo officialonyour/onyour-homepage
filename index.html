@@ -1485,24 +1485,24 @@
       type="hidden"
     />
 
-<div class="admin-music-editor-profile">
-  <span id="adminMusicEditorCategory">
-    MUSIC PROFILE
-  </span>
+    <div class="admin-music-editor-profile">
+      <span id="adminMusicEditorCategory">
+        MUSIC PROFILE
+      </span>
 
-  <input
-    id="adminMusicEditorName"
-    class="admin-music-editor-name-input"
-    type="text"
-    maxlength="40"
-    placeholder="프로필 이름"
-    aria-label="음원 프로필 이름"
-  />
+      <input
+        id="adminMusicEditorName"
+        class="admin-music-editor-name-input"
+        type="text"
+        maxlength="40"
+        placeholder="프로필 이름"
+        aria-label="음원 프로필 이름"
+      />
 
-  <small>
-    홈페이지 Music 영역에 표시되는 대표 정보를 수정합니다.
-  </small>
-</div>
+      <small>
+        홈페이지 Music 영역에 표시되는 대표 정보를 수정합니다.
+      </small>
+    </div>
 
     <label>
       표시 구분
@@ -1511,8 +1511,14 @@
         id="adminMusicType"
         required
       >
-        <option value="TEAM">TEAM</option>
-        <option value="ARTIST">ARTIST</option>
+        <option value="TEAM">
+          TEAM
+        </option>
+
+        <option value="ARTIST">
+          ARTIST
+        </option>
+
         <option value="PARTICIPATION">
           PARTICIPATION
         </option>
@@ -1520,14 +1526,30 @@
     </label>
 
     <label>
-      최근 앨범 또는 참여곡 제목
+      아티스트 또는 팀 이름
 
       <input
-        id="adminMusicTitle"
+        id="adminMusicArtist"
         type="text"
-        placeholder="앨범 또는 참여곡 제목"
+        maxlength="40"
+        placeholder="예: ONYOUR, 이휘근"
         required
       />
+    </label>
+
+    <label>
+      자켓 안 큰 제목
+
+      <input
+        id="adminMusicArtworkTitle"
+        type="text"
+        maxlength="40"
+        placeholder="예: ONYOUR, 이휘근"
+      />
+
+      <small class="admin-field-help">
+        앨범 자켓 안에서 가장 크게 표시되는 이름입니다.
+      </small>
     </label>
 
     <label>
@@ -1543,6 +1565,18 @@
       <small class="admin-field-help">
         앨범 자켓 안에서 이름 아래에 작게 표시되는 문구입니다.
       </small>
+    </label>
+
+    <label>
+      최근 앨범 또는 참여곡 제목
+
+      <input
+        id="adminMusicTitle"
+        type="text"
+        maxlength="100"
+        placeholder="앨범 또는 참여곡 제목"
+        required
+      />
     </label>
 
     <label>
@@ -1564,6 +1598,7 @@
       <input
         id="adminMusicReleaseDate"
         type="text"
+        maxlength="40"
         placeholder="예: 2026.05.01 또는 Coming Soon"
       />
     </label>
@@ -1574,6 +1609,7 @@
       <textarea
         id="adminMusicDescription"
         rows="4"
+        maxlength="500"
         placeholder="앨범 또는 참여곡 설명"
       ></textarea>
     </label>
@@ -1586,6 +1622,10 @@
         type="file"
         accept="image/jpeg,image/png,image/webp,image/gif"
       />
+
+      <small class="admin-field-help">
+        이미지를 직접 선택하면 음원 링크에서 자동으로 가져온 자켓보다 우선 적용됩니다.
+      </small>
     </label>
 
     <div
@@ -1607,6 +1647,7 @@
         id="adminMusicYoutubeUrl"
         type="url"
         placeholder="https://"
+        autocomplete="url"
       />
     </label>
 
@@ -1616,8 +1657,13 @@
       <input
         id="adminMusicSpotifyUrl"
         type="url"
-        placeholder="https://"
+        placeholder="https://open.spotify.com/"
+        autocomplete="url"
       />
+
+      <small class="admin-field-help">
+        자켓을 직접 등록하지 않으면 Spotify 링크의 앨범 자켓을 자동으로 사용합니다.
+      </small>
     </label>
 
     <label>
@@ -1626,7 +1672,8 @@
       <input
         id="adminMusicAppleUrl"
         type="url"
-        placeholder="https://"
+        placeholder="https://music.apple.com/"
+        autocomplete="url"
       />
     </label>
 
@@ -1637,7 +1684,9 @@
         checked
       />
 
-      <span>홈페이지에 공개</span>
+      <span>
+        홈페이지에 공개
+      </span>
     </label>
 
     <div class="admin-form-actions">
