@@ -2079,11 +2079,16 @@ const FAN_MESSAGE_PAGE_SIZE = 6;
 
 const fanMessageState = {
   isFormOpen: false,
+
   editingId: null,
+  editingPassword: "",
+
   offset: 0,
   total: 0,
   hasMore: false,
   isLoading: false,
+
+  messages: new Map(),
 };
 
 
@@ -2256,22 +2261,26 @@ function resetFanMessageForm() {
   }
 
   if (elements.characterCount) {
-    elements.characterCount.textContent = "0";
+    elements.characterCount.textContent =
+      "0";
   }
 
   if (elements.submitButton) {
     elements.submitButton.disabled = false;
-    elements.submitButton.textContent = "등록";
+    elements.submitButton.textContent =
+      "등록";
   }
 
   if (elements.formStatus) {
     elements.formStatus.textContent = "";
-    delete elements.formStatus.dataset.statusType;
+
+    delete elements.formStatus.dataset
+      .statusType;
   }
 
   fanMessageState.editingId = null;
+  fanMessageState.editingPassword = "";
 }
-
 
 /* =========================================================
    글자 수 표시
@@ -2455,6 +2464,34 @@ function createFanMessageRatingText(rating) {
   );
 }
 
+async function updateFanMessage(
+  messageId,
+  messageData
+) {
+  const response = await fetch(
+    FAN_MESSAGE_API_URL,
+    {
+      method: "PUT",
+
+      headers: {
+        "Content-Type":
+          "application/json",
+
+        Accept:
+          "application/json",
+      },
+
+      body: JSON.stringify({
+        id: messageId,
+        ...messageData,
+      }),
+    }
+  );
+
+  return parseFanMessageApiResponse(
+    response
+  );
+}
 
 /* =========================================================
    아바타 글자
@@ -2771,11 +2808,31 @@ async function loadFanMessages({
         response
       );
 
-    const messages =
-      Array.isArray(result.messages)
-        ? result.messages
-        : [];
 
+      const messages =
+
+      Array.isArray(result.messages)
+
+      ? result.messages
+
+      : [];
+
+
+
+      if (reset) {
+
+        fanMessageState.messages.clear();
+
+      }
+
+messages.forEach((messageItem) => {
+  fanMessageState.messages.set(
+    String(messageItem.id),
+    messageItem
+  );
+});
+
+        
     const pagination =
       result.pagination || {};
 
@@ -2890,10 +2947,13 @@ function setFanMessageFormStatus(
    폼 제출
 ========================================================= */
 
-async function handleFanMessageSubmit(event) {
+async function handleFanMessageSubmit(
+  event
+) {
   event.preventDefault();
 
-  const elements = getFanMessageElements();
+  const elements =
+    getFanMessageElements();
 
   if (
     !elements.form ||
@@ -2902,28 +2962,59 @@ async function handleFanMessageSubmit(event) {
     return;
   }
 
+  const isEditing =
+    Boolean(
+      fanMessageState.editingId
+    );
+
   try {
     const messageData =
       getFanMessageFormData();
 
-    elements.submitButton.disabled = true;
+    if (
+      isEditing &&
+      fanMessageState.editingPassword
+    ) {
+      messageData.password =
+        fanMessageState.editingPassword;
+    }
+
+    elements.submitButton.disabled =
+      true;
+
     elements.submitButton.textContent =
-      "등록 중...";
+      isEditing
+        ? "수정 중..."
+        : "등록 중...";
 
     setFanMessageFormStatus(
-      "메시지를 등록하고 있습니다."
+      isEditing
+        ? "메시지를 수정하고 있습니다."
+        : "메시지를 등록하고 있습니다."
     );
 
-    await createFanMessage(
-      messageData
-    );
+    if (isEditing) {
+      await updateFanMessage(
+        fanMessageState.editingId,
+        messageData
+      );
+    } else {
+      await createFanMessage(
+        messageData
+      );
+    }
 
     setFanMessageFormStatus(
-      "메시지가 등록되었습니다.",
+      isEditing
+        ? "메시지가 수정되었습니다."
+        : "메시지가 등록되었습니다.",
       "success"
     );
 
     elements.form.reset();
+
+    fanMessageState.editingId = null;
+    fanMessageState.editingPassword = "";
 
     updateFanMessageCharacterCount();
 
@@ -2936,19 +3027,29 @@ async function handleFanMessageSubmit(event) {
     }, 700);
   } catch (error) {
     console.error(
-      "Fan Message 등록 실패:",
+      isEditing
+        ? "Fan Message 수정 실패:"
+        : "Fan Message 등록 실패:",
       error
     );
 
     setFanMessageFormStatus(
       error.message ||
-      "메시지를 등록하지 못했습니다.",
+      (
+        isEditing
+          ? "메시지를 수정하지 못했습니다."
+          : "메시지를 등록하지 못했습니다."
+      ),
       "error"
     );
   } finally {
-    elements.submitButton.disabled = false;
+    elements.submitButton.disabled =
+      false;
+
     elements.submitButton.textContent =
-      "등록";
+      isEditing
+        ? "수정"
+        : "등록";
   }
 }
 
@@ -3009,6 +3110,98 @@ function closeFanMessageManageModal() {
 /* =========================================================
    메시지 관리 팝업 열기
 ========================================================= */
+
+function openFanMessageEditForm(
+  messageId,
+  password
+) {
+  const elements =
+    getFanMessageElements();
+
+  const messageData =
+    fanMessageState.messages.get(
+      String(messageId)
+    );
+
+  if (!messageData) {
+    alert(
+      "수정할 메시지 정보를 찾을 수 없습니다."
+    );
+
+    return;
+  }
+
+  fanMessageState.editingId =
+    String(messageId);
+
+  fanMessageState.editingPassword =
+    password;
+
+  if (elements.messageId) {
+    elements.messageId.value =
+      String(messageId);
+  }
+
+  if (elements.nameInput) {
+    elements.nameInput.value =
+      messageData.nickname ||
+      messageData.name ||
+      "";
+  }
+
+  if (elements.passwordInput) {
+    elements.passwordInput.value =
+      password;
+  }
+
+  if (elements.performanceSelect) {
+    elements.performanceSelect.value =
+      messageData.performance || "";
+  }
+
+  if (elements.contentInput) {
+    elements.contentInput.value =
+      messageData.message || "";
+  }
+
+  const rating =
+    Number(messageData.rating) || 0;
+
+  const ratingInput =
+    document.querySelector(
+      `input[name="rating"][value="${rating}"]`
+    );
+
+  if (ratingInput) {
+    ratingInput.checked = true;
+  }
+
+  openFanMessageForm();
+
+  fanMessageState.editingId =
+    String(messageId);
+
+  fanMessageState.editingPassword =
+    password;
+
+  if (elements.submitButton) {
+    elements.submitButton.textContent =
+      "수정";
+  }
+
+  updateFanMessageCharacterCount();
+
+  closeFanMessageManageModal();
+
+  window.setTimeout(() => {
+    elements.contentInput?.focus();
+
+    elements.formWrap?.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+  }, 100);
+}
 
 function openFanMessageManageModal(
   messageId
@@ -3131,20 +3324,31 @@ function openFanMessageManageModal(
       );
     });
 
-  editButton?.addEventListener(
-    "click",
-    () => {
-      if (!statusElement) {
-        return;
+editButton?.addEventListener(
+  "click",
+  () => {
+    const password =
+      passwordInput?.value || "";
+
+    if (!password.trim()) {
+      if (statusElement) {
+        statusElement.textContent =
+          "비밀번호를 입력해 주세요.";
+
+        statusElement.dataset.statusType =
+          "error";
       }
 
-      statusElement.textContent =
-        "수정 기능은 다음 단계에서 연결합니다.";
-
-      statusElement.dataset.statusType =
-        "normal";
+      passwordInput?.focus();
+      return;
     }
-  );
+
+    openFanMessageEditForm(
+      messageId,
+      password
+    );
+  }
+);
 
   deleteButton?.addEventListener(
     "click",
