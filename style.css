@@ -7581,3 +7581,44 @@ body.admin-dashboard-open {
 }
 
 }
+
+/* ==========================================================
+   FAN MESSAGE NEW BADGE
+========================================================== */
+
+.fan-message-name-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.fan-message-new-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 19px;
+  padding: 3px 7px;
+  border: 1px solid rgba(126, 143, 255, 0.28);
+  border-radius: 999px;
+  background: rgba(126, 143, 255, 0.12);
+  color: #b8c2ff;
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.fan-message-list-meta
+.fan-message-new-badge {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 768px) {
+  .fan-message-new-badge {
+    min-height: 18px;
+    padding: 3px 6px;
+    font-size: 8px;
+  }
+}

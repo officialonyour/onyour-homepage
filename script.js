@@ -3530,7 +3530,8 @@ function createFanMessageCardHtml(messageData) {
 
   const performance =
     escapeFanMessageHtml(
-      messageData.performance || ""
+      messageData.performance ||
+      "ONYOUR 응원 메시지"
     );
 
   const message =
@@ -3551,32 +3552,19 @@ function createFanMessageCardHtml(messageData) {
       createFanMessageAvatarText(name)
     );
 
-  const performanceHtml =
-    performance
-      ? `
-        <span class="fan-message-performance">
-          ${performance}
-        </span>
-      `
-      : `
-        <span class="fan-message-performance">
-          ONYOUR 응원 메시지
-        </span>
-      `;
-
-  const isPinned =
-    messageData.isPinned === true ||
-    messageData.is_pinned === 1 ||
-    messageData.is_pinned === true;
-
   const pinnedHtml =
-    isPinned
+    isFanMessagePinned(messageData)
       ? `
         <span class="fan-message-pinned">
           ONYOUR PICK
         </span>
       `
       : "";
+
+  const newBadgeHtml =
+    createFanMessageNewBadgeHtml(
+      messageData
+    );
 
   return `
     <article
@@ -3592,12 +3580,18 @@ function createFanMessageCardHtml(messageData) {
             ${avatar}
           </span>
 
-          <div>
-            <strong>
-              ${name}
-            </strong>
+          <div class="fan-message-user-info">
+            <div class="fan-message-name-row">
+              <strong>
+                ${name}
+              </strong>
 
-            ${performanceHtml}
+              ${newBadgeHtml}
+            </div>
+
+            <span class="fan-message-performance">
+              ${performance}
+            </span>
           </div>
         </div>
 
@@ -3661,6 +3655,51 @@ function getFanMessageTimestamp(messageData) {
     : 0;
 }
 
+/* =========================================================
+   새 메시지 여부
+   등록 후 24시간 이내
+========================================================= */
+
+function isFanMessageNew(messageData) {
+  const createdTimestamp =
+    getFanMessageTimestamp(messageData);
+
+  if (!createdTimestamp) {
+    return false;
+  }
+
+  const currentTimestamp = Date.now();
+
+  const elapsedTime =
+    currentTimestamp - createdTimestamp;
+
+  const oneDay =
+    24 * 60 * 60 * 1000;
+
+  return (
+    elapsedTime >= 0 &&
+    elapsedTime < oneDay
+  );
+}
+
+
+/* =========================================================
+   NEW 배지 HTML
+========================================================= */
+
+function createFanMessageNewBadgeHtml(
+  messageData
+) {
+  if (!isFanMessageNew(messageData)) {
+    return "";
+  }
+
+  return `
+    <span class="fan-message-new-badge">
+      NEW
+    </span>
+  `;
+}
 
 /* =========================================================
    기본 카드에 표시할 메시지 선택
@@ -3757,6 +3796,11 @@ function createFanMessageListItemHtml(
       `
       : "";
 
+  const newBadgeHtml =
+    createFanMessageNewBadgeHtml(
+      messageData
+    );
+
   return `
     <article
       class="fan-message-list-item"
@@ -3769,6 +3813,8 @@ function createFanMessageListItemHtml(
           <strong class="fan-message-list-name">
             ${name}
           </strong>
+
+          ${newBadgeHtml}
 
           <span class="fan-message-list-performance">
             ${performance}
