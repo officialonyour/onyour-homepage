@@ -1330,171 +1330,68 @@
       </form>
     </div>
 
-    <!-- 메시지 목록 -->
-    <div
-      class="fan-message-list"
-      id="fanMessageList"
-      aria-live="polite"
-    >
-      <article class="fan-message-card">
-        <div class="fan-message-card-header">
-          <div class="fan-message-user">
-            <span class="fan-message-avatar">
-              M
-            </span>
+<!-- 팬 메시지 기본 카드 영역 -->
+<div
+  class="fan-message-card-section"
+  id="fanMessageCardSection"
+>
+  <div
+    class="fan-message-list"
+    id="fanMessageList"
+    aria-live="polite"
+  >
+    <div class="fan-message-empty">
+      메시지를 불러오는 중입니다.
+    </div>
+  </div>
+</div>
 
-            <div>
-              <strong>
-                김민지
-              </strong>
+<!-- 전체 팬 메시지 리스트 영역 -->
+<section
+  class="fan-message-all-section"
+  id="fanMessageAllSection"
+  aria-labelledby="fanMessageAllTitle"
+  hidden
+>
+  <div class="fan-message-all-header">
+    <div>
+      <p class="fan-message-all-label">
+        ALL FAN MESSAGES
+      </p>
 
-              <span class="fan-message-performance">
-                강릉 버스킹 전국대회
-              </span>
-            </div>
-          </div>
-
-          <time datetime="2026-07-18">
-            2026.07.18
-          </time>
-        </div>
-
-        <div
-          class="fan-message-card-rating"
-          aria-label="별점 5점"
-        >
-          ★★★★★
-        </div>
-
-        <p class="fan-message-card-content">
-          Moonlight 정말 좋았어요.
-          다음 공연도 꼭 보러 갈게요!
-        </p>
-
-        <div class="fan-message-card-actions">
-          <button
-            type="button"
-            disabled
-          >
-            수정
-          </button>
-
-          <button
-            type="button"
-            disabled
-          >
-            삭제
-          </button>
-        </div>
-      </article>
-
-      <article class="fan-message-card">
-        <div class="fan-message-card-header">
-          <div class="fan-message-user">
-            <span class="fan-message-avatar">
-              J
-            </span>
-
-            <div>
-              <strong>
-                Jazzy
-              </strong>
-
-              <span class="fan-message-performance">
-                기타 공연
-              </span>
-            </div>
-          </div>
-
-          <time datetime="2026-07-17">
-            2026.07.17
-          </time>
-        </div>
-
-        <div
-          class="fan-message-card-rating"
-          aria-label="별점 4점"
-        >
-          ★★★★☆
-        </div>
-
-        <p class="fan-message-card-content">
-          기타 연주가 정말 인상 깊었어요.
-          가을 앨범도 기대할게요!
-        </p>
-
-        <div class="fan-message-card-actions">
-          <button
-            type="button"
-            disabled
-          >
-            수정
-          </button>
-
-          <button
-            type="button"
-            disabled
-          >
-            삭제
-          </button>
-        </div>
-      </article>
-
-      <article class="fan-message-card">
-        <div class="fan-message-card-header">
-          <div class="fan-message-user">
-            <span class="fan-message-avatar">
-              달
-            </span>
-
-            <div>
-              <strong>
-                달빛
-              </strong>
-
-              <span class="fan-message-performance">
-                강릉 버스킹 전국대회
-              </span>
-            </div>
-          </div>
-
-          <time datetime="2026-07-16">
-            2026.07.16
-          </time>
-        </div>
-
-        <p class="fan-message-card-content">
-          편안하게 들을 수 있어서 좋았습니다.
-          ONYOUR 음악 오래 듣고 싶어요.
-        </p>
-
-        <div class="fan-message-card-actions">
-          <button
-            type="button"
-            disabled
-          >
-            수정
-          </button>
-
-          <button
-            type="button"
-            disabled
-          >
-            삭제
-          </button>
-        </div>
-      </article>
+      <h3 id="fanMessageAllTitle">
+        전체 팬 메시지
+      </h3>
     </div>
 
-    <button
-      class="fan-message-more-button"
-      id="fanMessageMoreButton"
-      type="button"
+    <p
+      class="fan-message-all-count"
+      id="fanMessageAllCount"
     >
-      더 많은 메시지 보기
-    </button>
-
+      총 0개의 메시지
+    </p>
   </div>
+
+  <div
+    class="fan-message-all-list"
+    id="fanMessageAllList"
+    aria-live="polite"
+  ></div>
+</section>
+
+<!-- 더보기 / 접기 버튼 -->
+<div class="fan-message-more-wrap">
+  <button
+    class="fan-message-more-button"
+    id="fanMessageMoreButton"
+    type="button"
+    aria-expanded="false"
+    aria-controls="fanMessageAllSection"
+    hidden
+  >
+    더 많은 메시지 보기
+  </button>
+</div>
 </section>
 
     <!-- FOLLOW -->
