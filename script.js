@@ -3272,21 +3272,43 @@ function formatFanMessagePhotoSize(bytes) {
 
 
 /* =========================================================
-   사진 미리보기 주소 해제
+   첨부 사진 초기화
 ========================================================= */
 
-function revokeFanMessagePhotoPreviewUrl() {
-  if (!fanMessagePhotoPreviewUrl) {
-    return;
+function resetFanMessagePhoto() {
+  const elements =
+    getFanMessageElements();
+
+  revokeFanMessagePhotoPreviewUrl();
+
+  if (elements.photoInput) {
+    elements.photoInput.value = "";
   }
 
-  URL.revokeObjectURL(
-    fanMessagePhotoPreviewUrl
-  );
+  if (elements.photoPreviewImage) {
+    elements.photoPreviewImage.removeAttribute(
+      "src"
+    );
+  }
 
-  fanMessagePhotoPreviewUrl = "";
+  if (elements.photoName) {
+    elements.photoName.textContent =
+      "선택된 사진";
+  }
+
+  if (elements.photoSize) {
+    elements.photoSize.textContent =
+      "0 MB";
+  }
+
+  if (elements.photoPreview) {
+    elements.photoPreview.hidden = true;
+  }
+
+  if (elements.photoPicker) {
+    elements.photoPicker.hidden = false;
+  }
 }
-
 
 /* =========================================================
    현재 선택된 팬 메시지 사진 가져오기
