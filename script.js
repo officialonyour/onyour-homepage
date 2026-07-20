@@ -3270,6 +3270,21 @@ function formatFanMessagePhotoSize(bytes) {
   return `${megabytes.toFixed(2)} MB`;
 }
 
+/* =========================================================
+   사진 미리보기 주소 해제
+========================================================= */
+
+function revokeFanMessagePhotoPreviewUrl() {
+  if (!fanMessagePhotoPreviewUrl) {
+    return;
+  }
+
+  URL.revokeObjectURL(
+    fanMessagePhotoPreviewUrl
+  );
+
+  fanMessagePhotoPreviewUrl = "";
+}
 
 /* =========================================================
    첨부 사진 초기화
