@@ -3289,39 +3289,75 @@ function revokeFanMessagePhotoPreviewUrl() {
 
 
 /* =========================================================
-   첨부 사진 초기화
+   현재 선택된 팬 메시지 사진 가져오기
 ========================================================= */
 
-function resetFanMessagePhoto() {
+function getSelectedFanMessagePhotoFile() {
   const elements = getFanMessageElements();
 
-  revokeFanMessagePhotoPreviewUrl();
+  const selectedFile =
+    elements.photoInput?.files?.[0] || null;
 
-  if (elements.photoInput) {
-    elements.photoInput.value = "";
+  if (!selectedFile) {
+    return null;
   }
 
-  if (elements.photoPreviewImage) {
-    elements.photoPreviewImage.src = "";
+  if (!FAN_MESSAGE_PHOTO_TYPES.has(selectedFile.type)) {
+    throw new Error(
+      "JPG, PNG, WEBP 사진만 첨부할 수 있습니다."
+    );
   }
 
-  if (elements.photoName) {
-    elements.photoName.textContent =
-      "선택된 사진";
+  if (selectedFile.size > FAN_MESSAGE_PHOTO_MAX_SIZE) {
+    throw new Error(
+      "사진은 최대 5MB까지 첨부할 수 있습니다."
+    );
   }
 
-  if (elements.photoSize) {
-    elements.photoSize.textContent =
-      "0 MB";
+  return selectedFile;
+}
+
+/* =========================================================
+   팬 메시지 사진 업로드
+========================================================= */
+
+async function uploadFanMessagePhoto(file) {
+  if (!file) {
+    return {
+      photoUrl: "",
+      photoKey: "",
+    };
   }
 
-  if (elements.photoPreview) {
-    elements.photoPreview.hidden = true;
-  }
+  const formData = new FormData();
+  formData.append("file", file);
 
-  if (elements.photoPicker) {
-    elements.photoPicker.hidden = false;
-  }
+  const response = await fetch(
+    "/api/fan-message-photo",
+    {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+      body: formData,
+    }
+  );
+
+  const result =
+    await parseFanMessageApiResponse(response);
+
+  return {
+    photoUrl:
+      result.photoUrl ||
+      result.photo_url ||
+      result.file?.url ||
+      "",
+    photoKey:
+      result.photoKey ||
+      result.photo_key ||
+      result.file?.key ||
+      "",
+  };
 }
 
 
@@ -3736,6 +3772,13 @@ function createFanMessageCardHtml(messageData) {
       messageData.message || ""
     );
 
+  const photoUrl =
+    escapeFanMessageHtml(
+      messageData.photoUrl ||
+      messageData.photo_url ||
+      ""
+    );
+
   const createdAt =
     messageData.createdAt ||
     messageData.created_at ||
@@ -3762,6 +3805,24 @@ function createFanMessageCardHtml(messageData) {
     createFanMessageNewBadgeHtml(
       messageData
     );
+
+  const photoHtml =
+    photoUrl
+      ? `
+        <button
+          class="fan-message-card-photo"
+          type="button"
+          data-fan-photo-url="${photoUrl}"
+          aria-label="첨부 사진 크게 보기"
+        >
+          <img
+            src="${photoUrl}"
+            alt="${name}님의 첨부 사진"
+            loading="lazy"
+          />
+        </button>
+      `
+      : "";
 
   return `
     <article
@@ -3806,6 +3867,8 @@ function createFanMessageCardHtml(messageData) {
       <p class="fan-message-card-content">
         ${message}
       </p>
+
+      ${photoHtml}
 
       <div class="fan-message-card-actions">
         <button
@@ -3976,6 +4039,13 @@ function createFanMessageListItemHtml(
       messageData.message || ""
     );
 
+  const photoUrl =
+    escapeFanMessageHtml(
+      messageData.photoUrl ||
+      messageData.photo_url ||
+      ""
+    );
+
   const createdAt =
     messageData.createdAt ||
     messageData.created_at ||
@@ -3997,6 +4067,20 @@ function createFanMessageListItemHtml(
     createFanMessageNewBadgeHtml(
       messageData
     );
+
+  const photoHtml =
+    photoUrl
+      ? `
+        <button
+          class="fan-message-list-photo"
+          type="button"
+          data-fan-photo-url="${photoUrl}"
+          aria-label="첨부 사진 크게 보기"
+        >
+          사진 보기
+        </button>
+      `
+      : "";
 
   return `
     <article
@@ -4021,6 +4105,8 @@ function createFanMessageListItemHtml(
         <p class="fan-message-list-content">
           ${message}
         </p>
+
+        ${photoHtml}
       </div>
 
       <div class="fan-message-list-side">
@@ -5032,12 +5118,38 @@ editButton?.addEventListener(
 }
 
 /* =========================================================
-   메시지 관리 버튼
+   메시지 관리 버튼 / 사진 보기
 ========================================================= */
 
 function handleFanMessageListClick(
   event
 ) {
+  /*
+   * 첨부 사진 클릭
+   */
+  const photoButton =
+    event.target.closest(
+      "[data-fan-photo-url]"
+    );
+
+  if (photoButton) {
+    const photoUrl =
+      photoButton.dataset.fanPhotoUrl;
+
+    if (photoUrl) {
+      window.open(
+        photoUrl,
+        "_blank",
+        "noopener,noreferrer"
+      );
+    }
+
+    return;
+  }
+
+  /*
+   * 관리 버튼
+   */
   const actionButton =
     event.target.closest(
       "[data-fan-message-action]"
