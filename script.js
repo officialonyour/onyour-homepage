@@ -1,5 +1,39 @@
 "use strict";
 
+/* =========================
+   PAGE SCROLL RESET
+   새로고침 시 항상 최상단
+========================= */
+
+if ("scrollRestoration" in window.history) {
+  window.history.scrollRestoration = "manual";
+}
+
+function resetPageScrollPosition() {
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: "auto",
+  });
+}
+
+resetPageScrollPosition();
+
+window.addEventListener("DOMContentLoaded", () => {
+  resetPageScrollPosition();
+});
+
+window.addEventListener("pageshow", () => {
+  window.requestAnimationFrame(() => {
+    resetPageScrollPosition();
+  });
+});
+
+window.addEventListener("beforeunload", () => {
+  resetPageScrollPosition();
+});
+
+
 document.addEventListener("DOMContentLoaded", () => {
   const body = document.body;
   const siteHeader = document.getElementById("siteHeader");
