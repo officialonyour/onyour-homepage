@@ -572,19 +572,13 @@ main {
 
 .live-video-dot {
   flex: 0 0 auto;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #ff375f;
-  box-shadow: 0 0 12px rgba(255, 55, 95, 0.75);
-}
-
-.live-video-dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
   background: #ff4d63;
-  box-shadow: 0 0 0 5px rgba(255, 77, 99, 0.12);
+  box-shadow:
+    0 0 12px rgba(255, 77, 99, 0.7),
+    0 0 0 5px rgba(255, 77, 99, 0.12);
 }
 
 .live-info {
@@ -747,12 +741,13 @@ main {
     min-height: 500px;
   }
 
-  .live-video-badge {
-    top: 16px;
-    left: 16px;
-    padding: 9px 12px;
-    font-size: 9px;
-  }
+ .live-video-badge {
+  top: 16px;
+  right: 16px;
+  left: auto;
+  padding: 9px 12px;
+  font-size: 9px;
+}
 
   .live-info {
     padding: 28px 22px 24px;
