@@ -3113,7 +3113,10 @@ document.addEventListener(
 ========================================================= */
 
 const FAN_MESSAGE_API_URL = "/api/messages";
-const FAN_MESSAGE_PAGE_SIZE = 6;
+
+const FAN_MESSAGE_CARD_RECENT_LIMIT = 3;
+const FAN_MESSAGE_PINNED_LIMIT = 3;
+const FAN_MESSAGE_FETCH_LIMIT = 50;
 
 const fanMessageState = {
   isFormOpen: false,
@@ -3121,17 +3124,17 @@ const fanMessageState = {
   editingId: null,
   editingPassword: "",
 
-  offset: 0,
   total: 0,
-  hasMore: false,
   isLoading: false,
+  isExpanded: false,
 
   messages: new Map(),
+  allMessages: [],
 };
 
 
 /* =========================================================
-   요소 가져오기
+   팬 메시지 요소 가져오기
 ========================================================= */
 
 function getFanMessageElements() {
@@ -3186,6 +3189,18 @@ function getFanMessageElements() {
 
     messageList: document.getElementById(
       "fanMessageList"
+    ),
+
+    allSection: document.getElementById(
+      "fanMessageAllSection"
+    ),
+
+    allList: document.getElementById(
+      "fanMessageAllList"
+    ),
+
+    allCount: document.getElementById(
+      "fanMessageAllCount"
     ),
 
     moreButton: document.getElementById(
@@ -3614,6 +3629,177 @@ function createFanMessageCardHtml(messageData) {
   `;
 }
 
+/* =========================================================
+   고정 메시지 여부
+========================================================= */
+
+function isFanMessagePinned(messageData) {
+  return (
+    messageData.isPinned === true ||
+    messageData.is_pinned === true ||
+    Number(messageData.isPinned) === 1 ||
+    Number(messageData.is_pinned) === 1
+  );
+}
+
+
+/* =========================================================
+   메시지 작성 시각
+========================================================= */
+
+function getFanMessageTimestamp(messageData) {
+  const rawDate =
+    messageData.createdAt ||
+    messageData.created_at ||
+    "";
+
+  const timestamp =
+    new Date(rawDate).getTime();
+
+  return Number.isFinite(timestamp)
+    ? timestamp
+    : 0;
+}
+
+
+/* =========================================================
+   기본 카드에 표시할 메시지 선택
+   고정 최대 3개 + 최근 일반글 3개
+========================================================= */
+
+function getFanMessageCardItems() {
+  const sortedMessages =
+    [...fanMessageState.allMessages]
+      .sort(
+        (first, second) =>
+          getFanMessageTimestamp(second) -
+          getFanMessageTimestamp(first)
+      );
+
+  const pinnedMessages =
+    sortedMessages
+      .filter(isFanMessagePinned)
+      .slice(
+        0,
+        FAN_MESSAGE_PINNED_LIMIT
+      );
+
+  const pinnedIds =
+    new Set(
+      pinnedMessages.map(
+        (messageItem) =>
+          String(messageItem.id)
+      )
+    );
+
+  const recentMessages =
+    sortedMessages
+      .filter(
+        (messageItem) =>
+          !pinnedIds.has(
+            String(messageItem.id)
+          )
+      )
+      .slice(
+        0,
+        FAN_MESSAGE_CARD_RECENT_LIMIT
+      );
+
+  return [
+    ...pinnedMessages,
+    ...recentMessages,
+  ];
+}
+
+
+/* =========================================================
+   전체 메시지 한 줄 리스트 HTML
+========================================================= */
+
+function createFanMessageListItemHtml(
+  messageData
+) {
+  const id = escapeFanMessageHtml(
+    messageData.id
+  );
+
+  const name = escapeFanMessageHtml(
+    messageData.nickname ||
+    messageData.name ||
+    "익명"
+  );
+
+  const performance =
+    escapeFanMessageHtml(
+      messageData.performance ||
+      "ONYOUR 응원 메시지"
+    );
+
+  const message =
+    escapeFanMessageHtml(
+      messageData.message || ""
+    );
+
+  const createdAt =
+    messageData.createdAt ||
+    messageData.created_at ||
+    "";
+
+  const formattedDate =
+    formatFanMessageDate(createdAt);
+
+  const pinnedLabel =
+    isFanMessagePinned(messageData)
+      ? `
+        <span class="fan-message-list-pinned">
+          ONYOUR PICK
+        </span>
+      `
+      : "";
+
+  return `
+    <article
+      class="fan-message-list-item"
+      data-fan-message-id="${id}"
+    >
+      <div class="fan-message-list-main">
+        <div class="fan-message-list-meta">
+          ${pinnedLabel}
+
+          <strong class="fan-message-list-name">
+            ${name}
+          </strong>
+
+          <span class="fan-message-list-performance">
+            ${performance}
+          </span>
+        </div>
+
+        <p class="fan-message-list-content">
+          ${message}
+        </p>
+      </div>
+
+      <div class="fan-message-list-side">
+        <time
+          datetime="${escapeFanMessageHtml(
+            createdAt
+          )}"
+        >
+          ${formattedDate}
+        </time>
+
+        <button
+          type="button"
+          data-fan-message-action="manage"
+          data-fan-message-id="${id}"
+        >
+          관리
+        </button>
+      </div>
+    </article>
+  `;
+}
 
 /* =========================================================
    로딩 문구
@@ -3622,15 +3808,17 @@ function createFanMessageCardHtml(messageData) {
 function showFanMessageLoading() {
   const elements = getFanMessageElements();
 
-  if (!elements.messageList) {
-    return;
+  if (elements.messageList) {
+    elements.messageList.innerHTML = `
+      <div class="fan-message-empty">
+        메시지를 불러오는 중입니다.
+      </div>
+    `;
   }
 
-  elements.messageList.innerHTML = `
-    <div class="fan-message-empty">
-      메시지를 불러오는 중입니다.
-    </div>
-  `;
+  if (elements.allList) {
+    elements.allList.innerHTML = "";
+  }
 }
 
 
@@ -3674,6 +3862,106 @@ function showFanMessageLoadError(message) {
 
 
 /* =========================================================
+   기본 카드 목록 렌더링
+========================================================= */
+
+function renderFanMessageCards() {
+  const elements = getFanMessageElements();
+
+  if (!elements.messageList) {
+    return;
+  }
+
+  const cardItems =
+    getFanMessageCardItems();
+
+  if (cardItems.length === 0) {
+    showFanMessageEmpty();
+    return;
+  }
+
+  elements.messageList.innerHTML =
+    cardItems
+      .map(createFanMessageCardHtml)
+      .join("");
+}
+
+
+/* =========================================================
+   전체 한 줄 목록 렌더링
+========================================================= */
+
+function renderFanMessageAllList() {
+  const elements = getFanMessageElements();
+
+  if (
+    !elements.allSection ||
+    !elements.allList
+  ) {
+    return;
+  }
+
+  const sortedMessages =
+    [...fanMessageState.allMessages]
+      .sort((first, second) => {
+        const pinnedDifference =
+          Number(isFanMessagePinned(second)) -
+          Number(isFanMessagePinned(first));
+
+        if (pinnedDifference !== 0) {
+          return pinnedDifference;
+        }
+
+        return (
+          getFanMessageTimestamp(second) -
+          getFanMessageTimestamp(first)
+        );
+      });
+
+  elements.allList.innerHTML =
+    sortedMessages
+      .map(createFanMessageListItemHtml)
+      .join("");
+
+  if (elements.allCount) {
+    elements.allCount.textContent =
+      `총 ${fanMessageState.total}개의 메시지`;
+  }
+}
+
+
+/* =========================================================
+   전체 목록 열기·닫기
+========================================================= */
+
+function updateFanMessageExpandedView() {
+  const elements = getFanMessageElements();
+
+  if (
+    !elements.allSection ||
+    !elements.moreButton
+  ) {
+    return;
+  }
+
+  elements.allSection.hidden =
+    !fanMessageState.isExpanded;
+
+  elements.moreButton.setAttribute(
+    "aria-expanded",
+    fanMessageState.isExpanded
+      ? "true"
+      : "false"
+  );
+
+  elements.moreButton.textContent =
+    fanMessageState.isExpanded
+      ? "접기"
+      : "더 많은 메시지 보기";
+}
+
+
+/* =========================================================
    더보기 버튼 상태
 ========================================================= */
 
@@ -3684,23 +3972,64 @@ function updateFanMessageMoreButton() {
     return;
   }
 
-  if (
-    fanMessageState.total === 0 ||
-    !fanMessageState.hasMore
-  ) {
-    elements.moreButton.hidden = true;
-    return;
-  }
+  const shouldShow =
+    fanMessageState.total >
+    getFanMessageCardItems().length;
 
-  elements.moreButton.hidden = false;
+  elements.moreButton.hidden =
+    !shouldShow;
 
   elements.moreButton.disabled =
     fanMessageState.isLoading;
 
-  elements.moreButton.textContent =
-    fanMessageState.isLoading
-      ? "불러오는 중..."
-      : "더 많은 메시지 보기";
+  if (fanMessageState.isLoading) {
+    elements.moreButton.textContent =
+      "불러오는 중...";
+    return;
+  }
+
+  updateFanMessageExpandedView();
+}
+
+
+/* =========================================================
+   더보기·접기 처리
+========================================================= */
+
+function toggleFanMessageAllList() {
+  const elements = getFanMessageElements();
+
+  if (
+    fanMessageState.isLoading ||
+    !elements.allSection
+  ) {
+    return;
+  }
+
+  fanMessageState.isExpanded =
+    !fanMessageState.isExpanded;
+
+  updateFanMessageExpandedView();
+
+  if (fanMessageState.isExpanded) {
+    renderFanMessageAllList();
+
+    window.requestAnimationFrame(() => {
+      elements.allSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
+
+    return;
+  }
+
+  document
+    .getElementById("fanMessageCardSection")
+    ?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
 }
 
 
@@ -3721,7 +4050,10 @@ async function parseFanMessageApiResponse(
     );
   }
 
-  if (!response.ok || result.success === false) {
+  if (
+    !response.ok ||
+    result.success === false
+  ) {
     throw new Error(
       result.message ||
       "요청을 처리하지 못했습니다."
@@ -3733,17 +4065,11 @@ async function parseFanMessageApiResponse(
 
 
 /* =========================================================
-   메시지 목록 불러오기
-
-   reset = true:
-   처음부터 새로 불러오기
-
-   reset = false:
-   기존 목록 아래에 추가
+   전체 메시지 불러오기
 ========================================================= */
 
 async function loadFanMessages({
-  reset = false,
+  reset = true,
 } = {}) {
   const elements = getFanMessageElements();
 
@@ -3754,117 +4080,110 @@ async function loadFanMessages({
     return;
   }
 
+  fanMessageState.isLoading = true;
+
   if (reset) {
-    fanMessageState.offset = 0;
     fanMessageState.total = 0;
-    fanMessageState.hasMore = false;
+    fanMessageState.isExpanded = false;
+    fanMessageState.messages.clear();
+    fanMessageState.allMessages = [];
 
     showFanMessageLoading();
+
+    if (elements.allSection) {
+      elements.allSection.hidden = true;
+    }
   }
 
-  fanMessageState.isLoading = true;
   updateFanMessageMoreButton();
 
   try {
-    const requestUrl =
-      `${FAN_MESSAGE_API_URL}` +
-      `?limit=${FAN_MESSAGE_PAGE_SIZE}` +
-      `&offset=${fanMessageState.offset}`;
+    let offset = 0;
+    let hasMore = true;
+    let total = 0;
 
-    const response = await fetch(
-      requestUrl,
-      {
-        method: "GET",
+    const loadedMessages = [];
 
-        headers: {
-          Accept: "application/json",
-        },
+    while (hasMore) {
+      const requestUrl =
+        `${FAN_MESSAGE_API_URL}` +
+        `?limit=${FAN_MESSAGE_FETCH_LIMIT}` +
+        `&offset=${offset}`;
 
-        cache: "no-store",
+      const response = await fetch(
+        requestUrl,
+        {
+          method: "GET",
+
+          headers: {
+            Accept: "application/json",
+          },
+
+          cache: "no-store",
+        }
+      );
+
+      const result =
+        await parseFanMessageApiResponse(
+          response
+        );
+
+      const pageMessages =
+        Array.isArray(result.messages)
+          ? result.messages
+          : [];
+
+      const pagination =
+        result.pagination || {};
+
+      loadedMessages.push(
+        ...pageMessages
+      );
+
+      offset += pageMessages.length;
+
+      total =
+        Number(pagination.total) ||
+        loadedMessages.length;
+
+      hasMore =
+        Boolean(pagination.hasMore) &&
+        pageMessages.length > 0;
+
+      if (offset >= total) {
+        hasMore = false;
+      }
+    }
+
+    fanMessageState.allMessages =
+      loadedMessages;
+
+    fanMessageState.total =
+      total;
+
+    fanMessageState.messages.clear();
+
+    loadedMessages.forEach(
+      (messageItem) => {
+        fanMessageState.messages.set(
+          String(messageItem.id),
+          messageItem
+        );
       }
     );
 
-    const result =
-      await parseFanMessageApiResponse(
-        response
-      );
-
-
-      const messages =
-
-      Array.isArray(result.messages)
-
-      ? result.messages
-
-      : [];
-
-
-
-      if (reset) {
-
-        fanMessageState.messages.clear();
-
-      }
-
-messages.forEach((messageItem) => {
-  fanMessageState.messages.set(
-    String(messageItem.id),
-    messageItem
-  );
-});
-
-        
-    const pagination =
-      result.pagination || {};
-
-    if (reset) {
-      elements.messageList.innerHTML = "";
-    }
-
-    if (
-      reset &&
-      messages.length === 0
-    ) {
-      showFanMessageEmpty();
-    } else {
-      const cardsHtml =
-        messages
-          .map(
-            createFanMessageCardHtml
-          )
-          .join("");
-
-      elements.messageList.insertAdjacentHTML(
-        "beforeend",
-        cardsHtml
-      );
-    }
-
-    fanMessageState.offset +=
-      messages.length;
-
-    fanMessageState.total =
-      Number(pagination.total) || 0;
-
-    fanMessageState.hasMore =
-      Boolean(pagination.hasMore);
+    renderFanMessageCards();
+    renderFanMessageAllList();
   } catch (error) {
     console.error(
       "Fan Messages 불러오기 실패:",
       error
     );
 
-    if (reset) {
-      showFanMessageLoadError(
-        error.message ||
-        "메시지를 불러오지 못했습니다."
-      );
-    } else {
-      alert(
-        error.message ||
-        "추가 메시지를 불러오지 못했습니다."
-      );
-    }
+    showFanMessageLoadError(
+      error.message ||
+      "메시지를 불러오지 못했습니다."
+    );
   } finally {
     fanMessageState.isLoading = false;
     updateFanMessageMoreButton();
@@ -4467,7 +4786,7 @@ function handleFanMessageListClick(
 
 
 /* =========================================================
-   초기화
+   팬 메시지 초기화
 ========================================================= */
 
 function initializeFanMessages() {
@@ -4484,6 +4803,10 @@ function initializeFanMessages() {
 
   elements.formWrap.hidden = true;
 
+  if (elements.allSection) {
+    elements.allSection.hidden = true;
+  }
+
   elements.writeToggle.addEventListener(
     "click",
     toggleFanMessageForm
@@ -4491,9 +4814,7 @@ function initializeFanMessages() {
 
   elements.cancelButton?.addEventListener(
     "click",
-    () => {
-      closeFanMessageForm();
-    }
+    closeFanMessageForm
   );
 
   elements.contentInput?.addEventListener(
@@ -4511,13 +4832,14 @@ function initializeFanMessages() {
     handleFanMessageListClick
   );
 
+  elements.allList?.addEventListener(
+    "click",
+    handleFanMessageListClick
+  );
+
   elements.moreButton?.addEventListener(
     "click",
-    () => {
-      loadFanMessages({
-        reset: false,
-      });
-    }
+    toggleFanMessageAllList
   );
 
   updateFanMessageCharacterCount();
