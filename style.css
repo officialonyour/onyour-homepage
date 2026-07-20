@@ -7341,3 +7341,243 @@ body.admin-dashboard-open {
   }
 }
 
+/* ==========================================================
+   FAN MESSAGES LIST VIEW
+========================================================== */
+
+.fan-message-all-section {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+
+.fan-message-all-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:16px;
+  margin-bottom:18px;
+}
+
+.fan-message-all-label{
+  margin:0;
+  color:#7f8cff;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+
+.fan-message-all-header h3{
+  margin:4px 0 0;
+  font-size:24px;
+}
+
+.fan-message-all-count{
+  margin:0;
+  color:rgba(255,255,255,.55);
+  font-size:13px;
+}
+
+.fan-message-all-list{
+  display:flex;
+  flex-direction:column;
+}
+
+.fan-message-list-item{
+
+  display:grid;
+
+  grid-template-columns:
+      minmax(0,1fr)
+      auto;
+
+  gap:20px;
+
+  padding:18px 0;
+
+  border-bottom:1px solid rgba(255,255,255,.08);
+
+}
+
+.fan-message-list-main{
+  min-width:0;
+}
+
+.fan-message-list-meta{
+
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:10px;
+
+  margin-bottom:8px;
+
+}
+
+.fan-message-list-name{
+
+  font-size:16px;
+  color:#fff;
+
+}
+
+.fan-message-list-performance{
+
+  color:#9aa3b8;
+  font-size:13px;
+
+}
+
+.fan-message-list-content{
+
+  margin:0;
+
+  color:rgba(255,255,255,.78);
+
+  line-height:1.7;
+
+  white-space:pre-wrap;
+  word-break:break-word;
+
+}
+
+.fan-message-list-side{
+
+  display:flex;
+
+  flex-direction:column;
+
+  align-items:flex-end;
+
+  gap:12px;
+
+  flex:0 0 auto;
+
+}
+
+.fan-message-list-side time{
+
+  font-size:12px;
+
+  color:rgba(255,255,255,.45);
+
+}
+
+.fan-message-list-side button{
+
+  border:none;
+
+  background:none;
+
+  color:#8ca7ff;
+
+  cursor:pointer;
+
+  font-size:12px;
+
+}
+
+.fan-message-list-side button:hover{
+
+  color:#ffffff;
+
+}
+
+.fan-message-list-pinned{
+
+  display:inline-flex;
+
+  align-items:center;
+
+  padding:3px 8px;
+
+  border-radius:999px;
+
+  background:rgba(122,134,255,.16);
+
+  color:#aeb9ff;
+
+  font-size:11px;
+
+  font-weight:700;
+
+  letter-spacing:.08em;
+
+  text-transform:uppercase;
+
+}
+
+.fan-message-more-wrap{
+
+  display:flex;
+
+  justify-content:center;
+
+  margin-top:24px;
+
+}
+
+.fan-message-more-button{
+
+  min-width:220px;
+
+  height:48px;
+
+  border-radius:999px;
+
+  border:1px solid rgba(255,255,255,.12);
+
+  background:rgba(255,255,255,.04);
+
+  color:#fff;
+
+  cursor:pointer;
+
+  transition:.25s;
+
+}
+
+.fan-message-more-button:hover{
+
+  background:rgba(255,255,255,.08);
+
+  transform:translateY(-2px);
+
+}
+
+@media (max-width:768px){
+
+.fan-message-all-header{
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+}
+
+.fan-message-list-item{
+
+    grid-template-columns:1fr;
+
+    gap:12px;
+
+}
+
+.fan-message-list-side{
+
+    flex-direction:row;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+.fan-message-more-button{
+
+    width:100%;
+
+}
+
+}
