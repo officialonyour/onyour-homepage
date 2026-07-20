@@ -1142,28 +1142,55 @@
             />
           </label>
 
-          <label class="fan-message-field">
-            <span>
-              공연
-            </span>
+<label
+  class="fan-message-field fan-message-field-wide"
+>
+  <span>
+    공연
+  </span>
 
-            <select
-              id="fanMessagePerformance"
-              name="performance"
-            >
-              <option value="">
-                공연을 선택해 주세요
-              </option>
+  <select
+    id="fanMessagePerformance"
+    name="performance"
+  >
+    <option value="">
+      공연을 선택해 주세요
+    </option>
 
-              <option value="강릉 버스킹 전국대회">
-                강릉 버스킹 전국대회
-              </option>
+    <option value="강릉 버스킹 전국대회">
+      강릉 버스킹 전국대회
+    </option>
 
-              <option value="기타 공연">
-                기타 공연
-              </option>
-            </select>
-          </label>
+    <option value="기타 공연">
+      기타 공연
+    </option>
+  </select>
+</label>
+
+<label
+  class="fan-message-field fan-message-field-wide"
+>
+  <span>
+    메시지
+    <em>*</em>
+  </span>
+
+  <textarea
+    id="fanMessageContent"
+    name="message"
+    maxlength="300"
+    rows="4"
+    placeholder="응원 메시지나 공연 후기를 남겨주세요."
+    required
+  ></textarea>
+
+  <small class="fan-message-count">
+    <strong id="fanMessageCharacterCount">
+      0
+    </strong>
+    / 300
+  </small>
+</label>
 
           <fieldset class="fan-message-rating">
             <legend>

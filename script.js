@@ -3340,39 +3340,8 @@ function updateFanMessageCharacterCount() {
     );
 }
 
-
 /* =========================================================
-   선택된 별점
-========================================================= */
-
-function getSelectedFanMessageRating() {
-  const selectedRating =
-    document.querySelector(
-      'input[name="rating"]:checked'
-    );
-
-  if (!selectedRating) {
-    return 0;
-  }
-
-  const rating = Number(
-    selectedRating.value
-  );
-
-  if (
-    !Number.isInteger(rating) ||
-    rating < 1 ||
-    rating > 5
-  ) {
-    return 0;
-  }
-
-  return rating;
-}
-
-
-/* =========================================================
-   폼 입력값
+   팬 메시지 폼 입력값
 ========================================================= */
 
 function getFanMessageFormData() {
@@ -3387,9 +3356,6 @@ function getFanMessageFormData() {
   const performance =
     elements.performanceSelect?.value.trim() ||
     "";
-
-  const rating =
-    getSelectedFanMessageRating();
 
   const message =
     elements.contentInput?.value.trim() || "";
@@ -3434,7 +3400,13 @@ function getFanMessageFormData() {
     nickname,
     password,
     performance,
-    rating,
+
+    /*
+      기존 API와 데이터베이스 호환을 위해
+      별점은 화면에 표시하지 않고 0으로 전달한다.
+    */
+    rating: 0,
+
     message,
   };
 }
@@ -3478,29 +3450,6 @@ function formatFanMessageDate(dateValue) {
   return `${year}.${month}.${day}`;
 }
 
-
-/* =========================================================
-   별점 표시
-========================================================= */
-
-function createFanMessageRatingText(rating) {
-  const safeRating = Math.max(
-    0,
-    Math.min(
-      5,
-      Number(rating) || 0
-    )
-  );
-
-  if (safeRating === 0) {
-    return "";
-  }
-
-  return (
-    "★".repeat(safeRating) +
-    "☆".repeat(5 - safeRating)
-  );
-}
 
 async function updateFanMessage(
   messageId,
@@ -3550,7 +3499,7 @@ function createFanMessageAvatarText(name) {
 
 
 /* =========================================================
-   메시지 카드 HTML
+   팬 메시지 기본 카드 HTML
 ========================================================= */
 
 function createFanMessageCardHtml(messageData) {
@@ -3587,12 +3536,6 @@ function createFanMessageCardHtml(messageData) {
       createFanMessageAvatarText(name)
     );
 
-  const rating =
-    Number(messageData.rating) || 0;
-
-  const ratingText =
-    createFanMessageRatingText(rating);
-
   const performanceHtml =
     performance
       ? `
@@ -3600,22 +3543,19 @@ function createFanMessageCardHtml(messageData) {
           ${performance}
         </span>
       `
-      : "";
+      : `
+        <span class="fan-message-performance">
+          ONYOUR 응원 메시지
+        </span>
+      `;
 
-  const ratingHtml =
-    ratingText
-      ? `
-        <div
-          class="fan-message-card-rating"
-          aria-label="별점 ${rating}점"
-        >
-          ${ratingText}
-        </div>
-      `
-      : "";
+  const isPinned =
+    messageData.isPinned === true ||
+    messageData.is_pinned === 1 ||
+    messageData.is_pinned === true;
 
   const pinnedHtml =
-    messageData.isPinned
+    isPinned
       ? `
         <span class="fan-message-pinned">
           ONYOUR PICK
@@ -3630,7 +3570,10 @@ function createFanMessageCardHtml(messageData) {
     >
       <div class="fan-message-card-header">
         <div class="fan-message-user">
-          <span class="fan-message-avatar">
+          <span
+            class="fan-message-avatar"
+            aria-hidden="true"
+          >
             ${avatar}
           </span>
 
@@ -3643,29 +3586,29 @@ function createFanMessageCardHtml(messageData) {
           </div>
         </div>
 
-        <time datetime="${escapeFanMessageHtml(
-          createdAt
-        )}">
+        <time
+          datetime="${escapeFanMessageHtml(
+            createdAt
+          )}"
+        >
           ${formattedDate}
         </time>
       </div>
 
       ${pinnedHtml}
-      ${ratingHtml}
 
       <p class="fan-message-card-content">
         ${message}
       </p>
 
       <div class="fan-message-card-actions">
-      <button
-      type="button"
-      data-fan-message-action="manage"
-      data-fan-message-id="${id}"
-      >
-      관리
-      </button>
-
+        <button
+          type="button"
+          data-fan-message-action="manage"
+          data-fan-message-id="${id}"
+        >
+          관리
+        </button>
       </div>
     </article>
   `;
