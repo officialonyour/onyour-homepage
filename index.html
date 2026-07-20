@@ -1095,239 +1095,219 @@
       id="fanMessageFormWrap"
       hidden
     >
-      <form
-        class="fan-message-form"
-        id="fanMessageForm"
-        autocomplete="off"
+<form
+  class="fan-message-form"
+  id="fanMessageForm"
+  enctype="multipart/form-data"
+  novalidate
+>
+  <input
+    id="fanMessageId"
+    name="messageId"
+    type="hidden"
+  />
+
+  <div class="fan-message-form-grid">
+    <label class="fan-message-field">
+      <span>
+        이름
+        <em>*</em>
+      </span>
+
+      <input
+        id="fanMessageName"
+        name="nickname"
+        type="text"
+        maxlength="20"
+        placeholder="이름 또는 닉네임"
+        autocomplete="nickname"
+        required
+      />
+    </label>
+
+    <label class="fan-message-field">
+      <span>
+        비밀번호
+        <em>*</em>
+      </span>
+
+      <input
+        id="fanMessagePassword"
+        name="password"
+        type="password"
+        minlength="4"
+        maxlength="20"
+        placeholder="수정·삭제용 비밀번호"
+        autocomplete="new-password"
+        required
+      />
+    </label>
+
+    <label
+      class="fan-message-field
+             fan-message-field-wide"
+    >
+      <span>
+        공연
+      </span>
+
+      <select
+        id="fanMessagePerformance"
+        name="performance"
       >
-        <input
-          type="hidden"
-          id="fanMessageId"
-          value=""
-        />
+        <option value="">
+          공연을 선택해 주세요
+        </option>
 
-        <div class="fan-message-form-grid">
+        <option value="강릉 버스킹 전국대회">
+          강릉 버스킹 전국대회
+        </option>
 
-          <label class="fan-message-field">
-            <span>
-              이름
-              <em>*</em>
-            </span>
+        <option value="기타 공연">
+          기타 공연
+        </option>
+      </select>
+    </label>
 
-            <input
-              type="text"
-              id="fanMessageName"
-              name="name"
-              maxlength="20"
-              placeholder="이름 또는 닉네임"
-              required
-            />
-          </label>
+    <label
+      class="fan-message-field
+             fan-message-field-wide"
+    >
+      <span>
+        메시지
+        <em>*</em>
+      </span>
 
-          <label class="fan-message-field">
-            <span>
-              비밀번호
-              <em>*</em>
-            </span>
+      <textarea
+        id="fanMessageContent"
+        name="message"
+        rows="5"
+        maxlength="300"
+        placeholder="응원 메시지나 공연 후기를 남겨주세요."
+        required
+      ></textarea>
 
-            <input
-              type="password"
-              id="fanMessagePassword"
-              name="password"
-              minlength="4"
-              maxlength="20"
-              placeholder="수정·삭제용 비밀번호"
-              autocomplete="new-password"
-              required
-            />
-          </label>
+      <small class="fan-message-count">
+        <strong id="fanMessageCharacterCount">
+          0
+        </strong>
+        / 300
+      </small>
+    </label>
 
-<label
-  class="fan-message-field fan-message-field-wide"
->
-  <span>
-    공연
-  </span>
+    <div
+      class="fan-message-photo-field
+             fan-message-field-wide"
+    >
+      <div class="fan-message-photo-heading">
+        <div>
+          <strong>
+            사진 첨부
+          </strong>
 
-  <select
-    id="fanMessagePerformance"
-    name="performance"
-  >
-    <option value="">
-      공연을 선택해 주세요
-    </option>
+          <span>
+            선택 사항 · 최대 1장
+          </span>
+        </div>
 
-    <option value="강릉 버스킹 전국대회">
-      강릉 버스킹 전국대회
-    </option>
+        <small>
+          JPG · PNG · WEBP / 최대 5MB
+        </small>
+      </div>
 
-    <option value="기타 공연">
-      기타 공연
-    </option>
-  </select>
-</label>
+      <input
+        id="fanMessagePhoto"
+        name="photo"
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        hidden
+      />
 
-<label
-  class="fan-message-field fan-message-field-wide"
->
-  <span>
-    메시지
-    <em>*</em>
-  </span>
+      <label
+        class="fan-message-photo-picker"
+        id="fanMessagePhotoPicker"
+        for="fanMessagePhoto"
+      >
+        <span
+          class="fan-message-photo-icon"
+          aria-hidden="true"
+        >
+          ＋
+        </span>
 
-  <textarea
-    id="fanMessageContent"
-    name="message"
-    maxlength="300"
-    rows="4"
-    placeholder="응원 메시지나 공연 후기를 남겨주세요."
-    required
-  ></textarea>
+        <span>
+          <strong>사진 선택</strong>
+          <small>
+            공연 사진이나 응원 이미지를 첨부해 주세요.
+          </small>
+        </span>
+      </label>
 
-  <small class="fan-message-count">
-    <strong id="fanMessageCharacterCount">
-      0
-    </strong>
-    / 300
-  </small>
-</label>
+      <div
+        class="fan-message-photo-preview"
+        id="fanMessagePhotoPreview"
+        hidden
+      >
+        <div class="fan-message-photo-image-wrap">
+          <img
+            id="fanMessagePhotoPreviewImage"
+            src=""
+            alt="첨부 사진 미리보기"
+          />
 
-          <fieldset class="fan-message-rating">
-            <legend>
-              별점
-              <small>선택</small>
-            </legend>
-
-            <div
-              class="fan-message-stars"
-              id="fanMessageStars"
-              role="radiogroup"
-              aria-label="별점 선택"
-            >
-              <input
-                type="radio"
-                id="fanRating1"
-                name="rating"
-                value="1"
-              />
-              <label
-                for="fanRating1"
-                aria-label="별점 1점"
-              >
-                ★
-              </label>
-
-              <input
-                type="radio"
-                id="fanRating2"
-                name="rating"
-                value="2"
-              />
-              <label
-                for="fanRating2"
-                aria-label="별점 2점"
-              >
-                ★
-              </label>
-
-              <input
-                type="radio"
-                id="fanRating3"
-                name="rating"
-                value="3"
-              />
-              <label
-                for="fanRating3"
-                aria-label="별점 3점"
-              >
-                ★
-              </label>
-
-              <input
-                type="radio"
-                id="fanRating4"
-                name="rating"
-                value="4"
-              />
-              <label
-                for="fanRating4"
-                aria-label="별점 4점"
-              >
-                ★
-              </label>
-
-              <input
-                type="radio"
-                id="fanRating5"
-                name="rating"
-                value="5"
-              />
-              <label
-                for="fanRating5"
-                aria-label="별점 5점"
-              >
-                ★
-              </label>
-            </div>
-          </fieldset>
-
-          <label
-            class="fan-message-field fan-message-field-wide"
+          <button
+            class="fan-message-photo-remove"
+            id="fanMessagePhotoRemove"
+            type="button"
+            aria-label="첨부 사진 삭제"
           >
-            <span>
-              메시지
-              <em>*</em>
-            </span>
-
-            <textarea
-              id="fanMessageContent"
-              name="message"
-              maxlength="300"
-              rows="4"
-              placeholder="응원 메시지나 공연 후기를 남겨주세요."
-              required
-            ></textarea>
-
-            <small class="fan-message-count">
-              <strong id="fanMessageCharacterCount">
-                0
-              </strong>
-              / 300
-            </small>
-          </label>
-
+            ×
+          </button>
         </div>
 
-        <div class="fan-message-form-footer">
-          <p>
-            작성한 글은 비밀번호로 수정하거나 삭제할 수 있습니다.
-          </p>
+        <div class="fan-message-photo-info">
+          <strong id="fanMessagePhotoName">
+            선택된 사진
+          </strong>
 
-          <div class="fan-message-form-actions">
-            <button
-              class="fan-message-cancel-button"
-              id="fanMessageCancelButton"
-              type="button"
-            >
-              취소
-            </button>
-
-            <button
-              class="fan-message-submit-button"
-              id="fanMessageSubmitButton"
-              type="submit"
-            >
-              등록
-            </button>
-          </div>
+          <span id="fanMessagePhotoSize">
+            0 MB
+          </span>
         </div>
+      </div>
+    </div>
+  </div>
 
-        <p
-          class="fan-message-form-status"
-          id="fanMessageFormStatus"
-          aria-live="polite"
-        ></p>
-      </form>
+  <div class="fan-message-form-footer">
+    <p>
+      작성한 글은 비밀번호로 수정하거나 삭제할 수 있습니다.
+    </p>
+
+    <div class="fan-message-form-actions">
+      <button
+        class="fan-message-cancel-button"
+        id="fanMessageCancelButton"
+        type="button"
+      >
+        취소
+      </button>
+
+      <button
+        class="fan-message-submit-button"
+        id="fanMessageSubmitButton"
+        type="submit"
+      >
+        등록
+      </button>
+    </div>
+  </div>
+
+  <p
+    class="fan-message-form-status"
+    id="fanMessageFormStatus"
+    aria-live="polite"
+  ></p>
+</form>
     </div>
 
 <!-- 팬 메시지 기본 카드 영역 -->

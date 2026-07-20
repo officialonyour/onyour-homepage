@@ -3133,6 +3133,7 @@ const fanMessageState = {
 };
 
 
+
 /* =========================================================
    팬 메시지 요소 가져오기
 ========================================================= */
@@ -3175,6 +3176,34 @@ function getFanMessageElements() {
       "fanMessageCharacterCount"
     ),
 
+    photoInput: document.getElementById(
+      "fanMessagePhoto"
+    ),
+
+    photoPicker: document.getElementById(
+      "fanMessagePhotoPicker"
+    ),
+
+    photoPreview: document.getElementById(
+      "fanMessagePhotoPreview"
+    ),
+
+    photoPreviewImage: document.getElementById(
+      "fanMessagePhotoPreviewImage"
+    ),
+
+    photoRemoveButton: document.getElementById(
+      "fanMessagePhotoRemove"
+    ),
+
+    photoName: document.getElementById(
+      "fanMessagePhotoName"
+    ),
+
+    photoSize: document.getElementById(
+      "fanMessagePhotoSize"
+    ),
+
     cancelButton: document.getElementById(
       "fanMessageCancelButton"
     ),
@@ -3209,6 +3238,169 @@ function getFanMessageElements() {
   };
 }
 
+/* =========================================================
+   팬 메시지 첨부 사진 설정
+========================================================= */
+
+const FAN_MESSAGE_PHOTO_MAX_SIZE =
+  5 * 1024 * 1024;
+
+const FAN_MESSAGE_PHOTO_TYPES =
+  new Set([
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+  ]);
+
+let fanMessagePhotoPreviewUrl = "";
+
+
+/* =========================================================
+   파일 크기 표시
+========================================================= */
+
+function formatFanMessagePhotoSize(bytes) {
+  const megabytes =
+    Number(bytes) / 1024 / 1024;
+
+  if (megabytes < 0.01) {
+    return `${Math.ceil(bytes / 1024)} KB`;
+  }
+
+  return `${megabytes.toFixed(2)} MB`;
+}
+
+
+/* =========================================================
+   사진 미리보기 주소 해제
+========================================================= */
+
+function revokeFanMessagePhotoPreviewUrl() {
+  if (!fanMessagePhotoPreviewUrl) {
+    return;
+  }
+
+  URL.revokeObjectURL(
+    fanMessagePhotoPreviewUrl
+  );
+
+  fanMessagePhotoPreviewUrl = "";
+}
+
+
+/* =========================================================
+   첨부 사진 초기화
+========================================================= */
+
+function resetFanMessagePhoto() {
+  const elements = getFanMessageElements();
+
+  revokeFanMessagePhotoPreviewUrl();
+
+  if (elements.photoInput) {
+    elements.photoInput.value = "";
+  }
+
+  if (elements.photoPreviewImage) {
+    elements.photoPreviewImage.src = "";
+  }
+
+  if (elements.photoName) {
+    elements.photoName.textContent =
+      "선택된 사진";
+  }
+
+  if (elements.photoSize) {
+    elements.photoSize.textContent =
+      "0 MB";
+  }
+
+  if (elements.photoPreview) {
+    elements.photoPreview.hidden = true;
+  }
+
+  if (elements.photoPicker) {
+    elements.photoPicker.hidden = false;
+  }
+}
+
+
+/* =========================================================
+   첨부 사진 선택
+========================================================= */
+
+function handleFanMessagePhotoChange(
+  event
+) {
+  const elements = getFanMessageElements();
+
+  const selectedFile =
+    event.target.files?.[0];
+
+  if (!selectedFile) {
+    resetFanMessagePhoto();
+    return;
+  }
+
+  if (
+    !FAN_MESSAGE_PHOTO_TYPES.has(
+      selectedFile.type
+    )
+  ) {
+    resetFanMessagePhoto();
+
+    alert(
+      "JPG, PNG, WEBP 사진만 첨부할 수 있습니다."
+    );
+
+    return;
+  }
+
+  if (
+    selectedFile.size >
+    FAN_MESSAGE_PHOTO_MAX_SIZE
+  ) {
+    resetFanMessagePhoto();
+
+    alert(
+      "사진은 최대 5MB까지 첨부할 수 있습니다."
+    );
+
+    return;
+  }
+
+  revokeFanMessagePhotoPreviewUrl();
+
+  fanMessagePhotoPreviewUrl =
+    URL.createObjectURL(
+      selectedFile
+    );
+
+  if (elements.photoPreviewImage) {
+    elements.photoPreviewImage.src =
+      fanMessagePhotoPreviewUrl;
+  }
+
+  if (elements.photoName) {
+    elements.photoName.textContent =
+      selectedFile.name;
+  }
+
+  if (elements.photoSize) {
+    elements.photoSize.textContent =
+      formatFanMessagePhotoSize(
+        selectedFile.size
+      );
+  }
+
+  if (elements.photoPicker) {
+    elements.photoPicker.hidden = true;
+  }
+
+  if (elements.photoPreview) {
+    elements.photoPreview.hidden = false;
+  }
+}
 
 /* =========================================================
    작성창 열기
@@ -3301,7 +3493,7 @@ function toggleFanMessageForm() {
 
 
 /* =========================================================
-   폼 초기화
+   팬 메시지 폼 초기화
 ========================================================= */
 
 function resetFanMessageForm() {
@@ -3317,6 +3509,8 @@ function resetFanMessageForm() {
     elements.characterCount.textContent =
       "0";
   }
+
+  resetFanMessagePhoto();
 
   if (elements.submitButton) {
     elements.submitButton.disabled = false;
@@ -3360,20 +3554,24 @@ function updateFanMessageCharacterCount() {
 ========================================================= */
 
 function getFanMessageFormData() {
-  const elements = getFanMessageElements();
+  const elements =
+    getFanMessageElements();
 
   const nickname =
-    elements.nameInput?.value.trim() || "";
+    elements.nameInput?.value.trim() ||
+    "";
 
   const password =
-    elements.passwordInput?.value || "";
+    elements.passwordInput?.value ||
+    "";
 
   const performance =
     elements.performanceSelect?.value.trim() ||
     "";
 
   const message =
-    elements.contentInput?.value.trim() || "";
+    elements.contentInput?.value.trim() ||
+    "";
 
   if (!nickname) {
     throw new Error(
@@ -3399,6 +3597,12 @@ function getFanMessageFormData() {
     );
   }
 
+  if (performance.length > 100) {
+    throw new Error(
+      "공연명은 100자 이하로 입력해 주세요."
+    );
+  }
+
   if (!message) {
     throw new Error(
       "메시지를 입력해 주세요."
@@ -3415,13 +3619,6 @@ function getFanMessageFormData() {
     nickname,
     password,
     performance,
-
-    /*
-      기존 API와 데이터베이스 호환을 위해
-      별점은 화면에 표시하지 않고 0으로 전달한다.
-    */
-    rating: 0,
-
     message,
   };
 }
@@ -4290,7 +4487,8 @@ function setFanMessageFormStatus(
 
 
 /* =========================================================
-   폼 제출
+   팬 메시지 폼 제출
+   사진 업로드 후 메시지 등록·수정
 ========================================================= */
 
 async function handleFanMessageSubmit(
@@ -4325,19 +4523,54 @@ async function handleFanMessageSubmit(
         fanMessageState.editingPassword;
     }
 
+    const selectedPhoto =
+      getSelectedFanMessagePhotoFile();
+
     elements.submitButton.disabled =
       true;
 
     elements.submitButton.textContent =
-      isEditing
-        ? "수정 중..."
-        : "등록 중...";
+      selectedPhoto
+        ? "사진 업로드 중..."
+        : isEditing
+          ? "수정 중..."
+          : "등록 중...";
 
     setFanMessageFormStatus(
-      isEditing
-        ? "메시지를 수정하고 있습니다."
-        : "메시지를 등록하고 있습니다."
+      selectedPhoto
+        ? "첨부한 사진을 업로드하고 있습니다."
+        : isEditing
+          ? "메시지를 수정하고 있습니다."
+          : "메시지를 등록하고 있습니다."
     );
+
+    /*
+     * 사진이 선택된 경우에만
+     * R2 업로드 API를 먼저 호출한다.
+     */
+    if (selectedPhoto) {
+      const uploadedPhoto =
+        await uploadFanMessagePhoto(
+          selectedPhoto
+        );
+
+      messageData.photoUrl =
+        uploadedPhoto.photoUrl;
+
+      messageData.photoKey =
+        uploadedPhoto.photoKey;
+
+      elements.submitButton.textContent =
+        isEditing
+          ? "메시지 수정 중..."
+          : "메시지 등록 중...";
+
+      setFanMessageFormStatus(
+        isEditing
+          ? "사진 업로드가 완료되었습니다. 메시지를 수정하고 있습니다."
+          : "사진 업로드가 완료되었습니다. 메시지를 등록하고 있습니다."
+      );
+    }
 
     if (isEditing) {
       await updateFanMessage(
@@ -4357,10 +4590,19 @@ async function handleFanMessageSubmit(
       "success"
     );
 
+    /*
+     * 미리보기 URL과 파일 입력까지
+     * 함께 초기화한다.
+     */
+    resetFanMessagePhoto();
+
     elements.form.reset();
 
-    fanMessageState.editingId = null;
-    fanMessageState.editingPassword = "";
+    fanMessageState.editingId =
+      null;
+
+    fanMessageState.editingPassword =
+      "";
 
     updateFanMessageCharacterCount();
 
@@ -4868,6 +5110,17 @@ function initializeFanMessages() {
     updateFanMessageCharacterCount
   );
 
+  elements.photoInput?.addEventListener(
+    "change",
+    handleFanMessagePhotoChange
+  );
+
+  elements.photoRemoveButton
+    ?.addEventListener(
+      "click",
+      resetFanMessagePhoto
+    );
+
   elements.form.addEventListener(
     "submit",
     handleFanMessageSubmit
@@ -4889,6 +5142,7 @@ function initializeFanMessages() {
   );
 
   updateFanMessageCharacterCount();
+  resetFanMessagePhoto();
 
   loadFanMessages({
     reset: true,
