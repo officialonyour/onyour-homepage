@@ -8586,141 +8586,243 @@ html {
   }
 }
 
-/* =========================
-   MUSIC PLATFORM LINKS
-========================= */
+/* =========================================================
+   MUSIC PLATFORM ICONS
+   업로드한 플랫폼 아이콘 표시
+========================================================= */
 
 .music-platform-links {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   align-items: center;
-  gap: 10px;
-  margin-top: 22px;
+  justify-content: center;
+  width: 100%;
+  max-width: 220px;
+  margin: 14px auto 0;
+  padding: 0 2px;
+  gap: 8px;
+  box-sizing: border-box;
+  overflow: visible;
 }
 
 .music-platform-link {
-  position: relative;
   display: inline-flex;
-  width: 44px;
-  height: 44px;
-  flex: 0 0 44px;
   align-items: center;
   justify-content: center;
+  justify-self: center;
+  width: 38px;
+  height: 38px;
+  min-width: 0;
+  padding: 0;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.035);
-  color: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 11px;
+  background:
+    rgba(255, 255, 255, 0.96);
+  box-shadow:
+    0 5px 14px rgba(0, 0, 0, 0.18);
+  box-sizing: border-box;
   text-decoration: none;
   transition:
     transform 0.2s ease,
     border-color 0.2s ease,
-    background-color 0.2s ease,
+    box-shadow 0.2s ease,
     opacity 0.2s ease;
 }
 
 .music-platform-link:hover {
   transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.42);
-  background: rgba(255, 255, 255, 0.09);
+  border-color:
+    rgba(255, 255, 255, 0.38);
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.24);
 }
 
-.music-platform-icon {
-  display: inline-flex;
+.music-platform-link:active {
+  transform: translateY(0);
+}
+
+.music-platform-link:focus-visible {
+  outline: 2px solid
+    rgba(255, 255, 255, 0.9);
+  outline-offset: 3px;
+}
+
+.music-platform-icon-image {
+  display: block;
   width: 100%;
   height: 100%;
+  padding: 3px;
+  border-radius: inherit;
+  object-fit: contain;
+  object-position: center;
+  box-sizing: border-box;
+}
+
+.music-platform-icon-fallback {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.music-platform-name {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-}
-
-.music-platform-link.is-disabled {
-  cursor: default;
-  opacity: 0.28;
-  pointer-events: none;
-}
-
-.music-platform-link:not(.is-disabled) {
-  opacity: 1;
-}
-
-/* YouTube */
-.music-platform-link[title="YouTube"]
-  .music-platform-icon {
-  padding-left: 2px;
-  font-size: 17px;
-}
-
-/* Spotify */
-.music-platform-link[title="Spotify"]
-  .music-platform-icon {
-  font-size: 19px;
-}
-
-/* Apple Music */
-.music-platform-link[title="Apple Music"]
-  .music-platform-icon {
-  font-size: 22px;
-}
-
-/* Melon */
-.music-platform-link[title="Melon"]
-  .music-platform-icon {
-  font-family: Arial, sans-serif;
-  font-size: 19px;
+  width: 100%;
+  height: 100%;
+  color: #111111;
+  font-size: 13px;
   font-weight: 800;
-  text-transform: lowercase;
+  line-height: 1;
+  text-transform: uppercase;
 }
 
-@media (max-width: 767px) {
+
+/* =========================================================
+   MUSIC ADMIN PLATFORM EDITOR
+========================================================= */
+
+.admin-music-platform-section {
+  display: grid;
+  width: 100%;
+  margin-top: 8px;
+  gap: 14px;
+  box-sizing: border-box;
+}
+
+.admin-music-platform-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.admin-music-platform-heading strong {
+  display: block;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.admin-music-platform-heading
+  .admin-field-help {
+  margin: 5px 0 0;
+}
+
+.admin-platform-item {
+  display: grid;
+  width: 100%;
+  padding: 16px;
+  gap: 13px;
+  overflow: hidden;
+  border: 1px solid
+    rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  background:
+    rgba(255, 255, 255, 0.035);
+  box-sizing: border-box;
+}
+
+.admin-platform-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  gap: 12px;
+}
+
+.admin-platform-item-header h5 {
+  min-width: 0;
+  margin: 0;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.admin-platform-icon-preview {
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  overflow: hidden;
+  border: 1px solid
+    rgba(255, 255, 255, 0.14);
+  border-radius: 11px;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.admin-platform-icon-preview[hidden] {
+  display: none;
+}
+
+.admin-platform-icon-preview img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 3px;
+  border-radius: inherit;
+  object-fit: contain;
+  object-position: center;
+  box-sizing: border-box;
+}
+
+.admin-platform-item label {
+  min-width: 0;
+  margin: 0;
+}
+
+.admin-platform-item input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   MUSIC PLATFORM MOBILE
+========================================================= */
+
+@media (max-width: 720px) {
   .music-platform-links {
-    gap: 8px;
-    margin-top: 18px;
+    width: 100%;
+    max-width: none;
+    margin-top: 11px;
+    padding: 0;
+    gap: 5px;
   }
 
   .music-platform-link {
-    width: 40px;
-    height: 40px;
-    flex-basis: 40px;
+    width: clamp(29px, 8vw, 35px);
+    height: clamp(29px, 8vw, 35px);
+    border-radius: 9px;
   }
 
-  .music-platform-icon {
-    font-size: 16px;
+  .music-platform-icon-image {
+    padding: 2px;
+  }
+
+  .admin-platform-item {
+    padding: 14px;
+    border-radius: 13px;
+  }
+
+  .admin-platform-icon-preview {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
   }
 }
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
 
 @media (max-width: 390px) {
   .music-platform-links {
-    gap: 6px;
+    gap: 3px;
   }
 
   .music-platform-link {
-    width: 38px;
-    height: 38px;
-    flex-basis: 38px;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
   }
-}
-
-.music-platform-link svg {
-  width: 22px;
-  height: 22px;
-  display: block;
-  fill: currentColor;
-  pointer-events: none;
-}
-
-.music-platform-link:hover svg {
-  transform: scale(1.08);
-  transition: transform .2s ease;
 }

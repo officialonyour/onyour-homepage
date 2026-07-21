@@ -1477,129 +1477,73 @@ function fitMusicCardTitle(element) {
 }
 
 /* =========================================================
-   MUSIC PLATFORM ICON
-========================================================= */
-
-function getMusicPlatformIcon(
-  platform
-) {
-  const icons = {
-    youtube: `
-      <svg
-        viewBox="0 0 24 24"
-        aria-hidden="true"
-      >
-        <path
-          d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z"
-        />
-      </svg>
-    `,
-
-    spotify: `
-      <svg
-        viewBox="0 0 24 24"
-        aria-hidden="true"
-      >
-        <path
-          d="M12 0a12 12 0 1 0 0 24 12 12 0 0 0 0-24Zm5.5 17.3a.75.75 0 0 1-1 .25c-2.85-1.74-6.45-2.13-10.68-1.17a.75.75 0 1 1-.33-1.46c4.64-1.05 8.61-.6 11.76 1.32a.75.75 0 0 1 .25 1.03Zm1.43-3.18a.94.94 0 0 1-1.29.31c-3.26-2-8.22-2.58-12.07-1.41a.94.94 0 1 1-.55-1.8c4.4-1.34 9.87-.69 13.6 1.6a.94.94 0 0 1 .31 1.29Zm.12-3.3C15.14 8.5 8.69 8.27 4.96 9.4a1.13 1.13 0 1 1-.66-2.16c4.28-1.3 11.4-1.03 15.91 1.65a1.13 1.13 0 0 1-1.16 1.94Z"
-        />
-      </svg>
-    `,
-
-    apple: `
-      <svg
-        viewBox="0 0 24 24"
-        aria-hidden="true"
-      >
-        <path
-          d="M17.05 12.54c.02-2.18 1.78-3.23 1.86-3.28a4 4 0 0 0-3.15-1.7c-1.33-.14-2.62.8-3.3.8-.7 0-1.76-.79-2.9-.76a4.18 4.18 0 0 0-3.52 2.15c-1.52 2.63-.39 6.5 1.07 8.63.73 1.04 1.58 2.2 2.71 2.16 1.1-.04 1.51-.69 2.84-.69 1.32 0 1.7.69 2.86.66 1.19-.02 1.94-1.04 2.64-2.09a8.62 8.62 0 0 0 1.2-2.44 3.76 3.76 0 0 1-2.31-3.44ZM14.89 6.15a3.83 3.83 0 0 0 .88-2.75 3.9 3.9 0 0 0-2.55 1.31 3.65 3.65 0 0 0-.91 2.65 3.22 3.22 0 0 0 2.58-1.21Z"
-        />
-      </svg>
-    `,
-
-    melon: `
-      <svg
-        viewBox="0 0 24 24"
-        aria-hidden="true"
-      >
-        <path
-          d="M18.9 5.15c-2.15-1.63-5.42-1.87-8.35-.65-3.14 1.3-5.38 4.06-5.59 6.88-.2 2.57 1.38 4.9 4.02 5.94 2.82 1.12 6.33.58 8.72-1.33 2.18-1.75 3.2-4.43 2.6-6.84a7.14 7.14 0 0 0-1.4-3.99Zm-1.36 8.6c-1.5 1.52-4.08 2.2-6.4 1.68-2.18-.48-3.63-1.84-3.71-3.47-.09-1.87 1.52-3.91 3.92-4.95 2.22-.97 4.71-.88 6.2.23a4.5 4.5 0 0 1 1.73 2.63c.26 1.35-.39 2.51-1.74 3.88Z"
-        />
-      </svg>
-    `,
-  };
-
-  return icons[platform] || "";
-}
-
-
-/* =========================================================
    MUSIC PLATFORM LINK
 ========================================================= */
 
-function createMusicPlatformLink(
-  platform,
+function createMusicPlatformLink({
   url,
-  label
-) {
+  iconUrl,
+  label,
+}) {
   const cleanUrl =
     String(url || "").trim();
 
+  const cleanIconUrl =
+    String(iconUrl || "").trim();
+
+  /*
+   * 링크가 없으면 해당 플랫폼은
+   * 홈페이지에 표시하지 않는다.
+   */
   if (!cleanUrl) {
     return "";
   }
 
+  /*
+   * 아이콘이 저장되어 있으면
+   * 업로드한 이미지를 사용한다.
+   */
+  const iconHtml =
+    cleanIconUrl
+      ? `
+        <img
+          class="music-platform-icon-image"
+          src="${escapeAdminHtml(
+            cleanIconUrl
+          )}"
+          alt=""
+          loading="lazy"
+        />
+      `
+      : `
+        <span
+          class="music-platform-icon-fallback"
+          aria-hidden="true"
+        >
+          ${escapeAdminHtml(
+            label.charAt(0)
+          )}
+        </span>
+      `;
+
   return `
     <a
       class="music-platform-link"
-      href="${escapeAdminHtml(cleanUrl)}"
+      href="${escapeAdminHtml(
+        cleanUrl
+      )}"
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="${escapeAdminHtml(label)}에서 듣기"
-      title="${escapeAdminHtml(label)}"
+      aria-label="${escapeAdminHtml(
+        label
+      )}에서 듣기"
+      title="${escapeAdminHtml(
+        label
+      )}"
     >
-      ${getMusicPlatformIcon(platform)}
+      ${iconHtml}
     </a>
   `;
-}
-
-
-/* =========================================================
-   OLD RELEASE URL PLATFORM CHECK
-========================================================= */
-
-function getLegacyMusicPlatform(
-  url
-) {
-  const cleanUrl =
-    String(url || "").toLowerCase();
-
-  if (
-    cleanUrl.includes("youtube.com") ||
-    cleanUrl.includes("youtu.be")
-  ) {
-    return "youtube";
-  }
-
-  if (
-    cleanUrl.includes("spotify.com")
-  ) {
-    return "spotify";
-  }
-
-  if (
-    cleanUrl.includes("music.apple.com")
-  ) {
-    return "apple";
-  }
-
-  if (
-    cleanUrl.includes("melon.com")
-  ) {
-    return "melon";
-  }
-
-  return "";
 }
 
 
@@ -1649,18 +1593,20 @@ async function loadPublicMusic() {
   };
 
   try {
-    const response = await fetch(
-      "/api/content?type=music",
-      {
-        method: "GET",
+    const response =
+      await fetch(
+        "/api/content?type=music",
+        {
+          method: "GET",
 
-        headers: {
-          Accept: "application/json",
-        },
+          headers: {
+            Accept:
+              "application/json",
+          },
 
-        cache: "no-store",
-      }
-    );
+          cache: "no-store",
+        }
+      );
 
     const result =
       await response.json();
@@ -1699,12 +1645,20 @@ async function loadPublicMusic() {
             }
           );
 
-        if (!item) {
+        if (
+          !item ||
+          item.published === false
+        ) {
           return;
         }
 
         const suffix =
           setting.suffix;
+
+        const card =
+          musicProfileList.querySelector(
+            `[data-music-profile="${profileKey}"]`
+          );
 
         const coverImage =
           document.getElementById(
@@ -1714,11 +1668,6 @@ async function loadPublicMusic() {
         const fallback =
           document.getElementById(
             `musicFallback${suffix}`
-          );
-
-        const artistElement =
-          document.getElementById(
-            `musicArtist${suffix}`
           );
 
         const typeElement =
@@ -1731,15 +1680,41 @@ async function loadPublicMusic() {
             `musicTitle${suffix}`
           );
 
-        const platformContainer =
+        const artistElement =
           document.getElementById(
-            `musicPlatforms${suffix}`
+            `musicArtist${suffix}`
           );
 
-        const emptyElement =
+        const oldLinkElement =
           document.getElementById(
-            `musicPlatformEmpty${suffix}`
+            `musicLink${suffix}`
           );
+
+        /*
+         * 기본 정보
+         */
+        const artist =
+          String(
+            item.artist ||
+            item.artist_name ||
+            setting.defaultArtist
+          ).trim();
+
+        const albumType =
+          String(
+            item.albumType ||
+            item.album_type ||
+            item.type ||
+            setting.defaultType
+          ).trim();
+
+        const title =
+          String(
+            item.albumTitle ||
+            item.album_title ||
+            item.title ||
+            setting.defaultTitle
+          ).trim();
 
         const coverUrl =
           String(
@@ -1748,29 +1723,88 @@ async function loadPublicMusic() {
             ""
           ).trim();
 
-        const artistName =
-          String(
-            item.artist ||
-            item.artist_name ||
-            setting.defaultArtist
-          ).trim();
-
-        const releaseType =
-          String(
-            item.albumType ||
-            item.album_type ||
-            item.type ||
-            setting.defaultType
-          ).trim();
-
-        const releaseTitle =
-          String(
-            item.title ||
-            setting.defaultTitle
-          ).trim();
+        /*
+         * platforms 묶음 데이터
+         */
+        const platforms =
+          item.platforms || {};
 
         /*
-         * 자켓
+         * YouTube
+         */
+        const youtubeUrl =
+          item.youtubeUrl ||
+          item.youtube_url ||
+          platforms.youtube?.url ||
+          "";
+
+        const youtubeIconUrl =
+          item.youtubeIconUrl ||
+          item.youtube_icon_url ||
+          platforms.youtube
+            ?.iconUrl ||
+          platforms.youtube
+            ?.icon_url ||
+          "";
+
+        /*
+         * Spotify
+         */
+        const spotifyUrl =
+          item.spotifyUrl ||
+          item.spotify_url ||
+          platforms.spotify?.url ||
+          "";
+
+        const spotifyIconUrl =
+          item.spotifyIconUrl ||
+          item.spotify_icon_url ||
+          platforms.spotify
+            ?.iconUrl ||
+          platforms.spotify
+            ?.icon_url ||
+          "";
+
+        /*
+         * Apple Music
+         */
+        const appleUrl =
+          item.appleUrl ||
+          item.apple_url ||
+          item.appleMusicUrl ||
+          item.apple_music_url ||
+          platforms.apple?.url ||
+          "";
+
+        const appleIconUrl =
+          item.appleIconUrl ||
+          item.apple_icon_url ||
+          platforms.apple
+            ?.iconUrl ||
+          platforms.apple
+            ?.icon_url ||
+          "";
+
+        /*
+         * Melon
+         */
+        const melonUrl =
+          item.melonUrl ||
+          item.melon_url ||
+          platforms.melon?.url ||
+          "";
+
+        const melonIconUrl =
+          item.melonIconUrl ||
+          item.melon_icon_url ||
+          platforms.melon
+            ?.iconUrl ||
+          platforms.melon
+            ?.icon_url ||
+          "";
+
+        /*
+         * 앨범 자켓
          */
         if (
           coverImage &&
@@ -1781,7 +1815,7 @@ async function loadPublicMusic() {
               coverUrl;
 
             coverImage.alt =
-              `${releaseTitle} 앨범 자켓`;
+              `${title} 앨범 자켓`;
 
             coverImage.hidden =
               false;
@@ -1789,9 +1823,10 @@ async function loadPublicMusic() {
             fallback.hidden =
               true;
           } else {
-            coverImage.removeAttribute(
-              "src"
-            );
+            coverImage
+              .removeAttribute(
+                "src"
+              );
 
             coverImage.alt = "";
             coverImage.hidden =
@@ -1803,138 +1838,129 @@ async function loadPublicMusic() {
         }
 
         /*
-         * 아티스트 / 앨범 정보
+         * 앨범 정보
          */
-        if (artistElement) {
-          artistElement.textContent =
-            artistName;
-        }
-
         if (typeElement) {
           typeElement.textContent =
-            releaseType.toUpperCase();
+            albumType;
         }
 
         if (titleElement) {
           titleElement.textContent =
-            releaseTitle;
+            title;
+
+          fitMusicCardTitle(
+            titleElement
+          );
+        }
+
+        if (artistElement) {
+          artistElement.textContent =
+            artist;
         }
 
         /*
-         * 플랫폼 링크
+         * 플랫폼 링크 HTML 생성
          */
-        let youtubeUrl =
-          item.youtubeUrl ||
-          item.youtube_url ||
-          "";
+        const platformLinksHtml = [
+          createMusicPlatformLink({
+            url: youtubeUrl,
+            iconUrl:
+              youtubeIconUrl,
+            label: "YouTube",
+          }),
 
-        let spotifyUrl =
-          item.spotifyUrl ||
-          item.spotify_url ||
-          "";
+          createMusicPlatformLink({
+            url: spotifyUrl,
+            iconUrl:
+              spotifyIconUrl,
+            label: "Spotify",
+          }),
 
-        let appleUrl =
-          item.appleUrl ||
-          item.apple_url ||
-          "";
+          createMusicPlatformLink({
+            url: appleUrl,
+            iconUrl:
+              appleIconUrl,
+            label: "Apple Music",
+          }),
 
-        let melonUrl =
-          item.melonUrl ||
-          item.melon_url ||
-          "";
-
-        /*
-         * 기존 단일 링크도 임시로 유지
-         */
-        const legacyUrl =
-          item.releaseUrl ||
-          item.release_url ||
-          "";
-
-        if (legacyUrl) {
-          const legacyPlatform =
-            getLegacyMusicPlatform(
-              legacyUrl
-            );
-
-          if (
-            legacyPlatform ===
-              "youtube" &&
-            !youtubeUrl
-          ) {
-            youtubeUrl =
-              legacyUrl;
-          }
-
-          if (
-            legacyPlatform ===
-              "spotify" &&
-            !spotifyUrl
-          ) {
-            spotifyUrl =
-              legacyUrl;
-          }
-
-          if (
-            legacyPlatform ===
-              "apple" &&
-            !appleUrl
-          ) {
-            appleUrl =
-              legacyUrl;
-          }
-
-          if (
-            legacyPlatform ===
-              "melon" &&
-            !melonUrl
-          ) {
-            melonUrl =
-              legacyUrl;
-          }
-        }
-
-        const platformHtml = [
-          createMusicPlatformLink(
-            "youtube",
-            youtubeUrl,
-            "YouTube"
-          ),
-
-          createMusicPlatformLink(
-            "spotify",
-            spotifyUrl,
-            "Spotify"
-          ),
-
-          createMusicPlatformLink(
-            "apple",
-            appleUrl,
-            "Apple Music"
-          ),
-
-          createMusicPlatformLink(
-            "melon",
-            melonUrl,
-            "Melon"
-          ),
+          createMusicPlatformLink({
+            url: melonUrl,
+            iconUrl:
+              melonIconUrl,
+            label: "Melon",
+          }),
         ]
           .filter(Boolean)
           .join("");
 
-        if (platformContainer) {
-          platformContainer.innerHTML =
-            platformHtml;
+        let platformContainer =
+          document.getElementById(
+            `musicPlatforms${suffix}`
+          );
+
+        /*
+         * 기존의 큰 음원 듣기 버튼을
+         * 플랫폼 아이콘 영역으로 교체
+         */
+        if (
+          !platformContainer &&
+          oldLinkElement
+        ) {
+          platformContainer =
+            document.createElement(
+              "div"
+            );
+
+          platformContainer.id =
+            `musicPlatforms${suffix}`;
+
+          platformContainer.className =
+            "music-platform-links";
+
+          oldLinkElement.replaceWith(
+            platformContainer
+          );
         }
 
-        if (emptyElement) {
-          emptyElement.hidden =
-            Boolean(platformHtml);
+        /*
+         * 이미 교체된 상태에서
+         * 다시 불러오는 경우
+         */
+        if (
+          !platformContainer &&
+          card
+        ) {
+          platformContainer =
+            document.createElement(
+              "div"
+            );
 
-          emptyElement.textContent =
-            profileKey === "onyour"
-              ? "Coming Soon"
-              : "링크 준비 중";
+          platformContainer.id =
+            `musicPlatforms${suffix}`;
+
+          platformContainer.className =
+            "music-platform-links";
+
+          const cardBody =
+            card.querySelector(
+              ".music-card-body"
+            );
+
+          (
+            cardBody ||
+            card
+          ).appendChild(
+            platformContainer
+          );
+        }
+
+        if (platformContainer) {
+          platformContainer.innerHTML =
+            platformLinksHtml;
+
+          platformContainer.hidden =
+            !platformLinksHtml;
         }
       }
     );
