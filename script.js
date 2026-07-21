@@ -894,6 +894,56 @@ async function saveAdminItem(
   return savedItem;
 }
 
+async function adminApiRequest(
+  url,
+  options = {}
+) {
+  const headers = new Headers(
+    options.headers || {}
+  );
+
+  if (currentAdminPassword) {
+    headers.set(
+      "X-Admin-Password",
+      currentAdminPassword
+    );
+  }
+
+  if (
+    options.body &&
+    !(options.body instanceof FormData)
+  ) {
+    headers.set(
+      "Content-Type",
+      "application/json"
+    );
+  }
+
+  const response = await fetch(url, {
+    ...options,
+    headers,
+  });
+
+  let result;
+
+  try {
+    result = await response.json();
+  } catch {
+    result = {
+      success: false,
+      message: "서버 응답을 읽을 수 없습니다.",
+    };
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      result.message || "요청 처리 중 오류가 발생했습니다."
+    );
+  }
+
+  return result;
+}
+
 async function uploadAdminImage(
   file,
   folder = "music"
@@ -3363,81 +3413,6 @@ document
       }
     }
   );
-
-
-/* =========================
-   SAVE ADD / EDIT
-========================= */
-
-async function saveAdminItem(
-  sectionName,
-  data
-) {
-  try {
-    const existingItem =
-      adminStore[sectionName]?.find(
-        (item) => item.id === data.id
-      );
-
-    const isUpdate =
-      Boolean(existingItem);
-
-    const url = isUpdate
-      ? `/api/content?type=${sectionName}&id=${encodeURIComponent(
-          data.id
-        )}`
-      : `/api/content?type=${sectionName}`;
-
-    const result =
-      await adminApiRequest(url, {
-        method: isUpdate
-          ? "PUT"
-          : "POST",
-        body: JSON.stringify(data),
-      });
-
-    const savedItem = result.item;
-
-    if (isUpdate) {
-      const index =
-        adminStore[
-          sectionName
-        ].findIndex(
-          (item) =>
-            item.id === savedItem.id
-        );
-
-      if (index >= 0) {
-        adminStore[sectionName][index] =
-          savedItem;
-      }
-    } else {
-      adminStore[sectionName].unshift(
-        savedItem
-      );
-    }
-
-    renderAllAdminLists();
-    openAdminView(sectionName);
-
-    alert(
-      isUpdate
-        ? "수정되었습니다."
-        : "등록되었습니다."
-    );
-  } catch (error) {
-    console.error(
-      "콘텐츠 저장 실패:",
-      error
-    );
-
-    alert(
-      error.message ||
-        "저장하지 못했습니다."
-    );
-  }
-}
-
 
 /* =========================
    SETTINGS TEMPORARY SAVE
