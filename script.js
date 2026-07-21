@@ -3247,6 +3247,8 @@ document
 
 /* =========================
    MUSIC PROFILE FORM SUBMIT
+   - 동적 플랫폼 전체 저장
+   - 기존 플랫폼 필드도 함께 유지
 ========================= */
 
 document
@@ -3323,20 +3325,41 @@ document
           "adminMusicPublished"
         );
 
-      const youtubeUrl =
-        getAdminFormValue(
-          "adminMusicYoutube"
+      /*
+       * 현재 플랫폼 입력칸 전체 수집
+       */
+      const platforms =
+        collectAdminMusicPlatforms();
+
+      /*
+       * 플랫폼별 기존 호환 주소
+       */
+      const getPlatformUrl = (
+        platformKey
+      ) => {
+        const platformItem =
+          platforms.find(
+            (item) =>
+              item.key ===
+              platformKey
+          );
+
+        return (
+          platformItem?.url || ""
         );
+      };
+
+      const youtubeUrl =
+        getPlatformUrl("youtube");
 
       const spotifyUrl =
-        getAdminFormValue(
-          "adminMusicSpotify"
-        );
+        getPlatformUrl("spotify");
 
       const appleUrl =
-        getAdminFormValue(
-          "adminMusicApple"
-        );
+        getPlatformUrl("apple");
+
+      const melonUrl =
+        getPlatformUrl("melon");
 
       /*
        * 기존 자켓 주소 유지
@@ -3407,6 +3430,63 @@ document
         return;
       }
 
+      /*
+       * 입력된 플랫폼 링크 검사
+       */
+      const platformRows =
+        Array.from(
+          document.querySelectorAll(
+            "#adminMusicPlatformList [data-admin-platform-row]"
+          )
+        );
+
+      const emptyUrlRow =
+        platformRows.find(
+          (row) => {
+            const url =
+              row
+                .querySelector(
+                  "[data-admin-platform-url]"
+                )
+                ?.value.trim() ||
+              "";
+
+            return !url;
+          }
+        );
+
+      if (emptyUrlRow) {
+        alert(
+          "추가한 플랫폼의 음원 링크를 입력하거나 해당 플랫폼을 삭제해 주세요."
+        );
+
+        emptyUrlRow
+          .querySelector(
+            "[data-admin-platform-url]"
+          )
+          ?.focus();
+
+        return;
+      }
+
+      const invalidOtherPlatform =
+        platforms.find(
+          (platformItem) =>
+            platformItem.key ===
+              "other" &&
+            !String(
+              platformItem.label || ""
+            ).trim()
+        );
+
+      if (invalidOtherPlatform) {
+        alert(
+          "기타 플랫폼의 이름을 입력해 주세요."
+        );
+
+        return;
+      }
+
       try {
         if (submitButton) {
           submitButton.disabled =
@@ -3417,7 +3497,7 @@ document
         }
 
         /*
-         * 새 자켓을 선택한 경우에만 업로드
+         * 새 자켓 선택 시 업로드
          */
         const selectedCoverFile =
           coverInput?.files?.[0];
@@ -3452,8 +3532,20 @@ document
         }
 
         /*
-         * D1 music 테이블에 존재하는
-         * 항목만 서버로 전송
+         * hidden JSON 값 갱신
+         */
+        const platformsJson =
+          JSON.stringify(
+            platforms
+          );
+
+        setAdminFormValue(
+          "adminMusicPlatformsJson",
+          platformsJson
+        );
+
+        /*
+         * 서버 전송 데이터
          */
         const data = {
           id:
@@ -3501,11 +3593,20 @@ document
 
           coverUrl,
 
+          /*
+           * 새로운 동적 플랫폼 저장값
+           */
+          platforms,
+
+          platformsJson,
+
+          /*
+           * 기존 서버·데이터 호환값
+           */
           youtubeUrl,
-
           spotifyUrl,
-
           appleUrl,
+          melonUrl,
 
           published,
         };
@@ -3517,36 +3618,83 @@ document
           );
 
         /*
-         * 저장된 실제 응답값으로
-         * 현재 관리자 데이터 갱신
+         * 서버가 platforms를 응답하지 않는 경우에도
+         * 현재 화면에서는 입력값 유지
          */
-        if (savedItem) {
-          const savedIndex =
-            adminStore.music.findIndex(
-              (musicItem) => {
-                const savedProfileKey =
-                  musicItem.profileKey ||
-                  musicItem.profile_key ||
-                  musicItem.id ||
-                  "";
+        const normalizedSavedItem = {
+          ...existingItem,
+          ...data,
+          ...(savedItem || {}),
 
-                return (
-                  String(
-                    savedProfileKey
-                  ) ===
-                  String(
-                    profileKey
-                  )
-                );
-              }
-            );
+          platforms:
+            savedItem?.platforms ||
+            savedItem?.platformsJson ||
+            savedItem?.platforms_json
+              ? (
+                  savedItem.platforms ||
+                  savedItem.platformsJson ||
+                  savedItem.platforms_json
+                )
+              : platforms,
 
-          if (savedIndex >= 0) {
-            adminStore.music[
-              savedIndex
-            ] = savedItem;
-          }
+          platformsJson:
+            savedItem?.platformsJson ||
+            savedItem?.platforms_json ||
+            platformsJson,
+
+          youtubeUrl:
+            savedItem?.youtubeUrl ||
+            savedItem?.youtube_url ||
+            youtubeUrl,
+
+          spotifyUrl:
+            savedItem?.spotifyUrl ||
+            savedItem?.spotify_url ||
+            spotifyUrl,
+
+          appleUrl:
+            savedItem?.appleUrl ||
+            savedItem?.apple_url ||
+            appleUrl,
+
+          melonUrl:
+            savedItem?.melonUrl ||
+            savedItem?.melon_url ||
+            melonUrl,
+        };
+
+        const savedIndex =
+          adminStore.music.findIndex(
+            (musicItem) => {
+              const savedProfileKey =
+                musicItem.profileKey ||
+                musicItem.profile_key ||
+                musicItem.id ||
+                "";
+
+              return (
+                String(
+                  savedProfileKey
+                ) ===
+                String(
+                  profileKey
+                )
+              );
+            }
+          );
+
+        if (savedIndex >= 0) {
+          adminStore.music[
+            savedIndex
+          ] =
+            normalizedSavedItem;
+        } else {
+          adminStore.music.unshift(
+            normalizedSavedItem
+          );
         }
+
+        renderAllAdminLists();
 
         await loadPublicMusic();
 
@@ -3574,7 +3722,7 @@ document
       }
     }
   );
-
+  
 /* =========================
    SETTINGS TEMPORARY SAVE
 ========================= */
