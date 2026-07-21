@@ -1947,9 +1947,32 @@
       type="hidden"
     />
 
+    <!-- 동적 플랫폼 데이터 저장용 -->
+    <input
+      id="adminMusicPlatformsJson"
+      type="hidden"
+      value="[]"
+    />
+
     <!-- =========================
-         기존 데이터 호환용
+         기존 데이터 임시 호환용
+         다음 JS 단계에서 제거 예정
     ========================== -->
+    <input
+      id="adminMusicYoutube"
+      type="hidden"
+    />
+
+    <input
+      id="adminMusicSpotify"
+      type="hidden"
+    />
+
+    <input
+      id="adminMusicApple"
+      type="hidden"
+    />
+
     <input
       id="adminMusicArtworkTitle"
       type="hidden"
@@ -2052,7 +2075,7 @@
       </select>
 
       <small class="admin-field-help">
-        홈페이지에서 앨범명 위에 표시되는 종류입니다.
+        홈페이지에서 앨범명 위에 표시됩니다.
       </small>
     </label>
 
@@ -2105,109 +2128,52 @@
     </div>
 
     <!-- =========================
-         음원 플랫폼 링크
+         음원 플랫폼
     ========================== -->
-    <div class="admin-music-platform-section">
+    <section
+      class="admin-music-platform-section"
+      aria-labelledby="adminMusicPlatformTitle"
+    >
       <div class="admin-music-platform-heading">
         <div>
-          <strong>
+          <strong id="adminMusicPlatformTitle">
             음원 플랫폼
           </strong>
 
           <p class="admin-field-help">
-            링크를 입력한 플랫폼만 홈페이지에 표시됩니다.
-            플랫폼 아이콘은 자동으로 적용됩니다.
+            필요한 음원 플랫폼을 추가하고 링크를 입력하세요.
+            등록된 개수에 맞춰 홈페이지 버튼 크기가 자동으로 조절됩니다.
+          </p>
+        </div>
+
+        <button
+          class="admin-platform-add-button"
+          id="adminMusicPlatformAddButton"
+          type="button"
+        >
+          ＋ 플랫폼 추가
+        </button>
+      </div>
+
+      <div
+        class="admin-platform-dynamic-list"
+        id="adminMusicPlatformList"
+        aria-live="polite"
+      >
+        <div
+          class="admin-platform-empty-state"
+          id="adminMusicPlatformEmpty"
+        >
+          <strong>
+            등록된 음원 플랫폼이 없습니다.
+          </strong>
+
+          <p>
+            플랫폼 추가 버튼을 눌러 음원 링크를 등록해 주세요.
           </p>
         </div>
       </div>
-
-      <!-- YouTube -->
-      <div class="admin-platform-item">
-        <div class="admin-platform-item-header">
-          <h5>
-            <i
-              class="fa-brands fa-youtube"
-              aria-hidden="true"
-            ></i>
-
-            YouTube
-          </h5>
-        </div>
-
-        <label>
-          앨범 링크
-
-          <input
-            id="adminMusicYoutube"
-            type="url"
-            placeholder="https://youtube.com/..."
-            autocomplete="url"
-          />
-
-          <small class="admin-field-help">
-            YouTube 영상, 음원 또는 앨범 링크를 입력하세요.
-          </small>
-        </label>
-      </div>
-
-      <!-- Spotify -->
-      <div class="admin-platform-item">
-        <div class="admin-platform-item-header">
-          <h5>
-            <i
-              class="fa-brands fa-spotify"
-              aria-hidden="true"
-            ></i>
-
-            Spotify
-          </h5>
-        </div>
-
-        <label>
-          앨범 링크
-
-          <input
-            id="adminMusicSpotify"
-            type="url"
-            placeholder="https://open.spotify.com/..."
-            autocomplete="url"
-          />
-
-          <small class="admin-field-help">
-            Spotify 앨범, 싱글 또는 트랙 링크를 입력하세요.
-          </small>
-        </label>
-      </div>
-
-      <!-- Apple Music -->
-      <div class="admin-platform-item">
-        <div class="admin-platform-item-header">
-          <h5>
-            <i
-              class="fa-brands fa-apple"
-              aria-hidden="true"
-            ></i>
-
-            Apple Music
-          </h5>
-        </div>
-
-        <label>
-          앨범 링크
-
-          <input
-            id="adminMusicApple"
-            type="url"
-            placeholder="https://music.apple.com/..."
-            autocomplete="url"
-          />
-
-          <small class="admin-field-help">
-            Apple Music 앨범, 싱글 또는 트랙 링크를 입력하세요.
-          </small>
-        </label>
-      </div>
-    </div>
+    </section>
 
     <!-- =========================
          공개 여부

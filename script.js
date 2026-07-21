@@ -1548,45 +1548,452 @@ function fitMusicCardTitle(element) {
 }
 
 /* =========================================================
-   MUSIC PLATFORM LINK
+   MUSIC PLATFORM LINK + PUBLIC MUSIC LOAD
+   - 동적 플랫폼 배열 지원
+   - 기존 YouTube / Spotify / Apple 필드 호환
+   - 플랫폼 개수에 따라 버튼 동일 너비
+   - 링크가 없으면 준비중 안내
+   - 링크가 없으면 앨범 자켓 흐림 + COMING SOON
 ========================================================= */
 
-function createMusicPlatformLink({
-  url,
-  label,
-}) {
-  const cleanUrl = String(url || "").trim();
+const MUSIC_PLATFORM_SETTINGS = {
+  youtube: {
+    label: "YouTube",
+    color: "#ff0000",
+    icon: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          fill="currentColor"
+          d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8ZM9.6 15.5V8.5L15.8 12Z"
+        />
+      </svg>
+    `,
+  },
+
+  spotify: {
+    label: "Spotify",
+    color: "#1db954",
+    icon: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          fill="currentColor"
+          d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0Zm5.5 17.3a.75.75 0 0 1-1 .2c-2.7-1.6-6.1-2-10-.9a.75.75 0 1 1-.1-1.5c4.2-.2 7.9.3 10.9 1.1.4.2.5.8.2 1.1Zm1.4-3.1a.93.93 0 0 1-1.3.3c-3.1-1.9-7.9-2.5-11.6-1.2a.94.94 0 1 1-.6-1.8c4.2-1.4 9.4-.7 13.1 1.5.4.3.5.9.4 1.2Zm.2-3.3c-3.7-2.2-9.8-2.4-13.4-1.3a1.13 1.13 0 1 1-.7-2.1c4.2-1.3 11-1 15.2 1.5a1.12 1.12 0 1 1-1.1 1.9Z"
+        />
+      </svg>
+    `,
+  },
+
+  apple: {
+    label: "Apple Music",
+    color: "#fa243c",
+    icon: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          fill="currentColor"
+          d="M16.9 2v13.2a3.5 3.5 0 1 1-1.4-2.8V5.5l-7 1.5v10.2A3.5 3.5 0 1 1 7 14.4V5.8L16.9 2Z"
+        />
+      </svg>
+    `,
+  },
+
+  melon: {
+    label: "Melon",
+    color: "#00cd3c",
+    icon: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle
+          cx="12"
+          cy="12"
+          r="10"
+          fill="currentColor"
+        />
+
+        <text
+          x="12"
+          y="15.8"
+          text-anchor="middle"
+          font-size="8"
+          font-weight="700"
+          fill="#ffffff"
+          font-family="Arial, sans-serif"
+        >
+          M
+        </text>
+      </svg>
+    `,
+  },
+
+  genie: {
+    label: "Genie",
+    color: "#20c5e5",
+    icon: `
+      <span
+        class="music-platform-letter"
+        aria-hidden="true"
+      >
+        G
+      </span>
+    `,
+  },
+
+  flo: {
+    label: "FLO",
+    color: "#8b5cf6",
+    icon: `
+      <span
+        class="music-platform-letter"
+        aria-hidden="true"
+      >
+        F
+      </span>
+    `,
+  },
+
+  bugs: {
+    label: "Bugs",
+    color: "#ff3b30",
+    icon: `
+      <span
+        class="music-platform-letter"
+        aria-hidden="true"
+      >
+        B
+      </span>
+    `,
+  },
+
+  soundcloud: {
+    label: "SoundCloud",
+    color: "#ff5500",
+    icon: `
+      <i
+        class="fa-brands fa-soundcloud"
+        aria-hidden="true"
+      ></i>
+    `,
+  },
+
+  bandcamp: {
+    label: "Bandcamp",
+    color: "#629aa9",
+    icon: `
+      <i
+        class="fa-brands fa-bandcamp"
+        aria-hidden="true"
+      ></i>
+    `,
+  },
+
+  lineMusic: {
+    label: "LINE MUSIC",
+    color: "#06c755",
+    icon: `
+      <span
+        class="music-platform-letter"
+        aria-hidden="true"
+      >
+        L
+      </span>
+    `,
+  },
+
+  qqMusic: {
+    label: "QQ Music",
+    color: "#31c27c",
+    icon: `
+      <span
+        class="music-platform-letter"
+        aria-hidden="true"
+      >
+        Q
+      </span>
+    `,
+  },
+
+  other: {
+    label: "Music",
+    color: "#ffffff",
+    icon: `
+      <span
+        class="music-platform-letter"
+        aria-hidden="true"
+      >
+        ♪
+      </span>
+    `,
+  },
+};
+
+
+/* =========================
+   플랫폼 키 정리
+========================= */
+
+function normalizeMusicPlatformKey(value) {
+  const cleanValue =
+    String(value || "")
+      .trim()
+      .toLowerCase()
+      .replaceAll("-", "")
+      .replaceAll("_", "")
+      .replaceAll(" ", "");
+
+  const aliases = {
+    youtube: "youtube",
+    youtubemusic: "youtube",
+
+    spotify: "spotify",
+
+    apple: "apple",
+    applemusic: "apple",
+
+    melon: "melon",
+
+    genie: "genie",
+    geniemusic: "genie",
+
+    flo: "flo",
+
+    bugs: "bugs",
+    bugsmusic: "bugs",
+
+    soundcloud: "soundcloud",
+
+    bandcamp: "bandcamp",
+
+    linemusic: "lineMusic",
+    line: "lineMusic",
+
+    qqmusic: "qqMusic",
+    qq: "qqMusic",
+
+    other: "other",
+    music: "other",
+  };
+
+  return aliases[cleanValue] || cleanValue;
+}
+
+
+/* =========================
+   platforms 값 배열 변환
+========================= */
+
+function parseMusicPlatformsValue(value) {
+  if (Array.isArray(value)) {
+    return value;
+  }
+
+  if (
+    value &&
+    typeof value === "object"
+  ) {
+    return Object.entries(value).map(
+      ([platformKey, platformValue]) => {
+        if (
+          typeof platformValue ===
+          "string"
+        ) {
+          return {
+            key: platformKey,
+            url: platformValue,
+          };
+        }
+
+        return {
+          key: platformKey,
+          ...(platformValue || {}),
+        };
+      }
+    );
+  }
+
+  if (
+    typeof value === "string" &&
+    value.trim()
+  ) {
+    try {
+      const parsedValue =
+        JSON.parse(value);
+
+      return parseMusicPlatformsValue(
+        parsedValue
+      );
+    } catch {
+      return [];
+    }
+  }
+
+  return [];
+}
+
+
+/* =========================
+   저장 데이터에서 플랫폼 목록 만들기
+========================= */
+
+function getMusicPlatforms(item) {
+  const platformMap = new Map();
+
+  const dynamicPlatforms =
+    parseMusicPlatformsValue(
+      item.platforms ||
+      item.platformsJson ||
+      item.platforms_json ||
+      []
+    );
+
+  dynamicPlatforms.forEach(
+    (platformItem) => {
+      const platformKey =
+        normalizeMusicPlatformKey(
+          platformItem.key ||
+          platformItem.platform ||
+          platformItem.type ||
+          platformItem.name ||
+          platformItem.label
+        );
+
+      const platformUrl =
+        String(
+          platformItem.url ||
+          platformItem.link ||
+          platformItem.href ||
+          ""
+        ).trim();
+
+      if (
+        !platformKey ||
+        !platformUrl
+      ) {
+        return;
+      }
+
+      platformMap.set(
+        platformKey,
+        {
+          key: platformKey,
+
+          label:
+            platformItem.label ||
+            platformItem.name ||
+            MUSIC_PLATFORM_SETTINGS[
+              platformKey
+            ]?.label ||
+            "Music",
+
+          url: platformUrl,
+        }
+      );
+    }
+  );
+
+  const legacyPlatforms = [
+    {
+      key: "youtube",
+      url:
+        item.youtubeUrl ||
+        item.youtube_url ||
+        "",
+    },
+
+    {
+      key: "spotify",
+      url:
+        item.spotifyUrl ||
+        item.spotify_url ||
+        "",
+    },
+
+    {
+      key: "apple",
+      url:
+        item.appleUrl ||
+        item.apple_url ||
+        "",
+    },
+
+    {
+      key: "melon",
+      url:
+        item.melonUrl ||
+        item.melon_url ||
+        "",
+    },
+  ];
+
+  legacyPlatforms.forEach(
+    (platformItem) => {
+      const platformUrl =
+        String(
+          platformItem.url || ""
+        ).trim();
+
+      if (
+        !platformUrl ||
+        platformMap.has(
+          platformItem.key
+        )
+      ) {
+        return;
+      }
+
+      platformMap.set(
+        platformItem.key,
+        {
+          key: platformItem.key,
+
+          label:
+            MUSIC_PLATFORM_SETTINGS[
+              platformItem.key
+            ]?.label ||
+            "Music",
+
+          url: platformUrl,
+        }
+      );
+    }
+  );
+
+  return Array.from(
+    platformMap.values()
+  );
+}
+
+
+/* =========================
+   플랫폼 버튼 만들기
+========================= */
+
+function createMusicPlatformLink(
+  platformItem
+) {
+  const platformKey =
+    normalizeMusicPlatformKey(
+      platformItem.key
+    );
+
+  const setting =
+    MUSIC_PLATFORM_SETTINGS[
+      platformKey
+    ] ||
+    MUSIC_PLATFORM_SETTINGS.other;
+
+  const cleanUrl =
+    String(
+      platformItem.url || ""
+    ).trim();
+
+  const label =
+    String(
+      platformItem.label ||
+      setting.label ||
+      "Music"
+    ).trim();
 
   if (!cleanUrl) {
     return "";
   }
-
-  const icons = {
-    "YouTube": `
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path fill="#FF0000" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8ZM9.6 15.5V8.5L15.8 12Z"/>
-      </svg>
-    `,
-
-    "Spotify": `
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path fill="#1DB954" d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0Zm5.5 17.3a.75.75 0 0 1-1 .2c-2.7-1.6-6.1-2-10-.9a.75.75 0 1 1-.1-1.5c4.2-.2 7.9.3 10.9 1.1.4.2.5.8.2 1.1Zm1.4-3.1a.93.93 0 0 1-1.3.3c-3.1-1.9-7.9-2.5-11.6-1.2a.94.94 0 1 1-.6-1.8c4.2-1.4 9.4-.7 13.1 1.5.4.3.5.9.4 1.2Zm.2-3.3c-3.7-2.2-9.8-2.4-13.4-1.3a1.13 1.13 0 1 1-.7-2.1c4.2-1.3 11-1 15.2 1.5a1.12 1.12 0 1 1-1.1 1.9Z"/>
-      </svg>
-    `,
-
-    "Apple Music": `
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path fill="#FA243C" d="M16.9 2v13.2a3.5 3.5 0 1 1-1.4-2.8V5.5l-7 1.5v10.2A3.5 3.5 0 1 1 7 14.4V5.8L16.9 2Z"/>
-      </svg>
-    `,
-
-    "Melon": `
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <circle cx="12" cy="12" r="10" fill="#00CD3C"/>
-        <text x="12" y="16" text-anchor="middle" font-size="9" fill="#fff" font-family="Arial">M</text>
-      </svg>
-    `
-  };
 
   return `
     <a
@@ -1596,16 +2003,117 @@ function createMusicPlatformLink({
       rel="noopener noreferrer"
       aria-label="${escapeAdminHtml(label)}에서 듣기"
       title="${escapeAdminHtml(label)}"
+      data-music-platform="${escapeAdminHtml(
+        platformKey
+      )}"
+      style="--music-platform-color: ${
+        setting.color
+      };"
     >
-      ${icons[label] || ""}
+      <span
+        class="music-platform-icon"
+        aria-hidden="true"
+      >
+        ${setting.icon}
+      </span>
+
+      <span class="music-platform-name">
+        ${escapeAdminHtml(label)}
+      </span>
     </a>
   `;
 }
-/* =========================================================
-   PUBLIC MUSIC LOAD
-   - index.html의 기존 카드만 사용
-   - 중복 플랫폼 영역 생성 금지
-========================================================= */
+
+
+/* =========================
+   앨범 자켓 준비중 상태
+========================= */
+
+function updateMusicComingSoonArtwork({
+  artwork,
+  coverImage,
+  fallback,
+  isComingSoon,
+  coverUrl,
+  albumTitle,
+}) {
+  if (!artwork) {
+    return;
+  }
+
+  artwork.classList.toggle(
+    "is-coming-soon",
+    isComingSoon
+  );
+
+  artwork
+    .querySelector(
+      ".music-coming-soon-overlay"
+    )
+    ?.remove();
+
+  if (
+    coverImage &&
+    coverUrl
+  ) {
+    coverImage.src = coverUrl;
+    coverImage.alt =
+      `${albumTitle} 앨범 자켓`;
+
+    coverImage.hidden = false;
+
+    if (fallback) {
+      fallback.hidden = true;
+    }
+  } else {
+    if (coverImage) {
+      coverImage.removeAttribute(
+        "src"
+      );
+
+      coverImage.alt = "";
+      coverImage.hidden = true;
+    }
+
+    if (fallback) {
+      fallback.hidden = false;
+
+      fallback.innerHTML = `
+        <small>
+          ${
+            isComingSoon
+              ? "COMING SOON"
+              : "LATEST RELEASE"
+          }
+        </small>
+      `;
+    }
+  }
+
+  if (!isComingSoon) {
+    return;
+  }
+
+  const comingSoonOverlay =
+    document.createElement("div");
+
+  comingSoonOverlay.className =
+    "music-coming-soon-overlay";
+
+  comingSoonOverlay.innerHTML = `
+    <span>COMING</span>
+    <strong>SOON</strong>
+  `;
+
+  artwork.appendChild(
+    comingSoonOverlay
+  );
+}
+
+
+/* =========================
+   공개 Music 불러오기
+========================= */
 
 async function loadPublicMusic() {
   const musicProfileList =
@@ -1628,104 +2136,50 @@ async function loadPublicMusic() {
 
     leehwigeun: {
       suffix: "Leehwigeun",
-      defaultArtist: "이휘근",
+      defaultArtist:
+        "이휘근(Kenneth)",
       defaultType: "SINGLE",
-      defaultTitle: "Side by Side",
+      defaultTitle:
+        "Side by Side",
     },
 
     eluni: {
       suffix: "Eluni",
       defaultArtist: "이루니",
-      defaultType: "SINGLE",
-      defaultTitle: "참여 음원",
+      defaultType:
+        "PARTICIPATION",
+      defaultTitle:
+        "참여 음원",
     },
 
     leecherin: {
       suffix: "Leecherin",
       defaultArtist: "이체린",
-      defaultType: "SINGLE",
-      defaultTitle: "참여 음원",
+      defaultType:
+        "PARTICIPATION",
+      defaultTitle:
+        "참여 음원",
     },
   };
 
-  function updatePlatformLink(
-    element,
-    url
-  ) {
-    if (!element) {
-      return;
-    }
-
-    const cleanUrl =
-      String(url || "").trim();
-
-    if (cleanUrl) {
-      element.href = cleanUrl;
-
-      element.target = "_blank";
-      element.rel =
-        "noopener noreferrer";
-
-      element.classList.remove(
-        "is-disabled"
-      );
-
-      element.removeAttribute(
-        "aria-disabled"
-      );
-
-      element.removeAttribute(
-        "tabindex"
-      );
-
-      element.hidden = false;
-
-      return;
-    }
-
-    element.href = "#";
-
-    element.classList.add(
-      "is-disabled"
-    );
-
-    element.setAttribute(
-      "aria-disabled",
-      "true"
-    );
-
-    element.setAttribute(
-      "tabindex",
-      "-1"
-    );
-
-    element.hidden = true;
-  }
-
   try {
-    const response = await fetch(
-      "/api/content?type=music",
-      {
-        method: "GET",
+    const response =
+      await fetch(
+        "/api/content?type=music",
+        {
+          method: "GET",
 
-        headers: {
-          Accept:
-            "application/json",
-        },
+          headers: {
+            Accept:
+              "application/json",
+          },
 
-        cache: "no-store",
-      }
-    );
-
-    let result;
-
-    try {
-      result = await response.json();
-    } catch {
-      throw new Error(
-        "음원 서버 응답을 읽을 수 없습니다."
+          cache: "no-store",
+        }
       );
-    }
+
+    const result =
+      await response.json();
 
     if (
       !response.ok ||
@@ -1742,42 +2196,24 @@ async function loadPublicMusic() {
         ? result.items
         : [];
 
-    /*
-     * 이전 script.js가 잘못 추가했던
-     * 중복 플랫폼 영역 제거
-     */
-    Object.values(
-      profileSettings
-    ).forEach((setting) => {
-      document
-        .getElementById(
-          `musicPlatforms${setting.suffix}`
-        )
-        ?.remove();
-    });
-
     Object.entries(
       profileSettings
     ).forEach(
       ([profileKey, setting]) => {
-        const item = items.find(
-          (musicItem) => {
-            const savedProfileKey =
-              musicItem.profileKey ||
-              musicItem.profile_key ||
-              musicItem.id ||
-              "";
+        const item =
+          items.find(
+            (musicItem) => {
+              const savedProfileKey =
+                musicItem.profileKey ||
+                musicItem.profile_key ||
+                musicItem.id;
 
-            return (
-              String(
-                savedProfileKey
-              ) === profileKey
-            );
-          }
-        );
-
-        const suffix =
-          setting.suffix;
+              return (
+                String(savedProfileKey) ===
+                String(profileKey)
+              );
+            }
+          );
 
         const card =
           musicProfileList.querySelector(
@@ -1788,80 +2224,24 @@ async function loadPublicMusic() {
           return;
         }
 
-        const isPublished =
-          item &&
-          item.published !== false &&
-          Number(
-            item.published ?? 1
-          ) !== 0;
-
-        if (!isPublished) {
+        if (
+          !item ||
+          item.published === false ||
+          Number(item.published) === 0
+        ) {
           card.hidden = true;
           return;
         }
 
         card.hidden = false;
 
-        const artist =
-          String(
-            item.artist ||
-            item.artist_name ||
-            setting.defaultArtist
-          ).trim();
+        const suffix =
+          setting.suffix;
 
-        const albumType =
-          String(
-            item.albumType ||
-            item.album_type ||
-            item.type ||
-            item.release_type ||
-            setting.defaultType
-          ).trim();
-
-        const title =
-          String(
-            item.albumTitle ||
-            item.album_title ||
-            item.title ||
-            setting.defaultTitle
-          ).trim();
-
-        const coverUrl =
-          String(
-            item.coverUrl ||
-            item.cover_url ||
-            ""
-          ).trim();
-
-        const youtubeUrl =
-          String(
-            item.youtubeUrl ||
-            item.youtube_url ||
-            ""
-          ).trim();
-
-        const spotifyUrl =
-          String(
-            item.spotifyUrl ||
-            item.spotify_url ||
-            ""
-          ).trim();
-
-        const appleUrl =
-          String(
-            item.appleUrl ||
-            item.apple_url ||
-            item.appleMusicUrl ||
-            item.apple_music_url ||
-            ""
-          ).trim();
-
-        const melonUrl =
-          String(
-            item.melonUrl ||
-            item.melon_url ||
-            ""
-          ).trim();
+        const artwork =
+          card.querySelector(
+            ".music-artwork"
+          );
 
         const coverImage =
           document.getElementById(
@@ -1893,131 +2273,118 @@ async function loadPublicMusic() {
             `musicPlatformLinks${suffix}`
           );
 
-        /*
-         * 앨범 자켓
-         */
-        if (
-          coverImage &&
-          fallback
-        ) {
-          if (coverUrl) {
-            coverImage.src =
-              coverUrl;
+        const artist =
+          String(
+            item.artist ||
+            item.artist_name ||
+            setting.defaultArtist
+          ).trim();
 
-            coverImage.alt =
-              `${title} 앨범 자켓`;
+        const albumType =
+          String(
+            item.type ||
+            setting.defaultType
+          ).trim();
 
-            coverImage.hidden =
-              false;
+        const albumTitle =
+          String(
+            item.title ||
+            setting.defaultTitle
+          ).trim();
 
-            fallback.hidden =
-              true;
+        const coverUrl =
+          String(
+            item.coverUrl ||
+            item.cover_url ||
+            ""
+          ).trim();
 
-            coverImage.onerror =
-              () => {
-                coverImage
-                  .removeAttribute(
-                    "src"
-                  );
+        const platforms =
+          getMusicPlatforms(item);
 
-                coverImage.alt = "";
-                coverImage.hidden =
-                  true;
+        const isComingSoon =
+          platforms.length === 0;
 
-                fallback.hidden =
-                  false;
-              };
-          } else {
-            coverImage
-              .removeAttribute(
-                "src"
-              );
-
-            coverImage.alt = "";
-            coverImage.hidden =
-              true;
-
-            fallback.hidden =
-              false;
-          }
-        }
-
-        /*
-         * 아티스트 이름
-         */
         if (artistElement) {
           artistElement.textContent =
             artist;
         }
 
-        /*
-         * 앨범 종류
-         */
         if (typeElement) {
-          typeElement.innerHTML = `
-            <span aria-hidden="true"></span>
-            ${escapeAdminHtml(
-              albumType
-            )}
-          `;
+          typeElement.textContent =
+            albumType;
         }
 
-        /*
-         * 앨범명
-         */
         if (titleElement) {
           titleElement.textContent =
-            title;
+            albumTitle;
 
           fitMusicCardTitle(
             titleElement
           );
         }
 
-        /*
-         * 기존 index.html 플랫폼 버튼 연결
-         */
-        updatePlatformLink(
-          document.getElementById(
-            `musicYoutube${suffix}`
-          ),
-          youtubeUrl
+        updateMusicComingSoonArtwork({
+          artwork,
+          coverImage,
+          fallback,
+          isComingSoon,
+          coverUrl,
+          albumTitle,
+        });
+
+        card.classList.toggle(
+          "is-coming-soon",
+          isComingSoon
         );
 
-        updatePlatformLink(
-          document.getElementById(
-            `musicSpotify${suffix}`
-          ),
-          spotifyUrl
-        );
-
-        updatePlatformLink(
-          document.getElementById(
-            `musicApple${suffix}`
-          ),
-          appleUrl
-        );
-
-        updatePlatformLink(
-          document.getElementById(
-            `musicMelon${suffix}`
-          ),
-          melonUrl
-        );
-
-        /*
-         * 등록된 링크가 하나도 없으면
-         * 플랫폼 영역 전체를 숨긴다.
-         */
-        if (platformContainer) {
-          platformContainer.hidden =
-            !(
-              youtubeUrl ||
-              spotifyUrl ||
-              appleUrl ||
-              melonUrl
-            );
+        if (!platformContainer) {
+          return;
         }
+
+        platformContainer.classList.toggle(
+          "is-empty",
+          isComingSoon
+        );
+
+        platformContainer.style.setProperty(
+          "--music-platform-count",
+          String(
+            Math.max(
+              platforms.length,
+              1
+            )
+          )
+        );
+
+        if (isComingSoon) {
+          platformContainer.innerHTML = `
+            <div class="music-platform-coming-soon">
+              <span aria-hidden="true">
+                ♪
+              </span>
+
+              <div>
+                <strong>
+                  준비중입니다.
+                </strong>
+
+                <p>
+                  정식 발매 후 음원 서비스를 이용하실 수 있습니다.
+                </p>
+              </div>
+            </div>
+          `;
+
+          return;
+        }
+
+        platformContainer.innerHTML =
+          platforms
+            .map(
+              createMusicPlatformLink
+            )
+            .join("");
       }
     );
   } catch (error) {
@@ -2027,7 +2394,6 @@ async function loadPublicMusic() {
     );
   }
 }
-
 /* =========================
    FORM TITLE
 ========================= */
@@ -5871,4 +6237,838 @@ if (document.readyState === "loading") {
   );
 } else {
   loadPublicMusic();
+}
+
+/* =========================================================
+   ADMIN MUSIC PLATFORM MANAGER
+   - 플랫폼 자유 추가
+   - 플랫폼 변경
+   - 링크 입력
+   - 개별 삭제
+   - JSON 자동 동기화
+========================================================= */
+
+const ADMIN_MUSIC_PLATFORM_OPTIONS = [
+  {
+    key: "youtube",
+    label: "YouTube",
+    placeholder: "https://youtube.com/...",
+  },
+
+  {
+    key: "spotify",
+    label: "Spotify",
+    placeholder: "https://open.spotify.com/...",
+  },
+
+  {
+    key: "apple",
+    label: "Apple Music",
+    placeholder: "https://music.apple.com/...",
+  },
+
+  {
+    key: "melon",
+    label: "Melon",
+    placeholder: "https://www.melon.com/...",
+  },
+
+  {
+    key: "genie",
+    label: "Genie",
+    placeholder: "https://www.genie.co.kr/...",
+  },
+
+  {
+    key: "flo",
+    label: "FLO",
+    placeholder: "https://www.music-flo.com/...",
+  },
+
+  {
+    key: "bugs",
+    label: "Bugs",
+    placeholder: "https://music.bugs.co.kr/...",
+  },
+
+  {
+    key: "soundcloud",
+    label: "SoundCloud",
+    placeholder: "https://soundcloud.com/...",
+  },
+
+  {
+    key: "bandcamp",
+    label: "Bandcamp",
+    placeholder: "https://artist.bandcamp.com/...",
+  },
+
+  {
+    key: "lineMusic",
+    label: "LINE MUSIC",
+    placeholder: "https://music.line.me/...",
+  },
+
+  {
+    key: "qqMusic",
+    label: "QQ Music",
+    placeholder: "https://y.qq.com/...",
+  },
+
+  {
+    key: "other",
+    label: "기타 플랫폼",
+    placeholder: "https://...",
+  },
+];
+
+
+/* =========================
+   플랫폼 설정 찾기
+========================= */
+
+function getAdminMusicPlatformSetting(
+  platformKey
+) {
+  return (
+    ADMIN_MUSIC_PLATFORM_OPTIONS.find(
+      (option) =>
+        option.key === platformKey
+    ) ||
+    ADMIN_MUSIC_PLATFORM_OPTIONS.find(
+      (option) =>
+        option.key === "other"
+    )
+  );
+}
+
+
+/* =========================
+   플랫폼 행 ID 생성
+========================= */
+
+function createAdminMusicPlatformRowId() {
+  return (
+    "music-platform-" +
+    Date.now() +
+    "-" +
+    Math.random()
+      .toString(36)
+      .slice(2, 8)
+  );
+}
+
+
+/* =========================
+   플랫폼 행 HTML 생성
+========================= */
+
+function createAdminMusicPlatformRow(
+  platformData = {}
+) {
+  const rowId =
+    platformData.rowId ||
+    createAdminMusicPlatformRowId();
+
+  const selectedKey =
+    String(
+      platformData.key ||
+      platformData.platform ||
+      "youtube"
+    ).trim();
+
+  const selectedUrl =
+    String(
+      platformData.url ||
+      platformData.link ||
+      ""
+    ).trim();
+
+  const selectedLabel =
+    String(
+      platformData.label ||
+      ""
+    ).trim();
+
+  const setting =
+    getAdminMusicPlatformSetting(
+      selectedKey
+    );
+
+  const platformOptionsHtml =
+    ADMIN_MUSIC_PLATFORM_OPTIONS
+      .map((option) => {
+        const isSelected =
+          option.key === selectedKey;
+
+        return `
+          <option
+            value="${escapeAdminHtml(
+              option.key
+            )}"
+            ${
+              isSelected
+                ? "selected"
+                : ""
+            }
+          >
+            ${escapeAdminHtml(
+              option.label
+            )}
+          </option>
+        `;
+      })
+      .join("");
+
+  return `
+    <article
+      class="admin-platform-item"
+      data-admin-platform-row="${escapeAdminHtml(
+        rowId
+      )}"
+    >
+      <div class="admin-platform-item-header">
+        <strong>
+          음원 플랫폼
+        </strong>
+
+        <button
+          class="admin-platform-remove-button"
+          type="button"
+          data-remove-admin-platform
+          aria-label="음원 플랫폼 삭제"
+        >
+          삭제
+        </button>
+      </div>
+
+      <div class="admin-platform-fields">
+        <label>
+          플랫폼
+
+          <select
+            class="admin-platform-type-select"
+            data-admin-platform-key
+          >
+            ${platformOptionsHtml}
+          </select>
+        </label>
+
+        <label
+          class="admin-platform-custom-label-field"
+          ${
+            selectedKey === "other"
+              ? ""
+              : "hidden"
+          }
+        >
+          플랫폼 이름
+
+          <input
+            class="admin-platform-custom-label"
+            type="text"
+            maxlength="30"
+            value="${escapeAdminHtml(
+              selectedLabel
+            )}"
+            placeholder="예: TikTok Music"
+            data-admin-platform-label
+          />
+        </label>
+
+        <label>
+          음원 링크
+
+          <input
+            class="admin-platform-url-input"
+            type="url"
+            value="${escapeAdminHtml(
+              selectedUrl
+            )}"
+            placeholder="${escapeAdminHtml(
+              setting.placeholder
+            )}"
+            autocomplete="url"
+            data-admin-platform-url
+          />
+
+          <small class="admin-field-help">
+            앨범, 싱글 또는 트랙 주소를 입력하세요.
+          </small>
+        </label>
+      </div>
+    </article>
+  `;
+}
+
+
+/* =========================
+   플랫폼 목록 저장값 만들기
+========================= */
+
+function collectAdminMusicPlatforms() {
+  const platformList =
+    document.getElementById(
+      "adminMusicPlatformList"
+    );
+
+  if (!platformList) {
+    return [];
+  }
+
+  return Array.from(
+    platformList.querySelectorAll(
+      "[data-admin-platform-row]"
+    )
+  )
+    .map((row) => {
+      const platformKey =
+        row
+          .querySelector(
+            "[data-admin-platform-key]"
+          )
+          ?.value.trim() ||
+        "";
+
+      const platformUrl =
+        row
+          .querySelector(
+            "[data-admin-platform-url]"
+          )
+          ?.value.trim() ||
+        "";
+
+      const customLabel =
+        row
+          .querySelector(
+            "[data-admin-platform-label]"
+          )
+          ?.value.trim() ||
+        "";
+
+      const setting =
+        getAdminMusicPlatformSetting(
+          platformKey
+        );
+
+      return {
+        key: platformKey,
+
+        label:
+          platformKey === "other"
+            ? customLabel ||
+              "기타 플랫폼"
+            : setting.label,
+
+        url: platformUrl,
+      };
+    })
+    .filter(
+      (platformItem) =>
+        platformItem.key &&
+        platformItem.url
+    );
+}
+
+
+/* =========================
+   hidden JSON과 동기화
+========================= */
+
+function syncAdminMusicPlatformsJson() {
+  const hiddenInput =
+    document.getElementById(
+      "adminMusicPlatformsJson"
+    );
+
+  if (!hiddenInput) {
+    return;
+  }
+
+  hiddenInput.value =
+    JSON.stringify(
+      collectAdminMusicPlatforms()
+    );
+}
+
+
+/* =========================
+   빈 상태 표시 갱신
+========================= */
+
+function updateAdminMusicPlatformEmptyState() {
+  const platformList =
+    document.getElementById(
+      "adminMusicPlatformList"
+    );
+
+  if (!platformList) {
+    return;
+  }
+
+  const rows =
+    platformList.querySelectorAll(
+      "[data-admin-platform-row]"
+    );
+
+  const existingEmptyState =
+    platformList.querySelector(
+      ".admin-platform-empty-state"
+    );
+
+  if (rows.length > 0) {
+    existingEmptyState?.remove();
+    return;
+  }
+
+  if (existingEmptyState) {
+    return;
+  }
+
+  platformList.innerHTML = `
+    <div
+      class="admin-platform-empty-state"
+      id="adminMusicPlatformEmpty"
+    >
+      <strong>
+        등록된 음원 플랫폼이 없습니다.
+      </strong>
+
+      <p>
+        플랫폼 추가 버튼을 눌러 음원 링크를 등록해 주세요.
+      </p>
+    </div>
+  `;
+}
+
+
+/* =========================
+   플랫폼 한 개 추가
+========================= */
+
+function addAdminMusicPlatform(
+  platformData = {}
+) {
+  const platformList =
+    document.getElementById(
+      "adminMusicPlatformList"
+    );
+
+  if (!platformList) {
+    return;
+  }
+
+  platformList
+    .querySelector(
+      ".admin-platform-empty-state"
+    )
+    ?.remove();
+
+  platformList.insertAdjacentHTML(
+    "beforeend",
+    createAdminMusicPlatformRow(
+      platformData
+    )
+  );
+
+  syncAdminMusicPlatformsJson();
+
+  const latestRow =
+    platformList.lastElementChild;
+
+  latestRow
+    ?.querySelector(
+      "[data-admin-platform-key]"
+    )
+    ?.focus();
+}
+
+
+/* =========================
+   플랫폼 목록 전체 출력
+========================= */
+
+function renderAdminMusicPlatforms(
+  platforms = []
+) {
+  const platformList =
+    document.getElementById(
+      "adminMusicPlatformList"
+    );
+
+  if (!platformList) {
+    return;
+  }
+
+  const cleanPlatforms =
+    Array.isArray(platforms)
+      ? platforms.filter(
+          (platformItem) =>
+            platformItem &&
+            typeof platformItem ===
+              "object"
+        )
+      : [];
+
+  if (
+    cleanPlatforms.length === 0
+  ) {
+    platformList.innerHTML = "";
+
+    updateAdminMusicPlatformEmptyState();
+    syncAdminMusicPlatformsJson();
+
+    return;
+  }
+
+  platformList.innerHTML =
+    cleanPlatforms
+      .map(
+        createAdminMusicPlatformRow
+      )
+      .join("");
+
+  syncAdminMusicPlatformsJson();
+}
+
+
+/* =========================
+   JSON 값 안전하게 읽기
+========================= */
+
+function parseAdminMusicPlatforms(
+  value
+) {
+  if (Array.isArray(value)) {
+    return value;
+  }
+
+  if (
+    value &&
+    typeof value === "object"
+  ) {
+    return Object.entries(value).map(
+      ([platformKey, platformValue]) => {
+        if (
+          typeof platformValue ===
+          "string"
+        ) {
+          return {
+            key: platformKey,
+            url: platformValue,
+          };
+        }
+
+        return {
+          key: platformKey,
+          ...(platformValue || {}),
+        };
+      }
+    );
+  }
+
+  if (
+    typeof value !== "string" ||
+    !value.trim()
+  ) {
+    return [];
+  }
+
+  try {
+    const parsedValue =
+      JSON.parse(value);
+
+    return parseAdminMusicPlatforms(
+      parsedValue
+    );
+  } catch {
+    return [];
+  }
+}
+
+
+/* =========================
+   기존 저장 형식까지 플랫폼 변환
+========================= */
+
+function getAdminMusicPlatformsFromItem(
+  item = {}
+) {
+  const platformMap = new Map();
+
+  const dynamicPlatforms =
+    parseAdminMusicPlatforms(
+      item.platforms ||
+      item.platformsJson ||
+      item.platforms_json ||
+      []
+    );
+
+  dynamicPlatforms.forEach(
+    (platformItem) => {
+      const platformKey =
+        String(
+          platformItem.key ||
+          platformItem.platform ||
+          platformItem.type ||
+          ""
+        ).trim();
+
+      const platformUrl =
+        String(
+          platformItem.url ||
+          platformItem.link ||
+          ""
+        ).trim();
+
+      if (
+        !platformKey ||
+        !platformUrl
+      ) {
+        return;
+      }
+
+      platformMap.set(
+        platformKey,
+        {
+          key: platformKey,
+
+          label:
+            platformItem.label ||
+            platformItem.name ||
+            "",
+
+          url: platformUrl,
+        }
+      );
+    }
+  );
+
+  const legacyPlatforms = [
+    {
+      key: "youtube",
+      url:
+        item.youtubeUrl ||
+        item.youtube_url ||
+        "",
+    },
+
+    {
+      key: "spotify",
+      url:
+        item.spotifyUrl ||
+        item.spotify_url ||
+        "",
+    },
+
+    {
+      key: "apple",
+      url:
+        item.appleUrl ||
+        item.apple_url ||
+        "",
+    },
+
+    {
+      key: "melon",
+      url:
+        item.melonUrl ||
+        item.melon_url ||
+        "",
+    },
+  ];
+
+  legacyPlatforms.forEach(
+    (platformItem) => {
+      const cleanUrl =
+        String(
+          platformItem.url || ""
+        ).trim();
+
+      if (
+        !cleanUrl ||
+        platformMap.has(
+          platformItem.key
+        )
+      ) {
+        return;
+      }
+
+      platformMap.set(
+        platformItem.key,
+        {
+          key: platformItem.key,
+          url: cleanUrl,
+        }
+      );
+    }
+  );
+
+  return Array.from(
+    platformMap.values()
+  );
+}
+
+
+/* =========================
+   플랫폼 선택 변경 처리
+========================= */
+
+function handleAdminMusicPlatformChange(
+  selectElement
+) {
+  const row =
+    selectElement.closest(
+      "[data-admin-platform-row]"
+    );
+
+  if (!row) {
+    return;
+  }
+
+  const platformKey =
+    selectElement.value;
+
+  const setting =
+    getAdminMusicPlatformSetting(
+      platformKey
+    );
+
+  const urlInput =
+    row.querySelector(
+      "[data-admin-platform-url]"
+    );
+
+  const customLabelField =
+    row.querySelector(
+      ".admin-platform-custom-label-field"
+    );
+
+  const customLabelInput =
+    row.querySelector(
+      "[data-admin-platform-label]"
+    );
+
+  if (urlInput) {
+    urlInput.placeholder =
+      setting.placeholder;
+  }
+
+  if (customLabelField) {
+    customLabelField.hidden =
+      platformKey !== "other";
+  }
+
+  if (
+    platformKey !== "other" &&
+    customLabelInput
+  ) {
+    customLabelInput.value = "";
+  }
+
+  syncAdminMusicPlatformsJson();
+}
+
+
+/* =========================
+   플랫폼 추가 버튼
+========================= */
+
+document
+  .getElementById(
+    "adminMusicPlatformAddButton"
+  )
+  ?.addEventListener(
+    "click",
+    () => {
+      addAdminMusicPlatform({
+        key: "youtube",
+        label: "YouTube",
+        url: "",
+      });
+    }
+  );
+
+
+/* =========================
+   플랫폼 목록 이벤트
+========================= */
+
+document
+  .getElementById(
+    "adminMusicPlatformList"
+  )
+  ?.addEventListener(
+    "click",
+    (event) => {
+      const removeButton =
+        event.target.closest(
+          "[data-remove-admin-platform]"
+        );
+
+      if (!removeButton) {
+        return;
+      }
+
+      const row =
+        removeButton.closest(
+          "[data-admin-platform-row]"
+        );
+
+      row?.remove();
+
+      updateAdminMusicPlatformEmptyState();
+      syncAdminMusicPlatformsJson();
+    }
+  );
+
+document
+  .getElementById(
+    "adminMusicPlatformList"
+  )
+  ?.addEventListener(
+    "change",
+    (event) => {
+      const selectElement =
+        event.target.closest(
+          "[data-admin-platform-key]"
+        );
+
+      if (!selectElement) {
+        return;
+      }
+
+      handleAdminMusicPlatformChange(
+        selectElement
+      );
+    }
+  );
+
+document
+  .getElementById(
+    "adminMusicPlatformList"
+  )
+  ?.addEventListener(
+    "input",
+    (event) => {
+      const platformField =
+        event.target.closest(
+          "[data-admin-platform-url], [data-admin-platform-label]"
+        );
+
+      if (!platformField) {
+        return;
+      }
+
+      syncAdminMusicPlatformsJson();
+    }
+  );
+
+
+/* =========================
+   관리자 플랫폼 초기 상태
+========================= */
+
+function resetAdminMusicPlatforms() {
+  renderAdminMusicPlatforms([]);
 }
