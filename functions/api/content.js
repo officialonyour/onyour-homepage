@@ -55,21 +55,27 @@ music: {
   table: "music",
   orderBy: "created_at DESC",
 
-  fields: {
-    profileKey: "profile_key",
-    type: "release_type",
-    title: "title",
-    artist: "artist",
-    artworkTitle: "artwork_title",
-    displayLabel: "display_label",
-    trackCount: "track_count",
-    releaseDate: "release_date",
-    description: "description",
-    coverUrl: "cover_url",
-    releaseUrl: "release_url",
-    published: "published",
-    publishAt: "publish_at",
-  },
+fields: {
+  profileKey: "profile_key",
+  type: "release_type",
+  title: "title",
+  artist: "artist",
+  artworkTitle: "artwork_title",
+  displayLabel: "display_label",
+  trackCount: "track_count",
+  releaseDate: "release_date",
+  description: "description",
+  coverUrl: "cover_url",
+
+  youtubeUrl: "youtube_url",
+  spotifyUrl: "spotify_url",
+  appleUrl: "apple_url",
+
+  releaseUrl: "release_url",
+
+  published: "published",
+  publishAt: "publish_at",
+},
 },
 
   gallery: {
