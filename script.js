@@ -2394,6 +2394,269 @@ async function loadPublicMusic() {
     );
   }
 }
+
+/* =========================================================
+   PUBLIC MEMBERS LOAD
+   D1 멤버 정보 → 홈페이지 멤버 카드
+========================================================= */
+
+async function loadPublicMembers() {
+  const memberSettings = [
+    {
+      suffix: "Leehwigeun",
+      fallbackText: "HWG",
+    },
+    {
+      suffix: "Eluni",
+      fallbackText: "ELU",
+    },
+    {
+      suffix: "Leecherin",
+      fallbackText: "CHR",
+    },
+  ];
+
+  try {
+    const response = await fetch(
+      "/api/content?type=members",
+      {
+        method: "GET",
+
+        headers: {
+          Accept: "application/json",
+        },
+
+        cache: "no-store",
+      }
+    );
+
+    const result = await response.json();
+
+    if (
+      !response.ok ||
+      result.success === false
+    ) {
+      throw new Error(
+        result.message ||
+        "멤버 정보를 불러오지 못했습니다."
+      );
+    }
+
+    const members = (
+      Array.isArray(result.items)
+        ? result.items
+        : []
+    )
+      .filter(
+        (item) =>
+          item.published !== false &&
+          Number(item.published) !== 0
+      )
+      .sort(
+        (first, second) =>
+          Number(
+            first.order ??
+            first.sortOrder ??
+            first.sort_order ??
+            0
+          ) -
+          Number(
+            second.order ??
+            second.sortOrder ??
+            second.sort_order ??
+            0
+          )
+      );
+
+    memberSettings.forEach(
+      (setting, index) => {
+        const item =
+          members[index];
+
+        const suffix =
+          setting.suffix;
+
+        const image =
+          document.getElementById(
+            `memberImage${suffix}`
+          );
+
+        const fallback =
+          document.getElementById(
+            `memberFallback${suffix}`
+          );
+
+        const name =
+          document.getElementById(
+            `memberName${suffix}`
+          );
+
+        const role =
+          document.getElementById(
+            `memberRole${suffix}`
+          );
+
+        const description =
+          document.getElementById(
+            `memberDescription${suffix}`
+          );
+
+        const instagram =
+          document.getElementById(
+            `memberInstagram${suffix}`
+          );
+
+        const card =
+          name?.closest(
+            ".member-card"
+          );
+
+        if (!item) {
+          if (card) {
+            card.hidden = true;
+          }
+
+          return;
+        }
+
+        if (card) {
+          card.hidden = false;
+        }
+
+        const memberName =
+          String(
+            item.name || "멤버"
+          ).trim();
+
+        const memberRole =
+          String(
+            item.role || ""
+          ).trim();
+
+        const memberDescription =
+          String(
+            item.description || ""
+          ).trim();
+
+        const imageUrl =
+          String(
+            item.imageUrl ||
+            item.image_url ||
+            ""
+          ).trim();
+
+        const instagramUrl =
+          String(
+            item.instagram ||
+            item.instagramUrl ||
+            item.instagram_url ||
+            ""
+          ).trim();
+
+        if (name) {
+          name.textContent =
+            memberName;
+        }
+
+        if (role) {
+          role.textContent =
+            memberRole;
+        }
+
+        if (description) {
+          description.textContent =
+            memberDescription ||
+            "ONYOUR의 음악과 무대를 함께 만들어갑니다.";
+        }
+
+        const roleBadge =
+          card?.querySelector(
+            ".member-role-badge"
+          );
+
+        if (roleBadge) {
+          roleBadge.textContent =
+            memberRole;
+        }
+
+        if (
+          image &&
+          fallback
+        ) {
+          if (imageUrl) {
+            image.src =
+              imageUrl;
+
+            image.alt =
+              `${memberName} 프로필 사진`;
+
+            image.hidden =
+              false;
+
+            fallback.hidden =
+              true;
+          } else {
+            image.removeAttribute(
+              "src"
+            );
+
+            image.alt = "";
+
+            image.hidden =
+              true;
+
+            fallback.hidden =
+              false;
+
+            const fallbackText =
+              fallback.querySelector(
+                "span"
+              );
+
+            if (fallbackText) {
+              fallbackText.textContent =
+                setting.fallbackText;
+            }
+          }
+        }
+
+        if (instagram) {
+          if (instagramUrl) {
+            instagram.href =
+              instagramUrl;
+
+            instagram.target =
+              "_blank";
+
+            instagram.rel =
+              "noopener noreferrer";
+
+            instagram.hidden =
+              false;
+
+            instagram.setAttribute(
+              "aria-label",
+              `${memberName} Instagram 열기`
+            );
+          } else {
+            instagram.removeAttribute(
+              "href"
+            );
+
+            instagram.hidden =
+              true;
+          }
+        }
+      }
+    );
+  } catch (error) {
+    console.error(
+      "공개 멤버 불러오기 실패:",
+      error
+    );
+  }
+}
+
 /* =========================
    FORM TITLE
 ========================= */
@@ -2937,38 +3200,107 @@ document
   );
 
 function fillAdminMembersForm(item) {
+  if (!item) {
+    return;
+  }
+
+  const imageUrl =
+    item.imageUrl ||
+    item.image_url ||
+    "";
+
   setAdminFormValue(
     "adminMemberId",
     item.id
   );
+
   setAdminFormValue(
     "adminMemberName",
     item.name
   );
+
   setAdminFormValue(
     "adminMemberEnglishName",
-    item.englishName
+    item.englishName ||
+    item.english_name ||
+    ""
   );
+
   setAdminFormValue(
     "adminMemberRole",
     item.role
   );
+
   setAdminFormValue(
     "adminMemberDescription",
     item.description
   );
+
   setAdminFormValue(
     "adminMemberInstagram",
-    item.instagram
+    item.instagram ||
+    item.instagramUrl ||
+    item.instagram_url ||
+    ""
   );
+
   setAdminFormValue(
     "adminMemberOrder",
-    item.order
+    item.order ??
+    item.sortOrder ??
+    item.sort_order ??
+    0
   );
+
   setAdminFormValue(
     "adminMemberPublished",
     item.published
   );
+
+  const previewBox =
+    document.getElementById(
+      "adminMemberImagePreview"
+    );
+
+  const previewImage =
+    document.getElementById(
+      "adminMemberPreviewImage"
+    );
+
+  if (
+    previewBox &&
+    previewImage &&
+    imageUrl
+  ) {
+    previewImage.src = imageUrl;
+
+    previewImage.alt =
+      `${
+        item.name || "멤버"
+      } 프로필 사진 미리보기`;
+
+    previewBox.hidden = false;
+  } else if (
+    previewBox &&
+    previewImage
+  ) {
+    previewImage.removeAttribute(
+      "src"
+    );
+
+    previewImage.alt = "";
+
+    previewBox.hidden = true;
+  }
+
+  const imageInput =
+    document.getElementById(
+      "adminMemberImage"
+    );
+
+  if (imageInput) {
+    imageInput.value = "";
+  }
 }
 
 function openAdminEditForm(
@@ -3394,6 +3726,8 @@ document
           "members",
           data
         );
+
+        await loadPublicMembers();
 
         alert(
           "멤버 정보가 저장되었습니다."
@@ -7390,4 +7724,15 @@ document
 
 function resetAdminMusicPlatforms() {
   renderAdminMusicPlatforms([]);
+}
+
+if (
+  document.readyState === "loading"
+) {
+  document.addEventListener(
+    "DOMContentLoaded",
+    loadPublicMembers
+  );
+} else {
+  loadPublicMembers();
 }
