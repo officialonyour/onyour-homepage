@@ -2030,7 +2030,9 @@
     class="admin-content-form"
     id="adminMusicForm"
   >
-    <!-- 기본 식별 정보 -->
+    <!-- =========================
+         기본 식별 정보
+    ========================== -->
     <input
       id="adminMusicId"
       type="hidden"
@@ -2041,12 +2043,36 @@
       type="hidden"
     />
 
+    <!-- 앨범 자켓 저장 URL -->
     <input
       id="adminMusicCoverUrl"
       type="hidden"
     />
 
-    <!-- 기존 데이터 호환용 -->
+    <!-- 플랫폼 아이콘 저장 URL -->
+    <input
+      id="adminMusicYoutubeIconUrl"
+      type="hidden"
+    />
+
+    <input
+      id="adminMusicSpotifyIconUrl"
+      type="hidden"
+    />
+
+    <input
+      id="adminMusicAppleIconUrl"
+      type="hidden"
+    />
+
+    <input
+      id="adminMusicMelonIconUrl"
+      type="hidden"
+    />
+
+    <!-- =========================
+         기존 데이터 호환용
+    ========================== -->
     <input
       id="adminMusicArtworkTitle"
       type="hidden"
@@ -2078,7 +2104,9 @@
       type="hidden"
     />
 
-    <!-- 프로필 이름 -->
+    <!-- =========================
+         프로필 이름
+    ========================== -->
     <div class="admin-music-editor-profile">
       <span id="adminMusicEditorCategory">
         MUSIC PROFILE
@@ -2099,7 +2127,9 @@
       </small>
     </div>
 
-    <!-- 앨범 종류 -->
+    <!-- =========================
+         앨범 종류
+    ========================== -->
     <label>
       앨범 종류
 
@@ -2149,7 +2179,9 @@
       </small>
     </label>
 
-    <!-- 앨범명 -->
+    <!-- =========================
+         앨범명
+    ========================== -->
     <label>
       앨범명
 
@@ -2166,7 +2198,9 @@
       </small>
     </label>
 
-    <!-- 앨범 자켓 -->
+    <!-- =========================
+         앨범 자켓
+    ========================== -->
     <label>
       앨범 자켓
 
@@ -2177,11 +2211,10 @@
       />
 
       <small class="admin-field-help">
-        자켓 이미지는 글자를 추가하지 않고 원본 그대로 표시됩니다.
+        새 이미지를 선택하지 않으면 기존 앨범 자켓이 유지됩니다.
       </small>
     </label>
 
-    <!-- 자켓 미리보기 -->
     <div
       class="admin-image-preview"
       id="adminMusicImagePreview"
@@ -2194,154 +2227,210 @@
       />
     </div>
 
-<div class="admin-music-platform-section">
+    <!-- =========================
+         플랫폼
+    ========================== -->
+    <div class="admin-music-platform-section">
+      <div class="admin-music-platform-heading">
+        <div>
+          <strong>
+            음원 플랫폼
+          </strong>
 
-  <h4>
-    플랫폼
-  </h4>
+          <p class="admin-field-help">
+            아이콘 이미지와 앨범 링크를 함께 등록해 주세요.
+          </p>
+        </div>
+      </div>
 
-  <p class="admin-field-help">
-    아이콘 이미지를 업로드하고 링크를 입력하면 홈페이지에 표시됩니다.
-  </p>
+      <!-- YouTube -->
+      <div class="admin-platform-item">
+        <div class="admin-platform-item-header">
+          <h5>
+            YouTube
+          </h5>
 
+          <div
+            class="admin-platform-icon-preview"
+            id="adminMusicYoutubeIconPreview"
+            hidden
+          >
+            <img
+              id="adminMusicYoutubeIconPreviewImage"
+              src=""
+              alt="YouTube 아이콘 미리보기"
+            />
+          </div>
+        </div>
 
-  <!-- YouTube -->
+        <label>
+          아이콘 이미지
 
-  <div class="admin-platform-item">
+          <input
+            id="adminMusicYoutubeIcon"
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+          />
 
-    <h5>YouTube</h5>
+          <small class="admin-field-help">
+            새 이미지를 선택하지 않으면 기존 아이콘이 유지됩니다.
+          </small>
+        </label>
 
-    <label>
+        <label>
+          앨범 링크
 
-      아이콘 이미지
+          <input
+            id="adminMusicYoutube"
+            type="url"
+            placeholder="https://youtube.com/..."
+            autocomplete="url"
+          />
+        </label>
+      </div>
 
-      <input
-        id="adminMusicYoutubeIcon"
-        type="file"
-        accept="image/png,image/webp,image/jpeg,image/svg+xml"
-      >
+      <!-- Spotify -->
+      <div class="admin-platform-item">
+        <div class="admin-platform-item-header">
+          <h5>
+            Spotify
+          </h5>
 
-    </label>
+          <div
+            class="admin-platform-icon-preview"
+            id="adminMusicSpotifyIconPreview"
+            hidden
+          >
+            <img
+              id="adminMusicSpotifyIconPreviewImage"
+              src=""
+              alt="Spotify 아이콘 미리보기"
+            />
+          </div>
+        </div>
 
-    <label>
+        <label>
+          아이콘 이미지
 
-      링크
+          <input
+            id="adminMusicSpotifyIcon"
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+          />
 
-      <input
-        id="adminMusicYoutube"
-        type="url"
-        placeholder="https://youtube.com/..."
-      >
+          <small class="admin-field-help">
+            새 이미지를 선택하지 않으면 기존 아이콘이 유지됩니다.
+          </small>
+        </label>
 
-    </label>
+        <label>
+          앨범 링크
 
-  </div>
+          <input
+            id="adminMusicSpotify"
+            type="url"
+            placeholder="https://open.spotify.com/..."
+            autocomplete="url"
+          />
+        </label>
+      </div>
 
+      <!-- Apple Music -->
+      <div class="admin-platform-item">
+        <div class="admin-platform-item-header">
+          <h5>
+            Apple Music
+          </h5>
 
+          <div
+            class="admin-platform-icon-preview"
+            id="adminMusicAppleIconPreview"
+            hidden
+          >
+            <img
+              id="adminMusicAppleIconPreviewImage"
+              src=""
+              alt="Apple Music 아이콘 미리보기"
+            />
+          </div>
+        </div>
 
-  <!-- Spotify -->
+        <label>
+          아이콘 이미지
 
-  <div class="admin-platform-item">
+          <input
+            id="adminMusicAppleIcon"
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+          />
 
-    <h5>Spotify</h5>
+          <small class="admin-field-help">
+            새 이미지를 선택하지 않으면 기존 아이콘이 유지됩니다.
+          </small>
+        </label>
 
-    <label>
+        <label>
+          앨범 링크
 
-      아이콘 이미지
+          <input
+            id="adminMusicApple"
+            type="url"
+            placeholder="https://music.apple.com/..."
+            autocomplete="url"
+          />
+        </label>
+      </div>
 
-      <input
-        id="adminMusicSpotifyIcon"
-        type="file"
-        accept="image/png,image/webp,image/jpeg,image/svg+xml"
-      >
+      <!-- Melon -->
+      <div class="admin-platform-item">
+        <div class="admin-platform-item-header">
+          <h5>
+            Melon
+          </h5>
 
-    </label>
+          <div
+            class="admin-platform-icon-preview"
+            id="adminMusicMelonIconPreview"
+            hidden
+          >
+            <img
+              id="adminMusicMelonIconPreviewImage"
+              src=""
+              alt="Melon 아이콘 미리보기"
+            />
+          </div>
+        </div>
 
-    <label>
+        <label>
+          아이콘 이미지
 
-      링크
+          <input
+            id="adminMusicMelonIcon"
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+          />
 
-      <input
-        id="adminMusicSpotify"
-        type="url"
-        placeholder="https://open.spotify.com/..."
-      >
+          <small class="admin-field-help">
+            새 이미지를 선택하지 않으면 기존 아이콘이 유지됩니다.
+          </small>
+        </label>
 
-    </label>
+        <label>
+          앨범 링크
 
-  </div>
+          <input
+            id="adminMusicMelon"
+            type="url"
+            placeholder="https://www.melon.com/..."
+            autocomplete="url"
+          />
+        </label>
+      </div>
+    </div>
 
-
-
-  <!-- Apple -->
-
-  <div class="admin-platform-item">
-
-    <h5>Apple Music</h5>
-
-    <label>
-
-      아이콘 이미지
-
-      <input
-        id="adminMusicAppleIcon"
-        type="file"
-        accept="image/png,image/webp,image/jpeg,image/svg+xml"
-      >
-
-    </label>
-
-    <label>
-
-      링크
-
-      <input
-        id="adminMusicApple"
-        type="url"
-        placeholder="https://music.apple.com/..."
-      >
-
-    </label>
-
-  </div>
-
-
-
-  <!-- Melon -->
-
-  <div class="admin-platform-item">
-
-    <h5>Melon</h5>
-
-    <label>
-
-      아이콘 이미지
-
-      <input
-        id="adminMusicMelonIcon"
-        type="file"
-        accept="image/png,image/webp,image/jpeg,image/svg+xml"
-      >
-
-    </label>
-
-    <label>
-
-      링크
-
-      <input
-        id="adminMusicMelon"
-        type="url"
-        placeholder="https://www.melon.com/..."
-      >
-
-    </label>
-
-  </div>
-
-</div>
-
-    <!-- 공개 여부 -->
+    <!-- =========================
+         공개 여부
+    ========================== -->
     <label class="admin-checkbox-label">
       <input
         id="adminMusicPublished"
@@ -2354,7 +2443,9 @@
       </span>
     </label>
 
-    <!-- 하단 버튼 -->
+    <!-- =========================
+         하단 버튼
+    ========================== -->
     <div class="admin-form-actions">
       <button
         class="admin-form-cancel"
@@ -2373,6 +2464,7 @@
     </div>
   </form>
 </section>
+
     <!-- NEWS 작성/수정 -->
     <section
       class="admin-section-view admin-view"

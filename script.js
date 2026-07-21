@@ -2159,10 +2159,8 @@ function fillAdminMusicForm(item) {
       profileKey
     ] || {};
 
-  const coverUrl =
-    item.coverUrl ||
-    item.cover_url ||
-    "";
+  const platforms =
+    item.platforms || {};
 
   const artistName =
     item.artist ||
@@ -2183,14 +2181,35 @@ function fillAdminMusicForm(item) {
     item.title ||
     "";
 
+  const coverUrl =
+    item.coverUrl ||
+    item.cover_url ||
+    "";
+
   const youtubeUrl =
     item.youtubeUrl ||
     item.youtube_url ||
+    platforms.youtube?.url ||
+    "";
+
+  const youtubeIconUrl =
+    item.youtubeIconUrl ||
+    item.youtube_icon_url ||
+    platforms.youtube?.iconUrl ||
+    platforms.youtube?.icon_url ||
     "";
 
   const spotifyUrl =
     item.spotifyUrl ||
     item.spotify_url ||
+    platforms.spotify?.url ||
+    "";
+
+  const spotifyIconUrl =
+    item.spotifyIconUrl ||
+    item.spotify_icon_url ||
+    platforms.spotify?.iconUrl ||
+    platforms.spotify?.icon_url ||
     "";
 
   const appleUrl =
@@ -2198,13 +2217,32 @@ function fillAdminMusicForm(item) {
     item.apple_url ||
     item.appleMusicUrl ||
     item.apple_music_url ||
+    platforms.apple?.url ||
+    "";
+
+  const appleIconUrl =
+    item.appleIconUrl ||
+    item.apple_icon_url ||
+    platforms.apple?.iconUrl ||
+    platforms.apple?.icon_url ||
     "";
 
   const melonUrl =
     item.melonUrl ||
     item.melon_url ||
+    platforms.melon?.url ||
     "";
 
+  const melonIconUrl =
+    item.melonIconUrl ||
+    item.melon_icon_url ||
+    platforms.melon?.iconUrl ||
+    platforms.melon?.icon_url ||
+    "";
+
+  /*
+   * 기본값
+   */
   setAdminFormValue(
     "adminMusicId",
     item.id || profileKey
@@ -2213,11 +2251,6 @@ function fillAdminMusicForm(item) {
   setAdminFormValue(
     "adminMusicProfileKey",
     profileKey
-  );
-
-  setAdminFormValue(
-    "adminMusicCoverUrl",
-    coverUrl
   );
 
   setAdminFormValue(
@@ -2236,8 +2269,18 @@ function fillAdminMusicForm(item) {
   );
 
   setAdminFormValue(
+    "adminMusicCoverUrl",
+    coverUrl
+  );
+
+  setAdminFormValue(
     "adminMusicYoutube",
     youtubeUrl
+  );
+
+  setAdminFormValue(
+    "adminMusicYoutubeIconUrl",
+    youtubeIconUrl
   );
 
   setAdminFormValue(
@@ -2246,8 +2289,18 @@ function fillAdminMusicForm(item) {
   );
 
   setAdminFormValue(
+    "adminMusicSpotifyIconUrl",
+    spotifyIconUrl
+  );
+
+  setAdminFormValue(
     "adminMusicApple",
     appleUrl
+  );
+
+  setAdminFormValue(
+    "adminMusicAppleIconUrl",
+    appleIconUrl
   );
 
   setAdminFormValue(
@@ -2256,12 +2309,17 @@ function fillAdminMusicForm(item) {
   );
 
   setAdminFormValue(
+    "adminMusicMelonIconUrl",
+    melonIconUrl
+  );
+
+  setAdminFormValue(
     "adminMusicPublished",
     item.published !== false
   );
 
   /*
-   * 기존 데이터 구조 호환용
+   * 기존 데이터 호환용
    */
   setAdminFormValue(
     "adminMusicArtworkTitle",
@@ -2293,50 +2351,118 @@ function fillAdminMusicForm(item) {
     ""
   );
 
-  const imageInput =
-    document.getElementById(
-      "adminMusicImage"
-    );
+  /*
+   * 파일 입력 초기화
+   */
+  [
+    "adminMusicImage",
+    "adminMusicYoutubeIcon",
+    "adminMusicSpotifyIcon",
+    "adminMusicAppleIcon",
+    "adminMusicMelonIcon",
+  ].forEach((inputId) => {
+    const input =
+      document.getElementById(
+        inputId
+      );
 
-  if (imageInput) {
-    imageInput.value = "";
-  }
+    if (input) {
+      input.value = "";
+    }
+  });
 
-  const previewBox =
-    document.getElementById(
-      "adminMusicImagePreview"
-    );
+  /*
+   * 공통 미리보기 함수
+   */
+  const setMusicImagePreview = (
+    previewBoxId,
+    previewImageId,
+    imageUrl,
+    altText
+  ) => {
+    const previewBox =
+      document.getElementById(
+        previewBoxId
+      );
 
-  const previewImage =
-    document.getElementById(
-      "adminMusicPreviewImage"
-    );
+    const previewImage =
+      document.getElementById(
+        previewImageId
+      );
 
-  if (
-    previewBox &&
-    previewImage &&
-    coverUrl
-  ) {
-    previewImage.src = coverUrl;
+    if (
+      !previewBox ||
+      !previewImage
+    ) {
+      return;
+    }
 
-    previewImage.alt =
-      `${artistName || "음원"} 앨범 자켓 미리보기`;
+    if (imageUrl) {
+      previewImage.src =
+        imageUrl;
 
-    previewBox.hidden = false;
-  } else if (
-    previewBox &&
-    previewImage
-  ) {
-    previewImage.removeAttribute(
-      "src"
-    );
+      previewImage.alt =
+        altText;
 
-    previewImage.alt =
-      "앨범 자켓 미리보기";
+      previewBox.hidden =
+        false;
+    } else {
+      previewImage.removeAttribute(
+        "src"
+      );
 
-    previewBox.hidden = true;
-  }
+      previewImage.alt =
+        altText;
 
+      previewBox.hidden =
+        true;
+    }
+  };
+
+  /*
+   * 앨범 자켓 미리보기
+   */
+  setMusicImagePreview(
+    "adminMusicImagePreview",
+    "adminMusicPreviewImage",
+    coverUrl,
+    `${artistName || "음원"} 앨범 자켓 미리보기`
+  );
+
+  /*
+   * 플랫폼 아이콘 미리보기
+   */
+  setMusicImagePreview(
+    "adminMusicYoutubeIconPreview",
+    "adminMusicYoutubeIconPreviewImage",
+    youtubeIconUrl,
+    "YouTube 아이콘 미리보기"
+  );
+
+  setMusicImagePreview(
+    "adminMusicSpotifyIconPreview",
+    "adminMusicSpotifyIconPreviewImage",
+    spotifyIconUrl,
+    "Spotify 아이콘 미리보기"
+  );
+
+  setMusicImagePreview(
+    "adminMusicAppleIconPreview",
+    "adminMusicAppleIconPreviewImage",
+    appleIconUrl,
+    "Apple Music 아이콘 미리보기"
+  );
+
+  setMusicImagePreview(
+    "adminMusicMelonIconPreview",
+    "adminMusicMelonIconPreviewImage",
+    melonIconUrl,
+    "Melon 아이콘 미리보기"
+  );
+
+  /*
+   * 관리자 화면 제목
+   */
   const editorCategory =
     document.getElementById(
       "adminMusicEditorCategory"
@@ -2818,7 +2944,15 @@ document
           "adminMusicTitle"
         );
 
-      const imageInput =
+      const published =
+        getAdminFormValue(
+          "adminMusicPublished"
+        );
+
+      /*
+       * 앨범 자켓
+       */
+      const coverInput =
         document.getElementById(
           "adminMusicImage"
         );
@@ -2826,8 +2960,98 @@ document
       let coverUrl =
         getAdminFormValue(
           "adminMusicCoverUrl"
+        ) ||
+        existingItem?.coverUrl ||
+        existingItem?.cover_url ||
+        "";
+
+      /*
+       * YouTube
+       */
+      const youtubeIconInput =
+        document.getElementById(
+          "adminMusicYoutubeIcon"
         );
 
+      let youtubeIconUrl =
+        getAdminFormValue(
+          "adminMusicYoutubeIconUrl"
+        ) ||
+        existingItem?.youtubeIconUrl ||
+        existingItem?.youtube_icon_url ||
+        "";
+
+      const youtubeUrl =
+        getAdminFormValue(
+          "adminMusicYoutube"
+        );
+
+      /*
+       * Spotify
+       */
+      const spotifyIconInput =
+        document.getElementById(
+          "adminMusicSpotifyIcon"
+        );
+
+      let spotifyIconUrl =
+        getAdminFormValue(
+          "adminMusicSpotifyIconUrl"
+        ) ||
+        existingItem?.spotifyIconUrl ||
+        existingItem?.spotify_icon_url ||
+        "";
+
+      const spotifyUrl =
+        getAdminFormValue(
+          "adminMusicSpotify"
+        );
+
+      /*
+       * Apple Music
+       */
+      const appleIconInput =
+        document.getElementById(
+          "adminMusicAppleIcon"
+        );
+
+      let appleIconUrl =
+        getAdminFormValue(
+          "adminMusicAppleIconUrl"
+        ) ||
+        existingItem?.appleIconUrl ||
+        existingItem?.apple_icon_url ||
+        "";
+
+      const appleUrl =
+        getAdminFormValue(
+          "adminMusicApple"
+        );
+
+      /*
+       * Melon
+       */
+      const melonIconInput =
+        document.getElementById(
+          "adminMusicMelonIcon"
+        );
+
+      let melonIconUrl =
+        getAdminFormValue(
+          "adminMusicMelonIconUrl"
+        ) ||
+        existingItem?.melonIconUrl ||
+        existingItem?.melon_icon_url ||
+        "";
+
+      const melonUrl =
+        getAdminFormValue(
+          "adminMusicMelon"
+        );
+
+      /*
+       * 필수값 검사
+       */
       if (!profileKey) {
         alert(
           "음원 프로필 정보를 찾을 수 없습니다."
@@ -2884,16 +3108,19 @@ document
             true;
 
           submitButton.textContent =
-            "저장 중...";
+            "이미지 업로드 중...";
         }
 
-        const selectedFile =
-          imageInput?.files?.[0];
+        /*
+         * 앨범 자켓 업로드
+         */
+        const selectedCoverFile =
+          coverInput?.files?.[0];
 
-        if (selectedFile) {
+        if (selectedCoverFile) {
           coverUrl =
             await uploadAdminImage(
-              selectedFile,
+              selectedCoverFile,
               "music"
             );
 
@@ -2903,6 +3130,94 @@ document
           );
         }
 
+        /*
+         * YouTube 아이콘 업로드
+         */
+        const selectedYoutubeIcon =
+          youtubeIconInput
+            ?.files?.[0];
+
+        if (selectedYoutubeIcon) {
+          youtubeIconUrl =
+            await uploadAdminImage(
+              selectedYoutubeIcon,
+              "music"
+            );
+
+          setAdminFormValue(
+            "adminMusicYoutubeIconUrl",
+            youtubeIconUrl
+          );
+        }
+
+        /*
+         * Spotify 아이콘 업로드
+         */
+        const selectedSpotifyIcon =
+          spotifyIconInput
+            ?.files?.[0];
+
+        if (selectedSpotifyIcon) {
+          spotifyIconUrl =
+            await uploadAdminImage(
+              selectedSpotifyIcon,
+              "music"
+            );
+
+          setAdminFormValue(
+            "adminMusicSpotifyIconUrl",
+            spotifyIconUrl
+          );
+        }
+
+        /*
+         * Apple Music 아이콘 업로드
+         */
+        const selectedAppleIcon =
+          appleIconInput
+            ?.files?.[0];
+
+        if (selectedAppleIcon) {
+          appleIconUrl =
+            await uploadAdminImage(
+              selectedAppleIcon,
+              "music"
+            );
+
+          setAdminFormValue(
+            "adminMusicAppleIconUrl",
+            appleIconUrl
+          );
+        }
+
+        /*
+         * Melon 아이콘 업로드
+         */
+        const selectedMelonIcon =
+          melonIconInput
+            ?.files?.[0];
+
+        if (selectedMelonIcon) {
+          melonIconUrl =
+            await uploadAdminImage(
+              selectedMelonIcon,
+              "music"
+            );
+
+          setAdminFormValue(
+            "adminMusicMelonIconUrl",
+            melonIconUrl
+          );
+        }
+
+        if (submitButton) {
+          submitButton.textContent =
+            "정보 저장 중...";
+        }
+
+        /*
+         * 서버 저장 데이터
+         */
         const data = {
           id:
             id ||
@@ -2911,45 +3226,63 @@ document
 
           profileKey,
 
-          type:
-            getAdminFormValue(
-              "adminMusicType"
-            ) ||
-            profileSetting.defaultType ||
-            "ARTIST",
-
+          /*
+           * 새 구조와 기존 구조를
+           * 동시에 지원하기 위해 둘 다 저장
+           */
+          type: albumType,
           albumType,
 
           title,
-
           artist,
-
           coverUrl,
 
-          youtubeUrl:
-            getAdminFormValue(
-              "adminMusicYoutube"
-            ),
+          youtubeUrl,
+          youtubeIconUrl,
 
-          spotifyUrl:
-            getAdminFormValue(
-              "adminMusicSpotify"
-            ),
+          spotifyUrl,
+          spotifyIconUrl,
 
-          appleUrl:
-            getAdminFormValue(
-              "adminMusicApple"
-            ),
+          appleUrl,
+          appleIconUrl,
 
-          melonUrl:
-            getAdminFormValue(
-              "adminMusicMelon"
-            ),
+          melonUrl,
+          melonIconUrl,
 
-          published:
-            getAdminFormValue(
-              "adminMusicPublished"
-            ),
+          /*
+           * 플랫폼 묶음 데이터
+           */
+          platforms: {
+            youtube: {
+              name: "YouTube",
+              url: youtubeUrl,
+              iconUrl:
+                youtubeIconUrl,
+            },
+
+            spotify: {
+              name: "Spotify",
+              url: spotifyUrl,
+              iconUrl:
+                spotifyIconUrl,
+            },
+
+            apple: {
+              name: "Apple Music",
+              url: appleUrl,
+              iconUrl:
+                appleIconUrl,
+            },
+
+            melon: {
+              name: "Melon",
+              url: melonUrl,
+              iconUrl:
+                melonIconUrl,
+            },
+          },
+
+          published,
         };
 
         await saveAdminItem(
@@ -2958,6 +3291,10 @@ document
         );
 
         await loadPublicMusic();
+
+        alert(
+          "음원 정보가 저장되었습니다."
+        );
       } catch (error) {
         console.error(
           "음원 저장 실패:",
