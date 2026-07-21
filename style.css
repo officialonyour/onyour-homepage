@@ -8826,3 +8826,39 @@ html {
     border-radius: 8px;
   }
 }
+
+/* =========================================================
+   MUSIC PLATFORM OVERRIDE
+========================================================= */
+
+.music-platform-link{
+    background:transparent !important;
+    border:none !important;
+    box-shadow:none !important;
+    overflow:visible !important;
+}
+
+.music-platform-icon-image{
+    display:block !important;
+    width:30px !important;
+    height:30px !important;
+    padding:0 !important;
+    object-fit:contain !important;
+    opacity:1 !important;
+    filter:none !important;
+}
+
+.music-platform-link:hover{
+    transform:translateY(-2px) scale(1.08);
+}
+
+.music-platform-icon-fallback{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:30px;
+    height:30px;
+    font-size:24px;
+    font-weight:700;
+    opacity:1;
+}
