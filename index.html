@@ -2212,6 +2212,53 @@
   </form>
 </section>
 
+<!-- =========================
+     NEWS 목록
+========================== -->
+<section
+  class="admin-section-view admin-view"
+  id="adminNewsView"
+  data-admin-view="news"
+  aria-hidden="true"
+>
+  <div class="admin-section-header">
+    <button
+      class="admin-section-back"
+      type="button"
+      data-admin-back="home"
+      aria-label="관리자 메인으로 돌아가기"
+    >
+      ←
+    </button>
+
+    <div>
+      <p>CONTENT MANAGEMENT</p>
+      <h3>News 관리</h3>
+    </div>
+
+    <button
+      class="admin-add-button"
+      type="button"
+      data-open-form="news"
+    >
+      + 새 소식
+    </button>
+  </div>
+
+  <div
+    class="admin-content-list"
+    id="adminNewsList"
+  >
+    <div class="admin-empty-state">
+      <strong>등록된 소식을 불러오는 중입니다.</strong>
+
+      <p>
+        잠시만 기다려 주세요.
+      </p>
+    </div>
+  </div>
+</section>
+
     <!-- NEWS 작성/수정 -->
     <section
       class="admin-section-view admin-view"
