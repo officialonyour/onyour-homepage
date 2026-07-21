@@ -697,11 +697,52 @@ function convertDatabaseRow(
         databaseColumn === "featured"
       ) {
         value = Number(value) === 1;
+      } else if (
+        databaseColumn === "platforms_json"
+      ) {
+        try {
+          const parsed =
+            typeof value === "string"
+              ? JSON.parse(value || "[]")
+              : value;
+
+          value = Array.isArray(parsed)
+            ? parsed
+                .map((platform) => ({
+                  key: String(
+                    platform?.key || ""
+                  ).trim(),
+
+                  label: String(
+                    platform?.label || ""
+                  ).trim(),
+
+                  url: String(
+                    platform?.url || ""
+                  ).trim(),
+                }))
+                .filter(
+                  (platform) =>
+                    platform.key &&
+                    platform.label &&
+                    platform.url
+                )
+            : [];
+        } catch {
+          value = [];
+        }
       }
 
       item[clientKey] = value ?? "";
     }
   );
+
+  if (type === "music") {
+    item.platforms =
+      Array.isArray(item.platformsJson)
+        ? item.platformsJson
+        : [];
+  }
 
   return item;
 }
