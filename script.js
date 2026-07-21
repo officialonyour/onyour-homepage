@@ -2588,7 +2588,10 @@ const ADMIN_MUSIC_PROFILES = {
 };
 
 /* =========================
-   음악 수정 폼 채우기
+   음악 수정 폼 전체 채우기
+   - 기본 앨범 정보
+   - 기존 고정 플랫폼 링크 호환
+   - 새로운 동적 플랫폼 목록 출력
 ========================= */
 
 function fillAdminMusicForm(item) {
@@ -2601,6 +2604,11 @@ function fillAdminMusicForm(item) {
     item.profile_key ||
     item.id ||
     "";
+
+  const profileSetting =
+    ADMIN_MUSIC_PROFILES[
+      profileKey
+    ] || {};
 
   const coverUrl =
     item.coverUrl ||
@@ -2632,59 +2640,25 @@ function fillAdminMusicForm(item) {
     item.release_url ||
     "";
 
-  /*
-   * 플랫폼 주소
-   */
-  const youtubeUrl =
-    item.youtubeUrl ||
-    item.youtube_url ||
-    item.platforms?.youtube?.url ||
+  const artistName =
+    item.artist ||
+    item.artist_name ||
+    profileSetting.name ||
     "";
 
-  const spotifyUrl =
-    item.spotifyUrl ||
-    item.spotify_url ||
-    item.platforms?.spotify?.url ||
+  const albumType =
+    item.type ||
+    item.albumType ||
+    item.album_type ||
+    item.releaseType ||
+    item.release_type ||
     "";
 
-  const appleUrl =
-    item.appleUrl ||
-    item.apple_url ||
-    item.platforms?.apple?.url ||
-    "";
-
-  const melonUrl =
-    item.melonUrl ||
-    item.melon_url ||
-    item.platforms?.melon?.url ||
-    "";
-
-  /*
-   * 플랫폼 아이콘 주소
-   */
-  const youtubeIconUrl =
-    item.youtubeIconUrl ||
-    item.youtube_icon_url ||
-    item.platforms?.youtube?.iconUrl ||
-    "";
-
-  const spotifyIconUrl =
-    item.spotifyIconUrl ||
-    item.spotify_icon_url ||
-    item.platforms?.spotify?.iconUrl ||
-    "";
-
-  const appleIconUrl =
-    item.appleIconUrl ||
-    item.apple_icon_url ||
-    item.platforms?.apple?.iconUrl ||
-    "";
-
-  const melonIconUrl =
-    item.melonIconUrl ||
-    item.melon_icon_url ||
-    item.platforms?.melon?.iconUrl ||
-    "";
+  const publishedValue =
+    item.published === false ||
+    Number(item.published) === 0
+      ? false
+      : true;
 
   /*
    * 기본 음원 정보
@@ -2706,10 +2680,7 @@ function fillAdminMusicForm(item) {
 
   setAdminFormValue(
     "adminMusicType",
-    item.type ||
-    item.albumType ||
-    item.release_type ||
-    ""
+    albumType
   );
 
   setAdminFormValue(
@@ -2719,9 +2690,7 @@ function fillAdminMusicForm(item) {
 
   setAdminFormValue(
     "adminMusicEditorName",
-    item.artist ||
-    item.artist_name ||
-    ""
+    artistName
   );
 
   setAdminFormValue(
@@ -2756,56 +2725,56 @@ function fillAdminMusicForm(item) {
 
   setAdminFormValue(
     "adminMusicPublished",
-    Boolean(
-      Number(item.published ?? 1)
-    )
+    publishedValue
   );
 
   /*
-   * 플랫폼 주소 입력칸
+   * 예전 고정 플랫폼 숨김 입력값도 유지
+   * 기존 서버 구조와 임시 호환하기 위함
    */
   setAdminFormValue(
     "adminMusicYoutube",
-    youtubeUrl
+    item.youtubeUrl ||
+    item.youtube_url ||
+    ""
   );
 
   setAdminFormValue(
     "adminMusicSpotify",
-    spotifyUrl
+    item.spotifyUrl ||
+    item.spotify_url ||
+    ""
   );
 
   setAdminFormValue(
     "adminMusicApple",
-    appleUrl
-  );
-
-  setAdminFormValue(
-    "adminMusicMelon",
-    melonUrl
+    item.appleUrl ||
+    item.apple_url ||
+    ""
   );
 
   /*
-   * 플랫폼 아이콘 숨김 주소
+   * 새 동적 플랫폼 목록 만들기
+   *
+   * 지원 형식:
+   * 1. platforms 배열
+   * 2. platforms JSON 문자열
+   * 3. platforms 객체
+   * 4. 기존 youtubeUrl / spotifyUrl / appleUrl
    */
-  setAdminFormValue(
-    "adminMusicYoutubeIconUrl",
-    youtubeIconUrl
+  const savedPlatforms =
+    getAdminMusicPlatformsFromItem(
+      item
+    );
+
+  renderAdminMusicPlatforms(
+    savedPlatforms
   );
 
-  setAdminFormValue(
-    "adminMusicSpotifyIconUrl",
-    spotifyIconUrl
-  );
-
-  setAdminFormValue(
-    "adminMusicAppleIconUrl",
-    appleIconUrl
-  );
-
-  setAdminFormValue(
-    "adminMusicMelonIconUrl",
-    melonIconUrl
-  );
+  /*
+   * 플랫폼 JSON 숨김값 동기화
+   */
+  syncAdminMusicPlatformsJson();
 
   /*
    * 앨범 자켓 미리보기
@@ -2825,38 +2794,65 @@ function fillAdminMusicForm(item) {
     previewImage &&
     coverUrl
   ) {
-    previewImage.src = coverUrl;
-    previewBox.hidden = false;
+    previewImage.src =
+      coverUrl;
+
+    previewImage.alt =
+      `${
+        item.title ||
+        artistName ||
+        "앨범"
+      } 자켓 미리보기`;
+
+    previewBox.hidden =
+      false;
   } else if (
     previewBox &&
     previewImage
   ) {
-    previewImage.removeAttribute("src");
-    previewBox.hidden = true;
+    previewImage.removeAttribute(
+      "src"
+    );
+
+    previewImage.alt =
+      "";
+
+    previewBox.hidden =
+      true;
   }
 
   /*
    * 파일 선택값 초기화
    */
-  const fileInputIds = [
-    "adminMusicImage",
-    "adminMusicYoutubeIcon",
-    "adminMusicSpotifyIcon",
-    "adminMusicAppleIcon",
-    "adminMusicMelonIcon",
-  ];
+  const coverInput =
+    document.getElementById(
+      "adminMusicImage"
+    );
 
-  fileInputIds.forEach(
-    (inputId) => {
-      const input =
-        document.getElementById(
-          inputId
-        );
+  if (coverInput) {
+    coverInput.value = "";
+  }
 
-      if (input) {
-        input.value = "";
-      }
-    }
+  /*
+   * 관리자 수정 화면 상단 이름
+   */
+  const editorCategory =
+    document.getElementById(
+      "adminMusicEditorCategory"
+    );
+
+  if (editorCategory) {
+    editorCategory.textContent =
+      profileSetting.category ||
+      "MUSIC PROFILE";
+  }
+
+  /*
+   * 수정 화면 제목
+   */
+  setAdminFormTitle(
+    "music",
+    "edit"
   );
 }
 
