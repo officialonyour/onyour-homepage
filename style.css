@@ -8862,3 +8862,346 @@ html {
     font-weight:700;
     opacity:1;
 }
+
+/* =========================================================
+   MUSIC CARD FINAL COMPACT
+   - 카드 내부 공백 축소
+   - 음원 플랫폼 별도 영역
+   - 모바일 2 × 2 유지
+========================================================= */
+
+/* =========================
+   카드 전체
+========================= */
+
+#music .music-gallery {
+  align-items: stretch;
+}
+
+#music .music-card {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+}
+
+#music .music-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+
+  padding: 18px 8px 6px;
+}
+
+
+/* =========================
+   아티스트 정보
+========================= */
+
+#music .music-profile-block {
+  margin: 0;
+}
+
+#music .music-profile-label {
+  margin: 0 0 7px;
+
+  color: rgba(255, 255, 255, 0.48);
+
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.1em;
+}
+
+#music .music-profile-name {
+  margin: 0;
+
+  color: #ffffff;
+
+  font-size: clamp(20px, 2vw, 28px);
+  font-weight: 700;
+  line-height: 1.18;
+  letter-spacing: -0.04em;
+
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+
+/* =========================
+   앨범 정보
+========================= */
+
+#music .music-release-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  margin-top: 22px;
+}
+
+#music .music-release-type {
+  margin: 0;
+
+  color: rgba(255, 255, 255, 0.66);
+
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.03em;
+}
+
+#music .music-release-type span {
+  display: none;
+}
+
+#music .music-album-title {
+  margin: 0;
+
+  color: #ffffff;
+
+  font-size: clamp(18px, 2.1vw, 28px);
+  font-weight: 400;
+  line-height: 1.32;
+  letter-spacing: -0.035em;
+
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+
+/* =========================
+   플랫폼 별도 칸
+========================= */
+
+#music .music-platform-links {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+
+  width: 100%;
+  max-width: none;
+
+  margin: 22px 0 0;
+  padding: 10px;
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.055),
+      rgba(255, 255, 255, 0.018)
+    );
+
+  box-sizing: border-box;
+}
+
+#music .music-platform-links[hidden] {
+  display: none !important;
+}
+
+
+/* =========================
+   플랫폼 버튼
+========================= */
+
+#music .music-platform-link {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+
+  width: 100% !important;
+  height: 42px !important;
+  min-width: 0;
+
+  padding: 0 !important;
+
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 10px !important;
+
+  background: rgba(255, 255, 255, 0.045) !important;
+  box-shadow: none !important;
+
+  opacity: 1 !important;
+  overflow: visible !important;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+#music .music-platform-link:hover {
+  transform: translateY(-2px);
+
+  border-color: rgba(255, 255, 255, 0.24) !important;
+  background: rgba(255, 255, 255, 0.09) !important;
+}
+
+#music .music-platform-link.is-disabled {
+  display: none !important;
+}
+
+
+/* =========================
+   플랫폼 아이콘
+========================= */
+
+#music .music-platform-link svg,
+#music .music-platform-link i {
+  display: block !important;
+
+  width: 20px;
+  height: 20px;
+
+  font-size: 20px;
+  line-height: 1;
+
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+
+/* YouTube */
+
+#music .music-platform-link[title="YouTube"] {
+  background: rgba(255, 0, 0, 0.09) !important;
+}
+
+#music .music-platform-link[title="YouTube"] i {
+  color: #ff0000 !important;
+}
+
+
+/* Spotify */
+
+#music .music-platform-link[title="Spotify"] {
+  background: rgba(29, 185, 84, 0.09) !important;
+}
+
+#music .music-platform-link[title="Spotify"] i {
+  color: #1db954 !important;
+}
+
+
+/* Apple Music */
+
+#music .music-platform-link[title="Apple Music"] {
+  background: rgba(250, 36, 60, 0.09) !important;
+}
+
+#music .music-platform-link[title="Apple Music"] i {
+  color: #fa243c !important;
+}
+
+
+/* =========================
+   모바일
+========================= */
+
+@media (max-width: 767px) {
+  #music .music-gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  #music .music-card {
+    padding: 8px;
+
+    border-radius: 18px;
+  }
+
+  #music .music-artwork {
+    border-radius: 13px;
+  }
+
+  #music .music-card-body {
+    padding: 14px 6px 5px;
+  }
+
+  #music .music-profile-label {
+    margin-bottom: 6px;
+
+    font-size: 8px;
+  }
+
+  #music .music-profile-name {
+    font-size: 17px;
+    line-height: 1.2;
+  }
+
+  #music .music-release-block {
+    gap: 6px;
+
+    margin-top: 16px;
+  }
+
+  #music .music-release-type {
+    font-size: 9px;
+  }
+
+  #music .music-album-title {
+    font-size: 15px;
+    line-height: 1.28;
+  }
+
+  #music .music-platform-links {
+    gap: 5px;
+
+    margin-top: 16px;
+    padding: 7px;
+
+    border-radius: 11px;
+  }
+
+  #music .music-platform-link {
+    height: 34px !important;
+
+    border-radius: 8px !important;
+  }
+
+  #music .music-platform-link svg,
+  #music .music-platform-link i {
+    width: 17px;
+    height: 17px;
+
+    font-size: 17px;
+  }
+}
+
+
+/* =========================
+   작은 모바일
+========================= */
+
+@media (max-width: 390px) {
+  #music .music-card-body {
+    padding-right: 4px;
+    padding-left: 4px;
+  }
+
+  #music .music-profile-name {
+    font-size: 15px;
+  }
+
+  #music .music-album-title {
+    font-size: 13px;
+  }
+
+  #music .music-platform-links {
+    padding: 6px;
+  }
+
+  #music .music-platform-link {
+    height: 31px !important;
+  }
+
+  #music .music-platform-link svg,
+  #music .music-platform-link i {
+    width: 15px;
+    height: 15px;
+
+    font-size: 15px;
+  }
+}
