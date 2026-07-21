@@ -818,59 +818,80 @@ const adminStore = {
 
 
 /* =========================
-   COMMON HELPERS
+   SAVE ADD / EDIT
 ========================= */
 
-async function adminApiRequest(
-  url,
-  options = {}
+async function saveAdminItem(
+  sectionName,
+  data
 ) {
-  const headers = new Headers(
-    options.headers || {}
-  );
+  const sectionItems =
+    adminStore[sectionName] || [];
 
-  if (currentAdminPassword) {
-    headers.set(
-      "X-Admin-Password",
-      currentAdminPassword
+  const existingIndex =
+    sectionItems.findIndex(
+      (item) =>
+        String(item.id) ===
+        String(data.id)
     );
-  }
 
-  if (
-    options.body &&
-    !(options.body instanceof FormData)
-  ) {
-    headers.set(
-      "Content-Type",
-      "application/json"
+  const isUpdate =
+    existingIndex >= 0;
+
+  const url = isUpdate
+    ? `/api/content?type=${encodeURIComponent(
+        sectionName
+      )}&id=${encodeURIComponent(
+        data.id
+      )}`
+    : `/api/content?type=${encodeURIComponent(
+        sectionName
+      )}`;
+
+  const result =
+    await adminApiRequest(url, {
+      method: isUpdate
+        ? "PUT"
+        : "POST",
+
+      body: JSON.stringify(data),
+    });
+
+  const savedItem =
+    result.item ||
+    result.data ||
+    null;
+
+  if (!savedItem) {
+    console.error(
+      "저장 API 응답:",
+      result
     );
-  }
 
-  const response = await fetch(url, {
-    ...options,
-    headers,
-  });
-
-  let result;
-
-  try {
-    result = await response.json();
-  } catch {
-    result = {
-      success: false,
-      message:
-        "서버 응답을 읽을 수 없습니다.",
-    };
-  }
-
-  if (!response.ok) {
     throw new Error(
-      result.message ||
-        "요청 처리 중 오류가 발생했습니다."
+      "서버가 저장된 콘텐츠 정보를 반환하지 않았습니다."
     );
   }
 
-  return result;
+  if (!savedItem.id) {
+    savedItem.id =
+      data.id;
+  }
+
+  if (isUpdate) {
+    adminStore[sectionName][
+      existingIndex
+    ] = savedItem;
+  } else {
+    adminStore[sectionName].unshift(
+      savedItem
+    );
+  }
+
+  renderAllAdminLists();
+  openAdminView(sectionName);
+
+  return savedItem;
 }
 
 async function uploadAdminImage(
