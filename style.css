@@ -8711,3 +8711,16 @@ html {
     flex-basis: 38px;
   }
 }
+
+.music-platform-link svg {
+  width: 22px;
+  height: 22px;
+  display: block;
+  fill: currentColor;
+  pointer-events: none;
+}
+
+.music-platform-link:hover svg {
+  transform: scale(1.08);
+  transition: transform .2s ease;
+}
