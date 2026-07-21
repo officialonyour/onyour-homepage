@@ -2144,9 +2144,14 @@ const ADMIN_MUSIC_PROFILES = {
 ========================= */
 
 function fillAdminMusicForm(item) {
+  if (!item) {
+    return;
+  }
+
   const profileKey =
     item.profileKey ||
     item.profile_key ||
+    item.id ||
     "";
 
   const profileSetting =
@@ -2165,19 +2170,18 @@ function fillAdminMusicForm(item) {
     profileSetting.name ||
     "";
 
-  const cardType =
-    item.type ||
-    profileSetting.defaultType ||
-    "ARTIST";
-
   const albumType =
     item.albumType ||
     item.album_type ||
-    (
-      profileKey === "onyour"
-        ? "FULL ALBUM"
-        : "SINGLE"
-    );
+    item.type ||
+    profileSetting.defaultType ||
+    "";
+
+  const albumTitle =
+    item.albumTitle ||
+    item.album_title ||
+    item.title ||
+    "";
 
   const youtubeUrl =
     item.youtubeUrl ||
@@ -2192,6 +2196,8 @@ function fillAdminMusicForm(item) {
   const appleUrl =
     item.appleUrl ||
     item.apple_url ||
+    item.appleMusicUrl ||
+    item.apple_music_url ||
     "";
 
   const melonUrl =
@@ -2199,73 +2205,9 @@ function fillAdminMusicForm(item) {
     item.melon_url ||
     "";
 
-  /*
-   * 기존 단일 링크가 저장되어 있다면
-   * 해당 플랫폼 입력칸으로 자동 이동
-   */
-  const legacyUrl =
-    item.releaseUrl ||
-    item.release_url ||
-    "";
-
-  let finalYoutubeUrl =
-    youtubeUrl;
-
-  let finalSpotifyUrl =
-    spotifyUrl;
-
-  let finalAppleUrl =
-    appleUrl;
-
-  let finalMelonUrl =
-    melonUrl;
-
-  if (legacyUrl) {
-    const legacyPlatform =
-      getLegacyMusicPlatform(
-        legacyUrl
-      );
-
-    if (
-      legacyPlatform ===
-        "youtube" &&
-      !finalYoutubeUrl
-    ) {
-      finalYoutubeUrl =
-        legacyUrl;
-    }
-
-    if (
-      legacyPlatform ===
-        "spotify" &&
-      !finalSpotifyUrl
-    ) {
-      finalSpotifyUrl =
-        legacyUrl;
-    }
-
-    if (
-      legacyPlatform ===
-        "apple" &&
-      !finalAppleUrl
-    ) {
-      finalAppleUrl =
-        legacyUrl;
-    }
-
-    if (
-      legacyPlatform ===
-        "melon" &&
-      !finalMelonUrl
-    ) {
-      finalMelonUrl =
-        legacyUrl;
-    }
-  }
-
   setAdminFormValue(
     "adminMusicId",
-    item.id || ""
+    item.id || profileKey
   );
 
   setAdminFormValue(
@@ -2285,43 +2227,115 @@ function fillAdminMusicForm(item) {
 
   setAdminFormValue(
     "adminMusicType",
-    cardType
-  );
-
-  setAdminFormValue(
-    "adminMusicAlbumType",
     albumType
   );
 
   setAdminFormValue(
     "adminMusicTitle",
-    item.title || ""
+    albumTitle
   );
 
   setAdminFormValue(
-    "adminMusicYoutubeUrl",
-    finalYoutubeUrl
+    "adminMusicYoutube",
+    youtubeUrl
   );
 
   setAdminFormValue(
-    "adminMusicSpotifyUrl",
-    finalSpotifyUrl
+    "adminMusicSpotify",
+    spotifyUrl
   );
 
   setAdminFormValue(
-    "adminMusicAppleUrl",
-    finalAppleUrl
+    "adminMusicApple",
+    appleUrl
   );
 
   setAdminFormValue(
-    "adminMusicMelonUrl",
-    finalMelonUrl
+    "adminMusicMelon",
+    melonUrl
   );
 
   setAdminFormValue(
     "adminMusicPublished",
     item.published !== false
   );
+
+  /*
+   * 기존 데이터 구조 호환용
+   */
+  setAdminFormValue(
+    "adminMusicArtworkTitle",
+    ""
+  );
+
+  setAdminFormValue(
+    "adminMusicDisplayLabel",
+    ""
+  );
+
+  setAdminFormValue(
+    "adminMusicTrackCount",
+    0
+  );
+
+  setAdminFormValue(
+    "adminMusicReleaseDate",
+    ""
+  );
+
+  setAdminFormValue(
+    "adminMusicDescription",
+    ""
+  );
+
+  setAdminFormValue(
+    "adminMusicReleaseUrl",
+    ""
+  );
+
+  const imageInput =
+    document.getElementById(
+      "adminMusicImage"
+    );
+
+  if (imageInput) {
+    imageInput.value = "";
+  }
+
+  const previewBox =
+    document.getElementById(
+      "adminMusicImagePreview"
+    );
+
+  const previewImage =
+    document.getElementById(
+      "adminMusicPreviewImage"
+    );
+
+  if (
+    previewBox &&
+    previewImage &&
+    coverUrl
+  ) {
+    previewImage.src = coverUrl;
+
+    previewImage.alt =
+      `${artistName || "음원"} 앨범 자켓 미리보기`;
+
+    previewBox.hidden = false;
+  } else if (
+    previewBox &&
+    previewImage
+  ) {
+    previewImage.removeAttribute(
+      "src"
+    );
+
+    previewImage.alt =
+      "앨범 자켓 미리보기";
+
+    previewBox.hidden = true;
+  }
 
   const editorCategory =
     document.getElementById(
@@ -2341,54 +2355,9 @@ function fillAdminMusicForm(item) {
 
   if (formTitle) {
     formTitle.textContent =
-      `${artistName || "음원"} 정보 수정`;
-  }
-
-  const coverFileInput =
-    document.getElementById(
-      "adminMusicCoverFile"
-    );
-
-  if (coverFileInput) {
-    coverFileInput.value = "";
-  }
-
-  const previewBox =
-    document.getElementById(
-      "adminMusicImagePreview"
-    );
-
-  const previewImage =
-    document.getElementById(
-      "adminMusicPreviewImage"
-    );
-
-  if (
-    previewBox &&
-    previewImage &&
-    coverUrl
-  ) {
-    previewImage.src =
-      coverUrl;
-
-    previewImage.alt =
-      `${artistName || "앨범"} 자켓 미리보기`;
-
-    previewBox.hidden =
-      false;
-  } else if (
-    previewBox &&
-    previewImage
-  ) {
-    previewImage.removeAttribute(
-      "src"
-    );
-
-    previewImage.alt =
-      "앨범 자켓 미리보기";
-
-    previewBox.hidden =
-      true;
+      artistName
+        ? `${artistName} 음원 정보 수정`
+        : "음원 정보 수정";
   }
 }
 
@@ -2841,7 +2810,7 @@ document
 
       const albumType =
         getAdminFormValue(
-          "adminMusicAlbumType"
+          "adminMusicType"
         );
 
       const title =
@@ -2851,7 +2820,7 @@ document
 
       const imageInput =
         document.getElementById(
-          "adminMusicCoverFile"
+          "adminMusicImage"
         );
 
       let coverUrl =
@@ -2888,7 +2857,7 @@ document
 
         document
           .getElementById(
-            "adminMusicAlbumType"
+            "adminMusicType"
           )
           ?.focus();
 
@@ -2959,22 +2928,22 @@ document
 
           youtubeUrl:
             getAdminFormValue(
-              "adminMusicYoutubeUrl"
+              "adminMusicYoutube"
             ),
 
           spotifyUrl:
             getAdminFormValue(
-              "adminMusicSpotifyUrl"
+              "adminMusicSpotify"
             ),
 
           appleUrl:
             getAdminFormValue(
-              "adminMusicAppleUrl"
+              "adminMusicApple"
             ),
 
           melonUrl:
             getAdminFormValue(
-              "adminMusicMelonUrl"
+              "adminMusicMelon"
             ),
 
           published:

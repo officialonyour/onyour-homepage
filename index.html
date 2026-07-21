@@ -365,7 +365,7 @@
 
 <!-- MUSIC -->
 <section
-  class="section music-section music-section-v3"
+  class="section music-section music-section-v2"
   id="music"
 >
   <div
@@ -389,7 +389,7 @@
 
     <p class="music-heading-description">
       ONYOUR와 세 멤버의 가장 최근 음악을 한곳에서 만나보세요.
-      각 카드에는 현재 선택된 대표 앨범 한 개가 표시됩니다.
+      각 카드에는 현재 선택된 대표 음원 한 개만 표시됩니다.
     </p>
   </div>
 
@@ -398,7 +398,10 @@
     id="musicProfileList"
   >
 
-    <!-- ONYOUR -->
+    <!-- =========================================
+         01. ONYOUR
+    ========================================== -->
+
     <article
       class="music-card music-card-onyour reveal"
       data-music-profile="onyour"
@@ -415,7 +418,7 @@
           class="music-cover-image"
           id="musicCoverOnyour"
           src=""
-          alt="ONYOUR 앨범 자켓"
+          alt=""
           hidden
         />
 
@@ -423,33 +426,38 @@
           class="music-artwork-inner"
           id="musicFallbackOnyour"
         >
-          <small>COMING SOON</small>
+          <small>
+            COMING SOON
+          </small>
         </div>
       </div>
 
       <div class="music-card-body">
-        <p class="music-profile-label">
-          TEAM
-        </p>
+        <div class="music-profile-block">
+          <p class="music-profile-label">
+            ARTIST
+          </p>
 
-        <h3
-          class="music-profile-name"
-          id="musicArtistOnyour"
-        >
-          ONYOUR
-        </h3>
+          <h3
+            class="music-profile-name"
+            id="musicArtistNameOnyour"
+          >
+            ONYOUR
+          </h3>
+        </div>
 
-        <div class="music-release-info">
+        <div class="music-release-block">
           <p
             class="music-release-type"
-            id="musicTypeOnyour"
+            id="musicAlbumTypeOnyour"
           >
+            <span aria-hidden="true"></span>
             FULL ALBUM
           </p>
 
           <p
-            class="music-release-title"
-            id="musicTitleOnyour"
+            class="music-album-title"
+            id="musicAlbumTitleOnyour"
           >
             ONYOUR 1st Full Album
           </p>
@@ -457,21 +465,85 @@
 
         <div
           class="music-platform-links"
-          id="musicPlatformsOnyour"
+          id="musicPlatformLinksOnyour"
           aria-label="ONYOUR 음원 플랫폼"
-        ></div>
-
-        <p
-          class="music-platform-empty"
-          id="musicPlatformEmptyOnyour"
         >
-          Coming Soon
-        </p>
+          <a
+            class="music-platform-link is-disabled"
+            id="musicYoutubeOnyour"
+            href="#"
+            aria-disabled="true"
+            tabindex="-1"
+            title="YouTube"
+          >
+            <span class="music-platform-icon">
+              ▶
+            </span>
+
+            <span class="music-platform-name">
+              YouTube
+            </span>
+          </a>
+
+          <a
+            class="music-platform-link is-disabled"
+            id="musicSpotifyOnyour"
+            href="#"
+            aria-disabled="true"
+            tabindex="-1"
+            title="Spotify"
+          >
+            <span class="music-platform-icon">
+              ●
+            </span>
+
+            <span class="music-platform-name">
+              Spotify
+            </span>
+          </a>
+
+          <a
+            class="music-platform-link is-disabled"
+            id="musicAppleOnyour"
+            href="#"
+            aria-disabled="true"
+            tabindex="-1"
+            title="Apple Music"
+          >
+            <span class="music-platform-icon">
+              ♪
+            </span>
+
+            <span class="music-platform-name">
+              Apple
+            </span>
+          </a>
+
+          <a
+            class="music-platform-link is-disabled"
+            id="musicMelonOnyour"
+            href="#"
+            aria-disabled="true"
+            tabindex="-1"
+            title="Melon"
+          >
+            <span class="music-platform-icon">
+              m
+            </span>
+
+            <span class="music-platform-name">
+              Melon
+            </span>
+          </a>
+        </div>
       </div>
     </article>
 
 
-    <!-- 이휘근 -->
+    <!-- =========================================
+         02. 이휘근
+    ========================================== -->
+
     <article
       class="music-card reveal"
       data-music-profile="leehwigeun"
@@ -483,12 +555,14 @@
         02
       </div>
 
-      <div class="music-artwork">
+      <div
+        class="music-artwork music-artwork-personal"
+      >
         <img
           class="music-cover-image"
           id="musicCoverLeehwigeun"
           src=""
-          alt="이휘근 앨범 자켓"
+          alt=""
           hidden
         />
 
@@ -496,33 +570,38 @@
           class="music-artwork-inner"
           id="musicFallbackLeehwigeun"
         >
-          <small>LATEST RELEASE</small>
+          <small>
+            LATEST RELEASE
+          </small>
         </div>
       </div>
 
       <div class="music-card-body">
-        <p class="music-profile-label">
-          ARTIST
-        </p>
+        <div class="music-profile-block">
+          <p class="music-profile-label">
+            ARTIST
+          </p>
 
-        <h3
-          class="music-profile-name"
-          id="musicArtistLeehwigeun"
-        >
-          이휘근
-        </h3>
+          <h3
+            class="music-profile-name"
+            id="musicArtistNameLeehwigeun"
+          >
+            이휘근
+          </h3>
+        </div>
 
-        <div class="music-release-info">
+        <div class="music-release-block">
           <p
             class="music-release-type"
-            id="musicTypeLeehwigeun"
+            id="musicAlbumTypeLeehwigeun"
           >
+            <span aria-hidden="true"></span>
             SINGLE
           </p>
 
           <p
-            class="music-release-title"
-            id="musicTitleLeehwigeun"
+            class="music-album-title"
+            id="musicAlbumTitleLeehwigeun"
           >
             Side by Side
           </p>
@@ -530,21 +609,85 @@
 
         <div
           class="music-platform-links"
-          id="musicPlatformsLeehwigeun"
+          id="musicPlatformLinksLeehwigeun"
           aria-label="이휘근 음원 플랫폼"
-        ></div>
-
-        <p
-          class="music-platform-empty"
-          id="musicPlatformEmptyLeehwigeun"
         >
-          링크 준비 중
-        </p>
+          <a
+            class="music-platform-link is-disabled"
+            id="musicYoutubeLeehwigeun"
+            href="#"
+            aria-disabled="true"
+            tabindex="-1"
+            title="YouTube"
+          >
+            <span class="music-platform-icon">
+              ▶
+            </span>
+
+            <span class="music-platform-name">
+              YouTube
+            </span>
+          </a>
+
+          <a
+            class="music-platform-link is-disabled"
+            id="musicSpotifyLeehwigeun"
+            href="#"
+            aria-disabled="true"
+            tabindex="-1"
+            title="Spotify"
+          >
+            <span class="music-platform-icon">
+              ●
+            </span>
+
+            <span class="music-platform-name">
+              Spotify
+            </span>
+          </a>
+
+          <a
+            class="music-platform-link is-disabled"
+            id="musicAppleLeehwigeun"
+            href="#"
+            aria-disabled="true"
+            tabindex="-1"
+            title="Apple Music"
+          >
+            <span class="music-platform-icon">
+              ♪
+            </span>
+
+            <span class="music-platform-name">
+              Apple
+            </span>
+          </a>
+
+          <a
+            class="music-platform-link is-disabled"
+            id="musicMelonLeehwigeun"
+            href="#"
+            aria-disabled="true"
+            tabindex="-1"
+            title="Melon"
+          >
+            <span class="music-platform-icon">
+              m
+            </span>
+
+            <span class="music-platform-name">
+              Melon
+            </span>
+          </a>
+        </div>
       </div>
     </article>
 
 
-    <!-- 이루니 -->
+    <!-- =========================================
+         03. 이루니
+    ========================================== -->
+
     <article
       class="music-card reveal"
       data-music-profile="eluni"
@@ -556,12 +699,14 @@
         03
       </div>
 
-      <div class="music-artwork">
+      <div
+        class="music-artwork music-artwork-personal"
+      >
         <img
           class="music-cover-image"
           id="musicCoverEluni"
           src=""
-          alt="이루니 앨범 자켓"
+          alt=""
           hidden
         />
 
@@ -569,33 +714,38 @@
           class="music-artwork-inner"
           id="musicFallbackEluni"
         >
-          <small>LATEST RELEASE</small>
+          <small>
+            LATEST RELEASE
+          </small>
         </div>
       </div>
 
       <div class="music-card-body">
-        <p class="music-profile-label">
-          MEMBER
-        </p>
+        <div class="music-profile-block">
+          <p class="music-profile-label">
+            ARTIST
+          </p>
 
-        <h3
-          class="music-profile-name"
-          id="musicArtistEluni"
-        >
-          이루니
-        </h3>
+          <h3
+            class="music-profile-name"
+            id="musicArtistNameEluni"
+          >
+            이루니
+          </h3>
+        </div>
 
-        <div class="music-release-info">
+        <div class="music-release-block">
           <p
             class="music-release-type"
-            id="musicTypeEluni"
+            id="musicAlbumTypeEluni"
           >
+            <span aria-hidden="true"></span>
             SINGLE
           </p>
 
           <p
-            class="music-release-title"
-            id="musicTitleEluni"
+            class="music-album-title"
+            id="musicAlbumTitleEluni"
           >
             참여 음원
           </p>
@@ -603,21 +753,85 @@
 
         <div
           class="music-platform-links"
-          id="musicPlatformsEluni"
+          id="musicPlatformLinksEluni"
           aria-label="이루니 음원 플랫폼"
-        ></div>
-
-        <p
-          class="music-platform-empty"
-          id="musicPlatformEmptyEluni"
         >
-          링크 준비 중
-        </p>
+          <a
+            class="music-platform-link is-disabled"
+            id="musicYoutubeEluni"
+            href="#"
+            aria-disabled="true"
+            tabindex="-1"
+            title="YouTube"
+          >
+            <span class="music-platform-icon">
+              ▶
+            </span>
+
+            <span class="music-platform-name">
+              YouTube
+            </span>
+          </a>
+
+          <a
+            class="music-platform-link is-disabled"
+            id="musicSpotifyEluni"
+            href="#"
+            aria-disabled="true"
+            tabindex="-1"
+            title="Spotify"
+          >
+            <span class="music-platform-icon">
+              ●
+            </span>
+
+            <span class="music-platform-name">
+              Spotify
+            </span>
+          </a>
+
+          <a
+            class="music-platform-link is-disabled"
+            id="musicAppleEluni"
+            href="#"
+            aria-disabled="true"
+            tabindex="-1"
+            title="Apple Music"
+          >
+            <span class="music-platform-icon">
+              ♪
+            </span>
+
+            <span class="music-platform-name">
+              Apple
+            </span>
+          </a>
+
+          <a
+            class="music-platform-link is-disabled"
+            id="musicMelonEluni"
+            href="#"
+            aria-disabled="true"
+            tabindex="-1"
+            title="Melon"
+          >
+            <span class="music-platform-icon">
+              m
+            </span>
+
+            <span class="music-platform-name">
+              Melon
+            </span>
+          </a>
+        </div>
       </div>
     </article>
 
 
-    <!-- 이체린 -->
+    <!-- =========================================
+         04. 이체린
+    ========================================== -->
+
     <article
       class="music-card reveal"
       data-music-profile="leecherin"
@@ -629,12 +843,14 @@
         04
       </div>
 
-      <div class="music-artwork">
+      <div
+        class="music-artwork music-artwork-personal"
+      >
         <img
           class="music-cover-image"
           id="musicCoverLeecherin"
           src=""
-          alt="이체린 앨범 자켓"
+          alt=""
           hidden
         />
 
@@ -642,33 +858,38 @@
           class="music-artwork-inner"
           id="musicFallbackLeecherin"
         >
-          <small>LATEST RELEASE</small>
+          <small>
+            LATEST RELEASE
+          </small>
         </div>
       </div>
 
       <div class="music-card-body">
-        <p class="music-profile-label">
-          MEMBER
-        </p>
+        <div class="music-profile-block">
+          <p class="music-profile-label">
+            ARTIST
+          </p>
 
-        <h3
-          class="music-profile-name"
-          id="musicArtistLeecherin"
-        >
-          이체린
-        </h3>
+          <h3
+            class="music-profile-name"
+            id="musicArtistNameLeecherin"
+          >
+            이체린
+          </h3>
+        </div>
 
-        <div class="music-release-info">
+        <div class="music-release-block">
           <p
             class="music-release-type"
-            id="musicTypeLeecherin"
+            id="musicAlbumTypeLeecherin"
           >
+            <span aria-hidden="true"></span>
             SINGLE
           </p>
 
           <p
-            class="music-release-title"
-            id="musicTitleLeecherin"
+            class="music-album-title"
+            id="musicAlbumTitleLeecherin"
           >
             참여 음원
           </p>
@@ -676,16 +897,77 @@
 
         <div
           class="music-platform-links"
-          id="musicPlatformsLeecherin"
+          id="musicPlatformLinksLeecherin"
           aria-label="이체린 음원 플랫폼"
-        ></div>
-
-        <p
-          class="music-platform-empty"
-          id="musicPlatformEmptyLeecherin"
         >
-          링크 준비 중
-        </p>
+          <a
+            class="music-platform-link is-disabled"
+            id="musicYoutubeLeecherin"
+            href="#"
+            aria-disabled="true"
+            tabindex="-1"
+            title="YouTube"
+          >
+            <span class="music-platform-icon">
+              ▶
+            </span>
+
+            <span class="music-platform-name">
+              YouTube
+            </span>
+          </a>
+
+          <a
+            class="music-platform-link is-disabled"
+            id="musicSpotifyLeecherin"
+            href="#"
+            aria-disabled="true"
+            tabindex="-1"
+            title="Spotify"
+          >
+            <span class="music-platform-icon">
+              ●
+            </span>
+
+            <span class="music-platform-name">
+              Spotify
+            </span>
+          </a>
+
+          <a
+            class="music-platform-link is-disabled"
+            id="musicAppleLeecherin"
+            href="#"
+            aria-disabled="true"
+            tabindex="-1"
+            title="Apple Music"
+          >
+            <span class="music-platform-icon">
+              ♪
+            </span>
+
+            <span class="music-platform-name">
+              Apple
+            </span>
+          </a>
+
+          <a
+            class="music-platform-link is-disabled"
+            id="musicMelonLeecherin"
+            href="#"
+            aria-disabled="true"
+            tabindex="-1"
+            title="Melon"
+          >
+            <span class="music-platform-icon">
+              m
+            </span>
+
+            <span class="music-platform-name">
+              Melon
+            </span>
+          </a>
+        </div>
       </div>
     </article>
 
@@ -1716,7 +1998,6 @@
 <!-- =========================
      음원 프로필 수정
 ========================== -->
-
 <section
   class="admin-section-view admin-view"
   id="adminMusicFormView"
@@ -1746,6 +2027,7 @@
     class="admin-content-form"
     id="adminMusicForm"
   >
+    <!-- 기본 식별 정보 -->
     <input
       id="adminMusicId"
       type="hidden"
@@ -1761,6 +2043,39 @@
       type="hidden"
     />
 
+    <!-- 기존 데이터 호환용 -->
+    <input
+      id="adminMusicArtworkTitle"
+      type="hidden"
+    />
+
+    <input
+      id="adminMusicDisplayLabel"
+      type="hidden"
+    />
+
+    <input
+      id="adminMusicTrackCount"
+      type="hidden"
+      value="0"
+    />
+
+    <input
+      id="adminMusicReleaseDate"
+      type="hidden"
+    />
+
+    <input
+      id="adminMusicDescription"
+      type="hidden"
+    />
+
+    <input
+      id="adminMusicReleaseUrl"
+      type="hidden"
+    />
+
+    <!-- 프로필 이름 -->
     <div class="admin-music-editor-profile">
       <span id="adminMusicEditorCategory">
         MUSIC PROFILE
@@ -1777,40 +2092,24 @@
       />
 
       <small>
-        홈페이지 Music 카드에 표시될 대표 앨범 정보를 수정합니다.
+        홈페이지 Music 카드에 표시되는 아티스트 또는 팀 이름입니다.
       </small>
     </div>
 
+    <!-- 앨범 종류 -->
     <label>
-      카드 표시 구분
+      앨범 종류
 
       <select
         id="adminMusicType"
         required
       >
-        <option value="TEAM">
-          TEAM
+        <option value="">
+          앨범 종류 선택
         </option>
 
-        <option value="ARTIST">
-          ARTIST
-        </option>
-
-        <option value="MEMBER">
-          MEMBER
-        </option>
-      </select>
-    </label>
-
-    <label>
-      앨범 종류
-
-      <select
-        id="adminMusicAlbumType"
-        required
-      >
         <option value="SINGLE">
-          싱글
+          SINGLE
         </option>
 
         <option value="EP">
@@ -1818,19 +2117,36 @@
         </option>
 
         <option value="FULL ALBUM">
-          정규 앨범
+          FULL ALBUM
+        </option>
+
+        <option value="MINI ALBUM">
+          MINI ALBUM
+        </option>
+
+        <option value="LIVE ALBUM">
+          LIVE ALBUM
+        </option>
+
+        <option value="OST">
+          OST
         </option>
 
         <option value="PARTICIPATION">
-          참여 음원
+          PARTICIPATION
         </option>
 
         <option value="COMING SOON">
-          발매 예정
+          COMING SOON
         </option>
       </select>
+
+      <small class="admin-field-help">
+        앨범명 위에 표시되는 종류입니다.
+      </small>
     </label>
 
+    <!-- 앨범명 -->
     <label>
       앨범명
 
@@ -1841,22 +2157,28 @@
         placeholder="예: Side by Side"
         required
       />
-    </label>
-
-    <label>
-      앨범 자켓 이미지
-
-      <input
-        id="adminMusicCoverFile"
-        type="file"
-        accept="image/jpeg,image/png,image/webp"
-      />
 
       <small class="admin-field-help">
-        정사각형 이미지를 권장합니다. 새 이미지를 선택하지 않으면 기존 자켓이 유지됩니다.
+        앨범 종류 바로 아래에 표시됩니다.
       </small>
     </label>
 
+    <!-- 앨범 자켓 -->
+    <label>
+      앨범 자켓
+
+      <input
+        id="adminMusicImage"
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/gif"
+      />
+
+      <small class="admin-field-help">
+        자켓 이미지는 글자를 추가하지 않고 원본 그대로 표시됩니다.
+      </small>
+    </label>
+
+    <!-- 자켓 미리보기 -->
     <div
       class="admin-image-preview"
       id="adminMusicImagePreview"
@@ -1869,12 +2191,15 @@
       />
     </div>
 
-    <div class="admin-music-link-section">
-      <div class="admin-music-link-heading">
-        <strong>음원 플랫폼 링크</strong>
+    <!-- 플랫폼 링크 -->
+    <div class="admin-music-platform-section">
+      <div class="admin-music-platform-heading">
+        <strong>
+          음원 플랫폼 링크
+        </strong>
 
         <small>
-          입력한 플랫폼의 아이콘만 홈페이지에 표시됩니다.
+          링크가 없는 플랫폼은 홈페이지에서 비활성 상태로 표시됩니다.
         </small>
       </div>
 
@@ -1882,10 +2207,10 @@
         YouTube
 
         <input
-          id="adminMusicYoutubeUrl"
+          id="adminMusicYoutube"
           type="url"
-          inputmode="url"
           placeholder="https://youtube.com/..."
+          autocomplete="url"
         />
       </label>
 
@@ -1893,10 +2218,10 @@
         Spotify
 
         <input
-          id="adminMusicSpotifyUrl"
+          id="adminMusicSpotify"
           type="url"
-          inputmode="url"
           placeholder="https://open.spotify.com/..."
+          autocomplete="url"
         />
       </label>
 
@@ -1904,10 +2229,10 @@
         Apple Music
 
         <input
-          id="adminMusicAppleUrl"
+          id="adminMusicApple"
           type="url"
-          inputmode="url"
           placeholder="https://music.apple.com/..."
+          autocomplete="url"
         />
       </label>
 
@@ -1915,14 +2240,15 @@
         Melon
 
         <input
-          id="adminMusicMelonUrl"
+          id="adminMusicMelon"
           type="url"
-          inputmode="url"
           placeholder="https://www.melon.com/..."
+          autocomplete="url"
         />
       </label>
     </div>
 
+    <!-- 공개 여부 -->
     <label class="admin-checkbox-label">
       <input
         id="adminMusicPublished"
@@ -1935,6 +2261,7 @@
       </span>
     </label>
 
+    <!-- 하단 버튼 -->
     <div class="admin-form-actions">
       <button
         class="admin-form-cancel"
@@ -1953,7 +2280,6 @@
     </div>
   </form>
 </section>
-
     <!-- NEWS 작성/수정 -->
     <section
       class="admin-section-view admin-view"
