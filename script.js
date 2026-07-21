@@ -5155,6 +5155,157 @@ editButton?.addEventListener(
 }
 
 /* =========================================================
+   팬 메시지 사진 팝업 닫기
+========================================================= */
+
+function closeFanPhotoLightbox() {
+  const lightbox =
+    document.getElementById(
+      "fanPhotoLightbox"
+    );
+
+  if (!lightbox) {
+    return;
+  }
+
+  lightbox.classList.remove(
+    "is-open"
+  );
+
+  lightbox.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+  document.body.classList.remove(
+    "fan-photo-lightbox-open"
+  );
+
+  window.setTimeout(() => {
+    lightbox.remove();
+  }, 240);
+}
+
+
+/* =========================================================
+   팬 메시지 사진 팝업 열기
+========================================================= */
+
+function openFanPhotoLightbox(
+  photoUrl,
+  photoAlt = "첨부 사진"
+) {
+  const cleanPhotoUrl =
+    String(photoUrl || "").trim();
+
+  if (!cleanPhotoUrl) {
+    return;
+  }
+
+  closeFanPhotoLightbox();
+
+  const lightbox =
+    document.createElement("div");
+
+  lightbox.id =
+    "fanPhotoLightbox";
+
+  lightbox.className =
+    "fan-photo-lightbox";
+
+  lightbox.setAttribute(
+    "role",
+    "dialog"
+  );
+
+  lightbox.setAttribute(
+    "aria-modal",
+    "true"
+  );
+
+  lightbox.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+  lightbox.setAttribute(
+    "aria-label",
+    "첨부 사진 크게 보기"
+  );
+
+  lightbox.innerHTML = `
+    <button
+      class="fan-photo-lightbox-backdrop"
+      type="button"
+      data-fan-photo-close
+      aria-label="사진 팝업 닫기"
+    ></button>
+
+    <div
+      class="fan-photo-lightbox-panel"
+      role="document"
+    >
+      <img
+        class="fan-photo-lightbox-image"
+        src="${escapeFanMessageHtml(
+          cleanPhotoUrl
+        )}"
+        alt="${escapeFanMessageHtml(
+          photoAlt
+        )}"
+      />
+
+      <button
+        class="fan-photo-lightbox-close"
+        type="button"
+        data-fan-photo-close
+        aria-label="사진 팝업 닫기"
+      >
+        ×
+      </button>
+    </div>
+  `;
+
+  document.body.appendChild(
+    lightbox
+  );
+
+  document.body.classList.add(
+    "fan-photo-lightbox-open"
+  );
+
+  lightbox
+    .querySelectorAll(
+      "[data-fan-photo-close]"
+    )
+    .forEach((closeButton) => {
+      closeButton.addEventListener(
+        "click",
+        closeFanPhotoLightbox
+      );
+    });
+
+  const closeButton =
+    lightbox.querySelector(
+      ".fan-photo-lightbox-close"
+    );
+
+  window.requestAnimationFrame(() => {
+    lightbox.classList.add(
+      "is-open"
+    );
+
+    lightbox.setAttribute(
+      "aria-hidden",
+      "false"
+    );
+
+    closeButton?.focus();
+  });
+}
+
+
+/* =========================================================
    메시지 관리 버튼 / 사진 보기
 ========================================================= */
 
@@ -5171,21 +5322,28 @@ function handleFanMessageListClick(
 
   if (photoButton) {
     const photoUrl =
-      photoButton.dataset.fanPhotoUrl;
+      photoButton.dataset
+        .fanPhotoUrl;
 
-    if (photoUrl) {
-      window.open(
-        photoUrl,
-        "_blank",
-        "noopener,noreferrer"
+    const photoImage =
+      photoButton.querySelector(
+        "img"
       );
-    }
+
+    const photoAlt =
+      photoImage?.alt ||
+      "팬 메시지 첨부 사진";
+
+    openFanPhotoLightbox(
+      photoUrl,
+      photoAlt
+    );
 
     return;
   }
 
   /*
-   * 관리 버튼
+   * 관리 버튼 클릭
    */
   const actionButton =
     event.target.closest(
@@ -5297,6 +5455,24 @@ function initializeFanMessages() {
     reset: true,
   });
 }
+
+/*************************************************
+ * 사진 팝업 ESC 닫기
+ *************************************************/
+
+document.addEventListener(
+  "keydown",
+  (event) => {
+    if (
+      event.key === "Escape" &&
+      document.getElementById(
+        "fanPhotoLightbox"
+      )
+    ) {
+      closeFanPhotoLightbox();
+    }
+  }
+);
 
 
 /* =========================================================

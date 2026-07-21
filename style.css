@@ -7812,3 +7812,388 @@ body.admin-dashboard-open {
     width: 104px;
   }
 }
+
+/* =========================================================
+   FAN MESSAGE PHOTO V2
+   - 작성창 미리보기 축소
+   - 메시지 카드 사진 썸네일
+   - 사진 팝업 라이트박스
+========================================================= */
+
+
+/* =========================
+   작성창 사진 미리보기
+========================= */
+
+.fan-message-photo-preview {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  width: 100%;
+  padding: 12px;
+
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 14px;
+
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.fan-message-photo-preview[hidden] {
+  display: none !important;
+}
+
+.fan-message-photo-image-wrap {
+  position: relative;
+  flex: 0 0 auto;
+
+  width: 88px;
+  height: 88px;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.fan-message-photo-image-wrap img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+  object-position: center;
+}
+
+.fan-message-photo-remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 24px;
+  height: 24px;
+  padding: 0;
+
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 50%;
+
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.72);
+
+  font-size: 17px;
+  line-height: 1;
+
+  cursor: pointer;
+
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.fan-message-photo-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  min-width: 0;
+}
+
+.fan-message-photo-info strong {
+  overflow: hidden;
+
+  color: rgba(255, 255, 255, 0.84);
+
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fan-message-photo-info span {
+  color: rgba(255, 255, 255, 0.4);
+
+  font-size: 10px;
+}
+
+
+/* =========================
+   기본 카드 사진 썸네일
+========================= */
+
+.fan-message-card-photo {
+  appearance: none;
+
+  display: block;
+
+  width: 92px;
+  height: 92px;
+  margin: 14px 0 0;
+  padding: 0;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 13px;
+
+  background: rgba(255, 255, 255, 0.035);
+
+  cursor: zoom-in;
+
+  transition:
+    transform 0.22s ease,
+    border-color 0.22s ease,
+    opacity 0.22s ease;
+}
+
+.fan-message-card-photo img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+  object-position: center;
+
+  transition: transform 0.3s ease;
+}
+
+@media (hover: hover) {
+  .fan-message-card-photo:hover {
+    transform: translateY(-2px);
+
+    border-color: rgba(255, 255, 255, 0.28);
+  }
+
+  .fan-message-card-photo:hover img {
+    transform: scale(1.06);
+  }
+}
+
+
+/* =========================
+   전체 메시지 사진 버튼
+========================= */
+
+.fan-message-list-photo {
+  appearance: none;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 30px;
+  margin-top: 9px;
+  padding: 0 11px;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+
+  color: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.045);
+
+  font-family: inherit;
+  font-size: 9px;
+  font-weight: 700;
+
+  cursor: zoom-in;
+
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.fan-message-list-photo:hover {
+  color: #ffffff;
+
+  border-color: rgba(255, 255, 255, 0.26);
+  background: rgba(255, 255, 255, 0.09);
+}
+
+
+/* =========================
+   사진 팝업
+========================= */
+
+.fan-photo-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 30000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding:
+    calc(24px + env(safe-area-inset-top))
+    24px
+    calc(24px + env(safe-area-inset-bottom));
+
+  visibility: hidden;
+  opacity: 0;
+
+  transition:
+    opacity 0.24s ease,
+    visibility 0.24s ease;
+}
+
+.fan-photo-lightbox.is-open {
+  visibility: visible;
+  opacity: 1;
+}
+
+.fan-photo-lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+
+  border: 0;
+
+  background: rgba(0, 0, 0, 0.88);
+
+  cursor: zoom-out;
+
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.fan-photo-lightbox-panel {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: min(920px, 100%);
+  max-height: calc(100svh - 48px);
+
+  padding: 12px;
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+
+  background: rgba(17, 17, 17, 0.96);
+
+  box-shadow:
+    0 30px 100px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  transform: scale(0.96);
+
+  transition: transform 0.24s ease;
+}
+
+.fan-photo-lightbox.is-open
+  .fan-photo-lightbox-panel {
+  transform: scale(1);
+}
+
+.fan-photo-lightbox-image {
+  display: block;
+
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: calc(100svh - 76px);
+
+  border-radius: 13px;
+
+  object-fit: contain;
+}
+
+.fan-photo-lightbox-close {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+
+  z-index: 2;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 42px;
+  padding: 0;
+
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+
+  color: #ffffff;
+  background: rgba(15, 15, 15, 0.96);
+
+  font-size: 24px;
+  line-height: 1;
+
+  cursor: pointer;
+
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.42);
+}
+
+body.fan-photo-lightbox-open {
+  overflow: hidden;
+}
+
+
+/* =========================
+   모바일
+========================= */
+
+@media (max-width: 767px) {
+  .fan-message-photo-preview {
+    gap: 11px;
+    padding: 10px;
+  }
+
+  .fan-message-photo-image-wrap {
+    width: 72px;
+    height: 72px;
+
+    border-radius: 10px;
+  }
+
+  .fan-message-card-photo {
+    width: 76px;
+    height: 76px;
+
+    border-radius: 11px;
+  }
+
+  .fan-photo-lightbox {
+    padding:
+      calc(18px + env(safe-area-inset-top))
+      14px
+      calc(18px + env(safe-area-inset-bottom));
+  }
+
+  .fan-photo-lightbox-panel {
+    width: 100%;
+    max-height: calc(100svh - 36px);
+
+    padding: 8px;
+
+    border-radius: 16px;
+  }
+
+  .fan-photo-lightbox-image {
+    max-height: calc(100svh - 54px);
+
+    border-radius: 10px;
+  }
+
+  .fan-photo-lightbox-close {
+    top: 8px;
+    right: 8px;
+
+    width: 38px;
+    height: 38px;
+
+    background: rgba(0, 0, 0, 0.74);
+
+    font-size: 22px;
+  }
+}
