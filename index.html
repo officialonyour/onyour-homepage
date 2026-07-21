@@ -364,12 +364,22 @@
 </section>
 
 <!-- MUSIC -->
-<section class="section music-section music-section-v2" id="music">
-  <div class="music-section-glow" aria-hidden="true"></div>
+<section
+  class="section music-section music-section-v3"
+  id="music"
+>
+  <div
+    class="music-section-glow"
+    aria-hidden="true"
+  ></div>
 
-  <div class="section-heading music-section-heading reveal">
+  <div
+    class="section-heading music-section-heading reveal"
+  >
     <div>
-      <p class="section-label">Selected Music</p>
+      <p class="section-label">
+        Selected Music
+      </p>
 
       <h2>
         네 개의 색으로<br />
@@ -379,18 +389,24 @@
 
     <p class="music-heading-description">
       ONYOUR와 세 멤버의 가장 최근 음악을 한곳에서 만나보세요.
-      각 카드에는 현재 선택된 대표 음원 한 개만 표시됩니다.
+      각 카드에는 현재 선택된 대표 앨범 한 개가 표시됩니다.
     </p>
   </div>
 
-  <div class="music-list music-gallery" id="musicProfileList">
+  <div
+    class="music-list music-gallery"
+    id="musicProfileList"
+  >
 
     <!-- ONYOUR -->
     <article
       class="music-card music-card-onyour reveal"
       data-music-profile="onyour"
     >
-      <div class="music-card-number" aria-hidden="true">
+      <div
+        class="music-card-number"
+        aria-hidden="true"
+      >
         01
       </div>
 
@@ -399,7 +415,7 @@
           class="music-cover-image"
           id="musicCoverOnyour"
           src=""
-          alt=""
+          alt="ONYOUR 앨범 자켓"
           hidden
         />
 
@@ -407,50 +423,50 @@
           class="music-artwork-inner"
           id="musicFallbackOnyour"
         >
-          <span>ONYOUR</span>
           <small>COMING SOON</small>
         </div>
-
-        <div class="music-artwork-overlay" aria-hidden="true"></div>
-
-        <span class="music-artwork-label">
-          Team Release
-        </span>
       </div>
 
       <div class="music-card-body">
-        <div class="music-info">
-          <div>
-            <p class="music-type" id="musicTypeOnyour">
-              TEAM
-            </p>
+        <p class="music-profile-label">
+          TEAM
+        </p>
 
-            <h3 id="musicTitleOnyour">
-              ONYOUR
-            </h3>
+        <h3
+          class="music-profile-name"
+          id="musicArtistOnyour"
+        >
+          ONYOUR
+        </h3>
 
-            <p class="music-artist" id="musicArtistOnyour">
-              ONYOUR 1st Full Album
-            </p>
-          </div>
-
-          <span
-            class="music-track-count"
-            id="musicTrackCountOnyour"
+        <div class="music-release-info">
+          <p
+            class="music-release-type"
+            id="musicTypeOnyour"
           >
-            발매 8곡
-          </span>
+            FULL ALBUM
+          </p>
+
+          <p
+            class="music-release-title"
+            id="musicTitleOnyour"
+          >
+            ONYOUR 1st Full Album
+          </p>
         </div>
 
-        <a
-          class="music-button music-button-disabled"
-          id="musicLinkOnyour"
-          href="#"
-          aria-disabled="true"
-          tabindex="-1"
+        <div
+          class="music-platform-links"
+          id="musicPlatformsOnyour"
+          aria-label="ONYOUR 음원 플랫폼"
+        ></div>
+
+        <p
+          class="music-platform-empty"
+          id="musicPlatformEmptyOnyour"
         >
           Coming Soon
-        </a>
+        </p>
       </div>
     </article>
 
@@ -460,16 +476,19 @@
       class="music-card reveal"
       data-music-profile="leehwigeun"
     >
-      <div class="music-card-number" aria-hidden="true">
+      <div
+        class="music-card-number"
+        aria-hidden="true"
+      >
         02
       </div>
 
-      <div class="music-artwork music-artwork-personal">
+      <div class="music-artwork">
         <img
           class="music-cover-image"
           id="musicCoverLeehwigeun"
           src=""
-          alt=""
+          alt="이휘근 앨범 자켓"
           hidden
         />
 
@@ -477,50 +496,50 @@
           class="music-artwork-inner"
           id="musicFallbackLeehwigeun"
         >
-          <span>이휘근</span>
           <small>LATEST RELEASE</small>
         </div>
-
-        <div class="music-artwork-overlay" aria-hidden="true"></div>
-
-        <span class="music-artwork-label">
-          Artist Release
-        </span>
       </div>
 
       <div class="music-card-body">
-        <div class="music-info">
-          <div>
-            <p class="music-type" id="musicTypeLeehwigeun">
-              ARTIST
-            </p>
+        <p class="music-profile-label">
+          ARTIST
+        </p>
 
-            <h3 id="musicTitleLeehwigeun">
-              이휘근
-            </h3>
+        <h3
+          class="music-profile-name"
+          id="musicArtistLeehwigeun"
+        >
+          이휘근
+        </h3>
 
-            <p class="music-artist" id="musicArtistLeehwigeun">
-              Side by Side
-            </p>
-          </div>
-
-          <span
-            class="music-track-count"
-            id="musicTrackCountLeehwigeun"
+        <div class="music-release-info">
+          <p
+            class="music-release-type"
+            id="musicTypeLeehwigeun"
           >
-            발매 12곡
-          </span>
+            SINGLE
+          </p>
+
+          <p
+            class="music-release-title"
+            id="musicTitleLeehwigeun"
+          >
+            Side by Side
+          </p>
         </div>
 
-        <a
-          class="music-button music-button-disabled"
-          id="musicLinkLeehwigeun"
-          href="#"
-          aria-disabled="true"
-          tabindex="-1"
+        <div
+          class="music-platform-links"
+          id="musicPlatformsLeehwigeun"
+          aria-label="이휘근 음원 플랫폼"
+        ></div>
+
+        <p
+          class="music-platform-empty"
+          id="musicPlatformEmptyLeehwigeun"
         >
           링크 준비 중
-        </a>
+        </p>
       </div>
     </article>
 
@@ -530,16 +549,19 @@
       class="music-card reveal"
       data-music-profile="eluni"
     >
-      <div class="music-card-number" aria-hidden="true">
+      <div
+        class="music-card-number"
+        aria-hidden="true"
+      >
         03
       </div>
 
-      <div class="music-artwork music-artwork-personal">
+      <div class="music-artwork">
         <img
           class="music-cover-image"
           id="musicCoverEluni"
           src=""
-          alt=""
+          alt="이루니 앨범 자켓"
           hidden
         />
 
@@ -547,50 +569,50 @@
           class="music-artwork-inner"
           id="musicFallbackEluni"
         >
-          <span>이루니</span>
           <small>LATEST RELEASE</small>
         </div>
-
-        <div class="music-artwork-overlay" aria-hidden="true"></div>
-
-        <span class="music-artwork-label">
-          Vocal Release
-        </span>
       </div>
 
       <div class="music-card-body">
-        <div class="music-info">
-          <div>
-            <p class="music-type" id="musicTypeEluni">
-              PARTICIPATION
-            </p>
+        <p class="music-profile-label">
+          MEMBER
+        </p>
 
-            <h3 id="musicTitleEluni">
-              이루니
-            </h3>
+        <h3
+          class="music-profile-name"
+          id="musicArtistEluni"
+        >
+          이루니
+        </h3>
 
-            <p class="music-artist" id="musicArtistEluni">
-              참여 음원
-            </p>
-          </div>
-
-          <span
-            class="music-track-count"
-            id="musicTrackCountEluni"
+        <div class="music-release-info">
+          <p
+            class="music-release-type"
+            id="musicTypeEluni"
           >
-            참여 3곡
-          </span>
+            SINGLE
+          </p>
+
+          <p
+            class="music-release-title"
+            id="musicTitleEluni"
+          >
+            참여 음원
+          </p>
         </div>
 
-        <a
-          class="music-button music-button-disabled"
-          id="musicLinkEluni"
-          href="#"
-          aria-disabled="true"
-          tabindex="-1"
+        <div
+          class="music-platform-links"
+          id="musicPlatformsEluni"
+          aria-label="이루니 음원 플랫폼"
+        ></div>
+
+        <p
+          class="music-platform-empty"
+          id="musicPlatformEmptyEluni"
         >
           링크 준비 중
-        </a>
+        </p>
       </div>
     </article>
 
@@ -600,16 +622,19 @@
       class="music-card reveal"
       data-music-profile="leecherin"
     >
-      <div class="music-card-number" aria-hidden="true">
+      <div
+        class="music-card-number"
+        aria-hidden="true"
+      >
         04
       </div>
 
-      <div class="music-artwork music-artwork-personal">
+      <div class="music-artwork">
         <img
           class="music-cover-image"
           id="musicCoverLeecherin"
           src=""
-          alt=""
+          alt="이체린 앨범 자켓"
           hidden
         />
 
@@ -617,50 +642,50 @@
           class="music-artwork-inner"
           id="musicFallbackLeecherin"
         >
-          <span>이체린</span>
           <small>LATEST RELEASE</small>
         </div>
-
-        <div class="music-artwork-overlay" aria-hidden="true"></div>
-
-        <span class="music-artwork-label">
-          Guitar Release
-        </span>
       </div>
 
       <div class="music-card-body">
-        <div class="music-info">
-          <div>
-            <p class="music-type" id="musicTypeLeecherin">
-              PARTICIPATION
-            </p>
+        <p class="music-profile-label">
+          MEMBER
+        </p>
 
-            <h3 id="musicTitleLeecherin">
-              이체린
-            </h3>
+        <h3
+          class="music-profile-name"
+          id="musicArtistLeecherin"
+        >
+          이체린
+        </h3>
 
-            <p class="music-artist" id="musicArtistLeecherin">
-              참여 음원
-            </p>
-          </div>
-
-          <span
-            class="music-track-count"
-            id="musicTrackCountLeecherin"
+        <div class="music-release-info">
+          <p
+            class="music-release-type"
+            id="musicTypeLeecherin"
           >
-            참여 5곡
-          </span>
+            SINGLE
+          </p>
+
+          <p
+            class="music-release-title"
+            id="musicTitleLeecherin"
+          >
+            참여 음원
+          </p>
         </div>
 
-        <a
-          class="music-button music-button-disabled"
-          id="musicLinkLeecherin"
-          href="#"
-          aria-disabled="true"
-          tabindex="-1"
+        <div
+          class="music-platform-links"
+          id="musicPlatformsLeecherin"
+          aria-label="이체린 음원 플랫폼"
+        ></div>
+
+        <p
+          class="music-platform-empty"
+          id="musicPlatformEmptyLeecherin"
         >
           링크 준비 중
-        </a>
+        </p>
       </div>
     </article>
 
@@ -1688,13 +1713,10 @@
       </button>
     </main>
 
-
-    <!-- =========================
-         NEWS 목록
-    ========================== -->
-    <!-- =========================
+<!-- =========================
      음원 프로필 수정
 ========================== -->
+
 <section
   class="admin-section-view admin-view"
   id="adminMusicFormView"
@@ -1749,17 +1771,18 @@
         class="admin-music-editor-name-input"
         type="text"
         maxlength="40"
-        placeholder="프로필 이름"
-        aria-label="음원 프로필 이름"
+        placeholder="아티스트 또는 팀 이름"
+        aria-label="아티스트 또는 팀 이름"
+        required
       />
 
       <small>
-        홈페이지 Music 영역에 표시되는 대표 정보를 수정합니다.
+        홈페이지 Music 카드에 표시될 대표 앨범 정보를 수정합니다.
       </small>
     </div>
 
     <label>
-      표시 구분
+      카드 표시 구분
 
       <select
         id="adminMusicType"
@@ -1773,101 +1796,64 @@
           ARTIST
         </option>
 
-        <option value="PARTICIPATION">
-          PARTICIPATION
+        <option value="MEMBER">
+          MEMBER
         </option>
       </select>
     </label>
 
-
     <label>
-      자켓 안 큰 제목
+      앨범 종류
 
-      <input
-        id="adminMusicArtworkTitle"
-        type="text"
-        maxlength="40"
-        placeholder="예: ONYOUR, 이휘근"
-      />
+      <select
+        id="adminMusicAlbumType"
+        required
+      >
+        <option value="SINGLE">
+          싱글
+        </option>
 
-      <small class="admin-field-help">
-        앨범 자켓 안에서 가장 크게 표시되는 이름입니다.
-      </small>
+        <option value="EP">
+          EP
+        </option>
+
+        <option value="FULL ALBUM">
+          정규 앨범
+        </option>
+
+        <option value="PARTICIPATION">
+          참여 음원
+        </option>
+
+        <option value="COMING SOON">
+          발매 예정
+        </option>
+      </select>
     </label>
 
     <label>
-      자켓 안 표시 문구
-
-      <input
-        id="adminMusicDisplayLabel"
-        type="text"
-        maxlength="40"
-        placeholder="예: COMING SOON, LATEST RELEASE"
-      />
-
-      <small class="admin-field-help">
-        앨범 자켓 안에서 이름 아래에 작게 표시되는 문구입니다.
-      </small>
-    </label>
-
-    <label>
-      최근 앨범 또는 참여곡 제목
+      앨범명
 
       <input
         id="adminMusicTitle"
         type="text"
         maxlength="100"
-        placeholder="앨범 또는 참여곡 제목"
+        placeholder="예: Side by Side"
         required
       />
     </label>
 
     <label>
-      총 발매·참여 곡 수
+      앨범 자켓 이미지
 
       <input
-        id="adminMusicTrackCount"
-        type="number"
-        min="0"
-        step="1"
-        value="0"
-        required
-      />
-    </label>
-
-    <label>
-      발매일 또는 상태
-
-      <input
-        id="adminMusicReleaseDate"
-        type="text"
-        maxlength="40"
-        placeholder="예: 2026.05.01 또는 Coming Soon"
-      />
-    </label>
-
-    <label>
-      설명
-
-      <textarea
-        id="adminMusicDescription"
-        rows="4"
-        maxlength="500"
-        placeholder="앨범 또는 참여곡 설명"
-      ></textarea>
-    </label>
-
-    <label>
-      최근 앨범·참여곡 자켓
-
-      <input
-        id="adminMusicImage"
+        id="adminMusicCoverFile"
         type="file"
-        accept="image/jpeg,image/png,image/webp,image/gif"
+        accept="image/jpeg,image/png,image/webp"
       />
 
       <small class="admin-field-help">
-        홈페이지에 표시할 최근 앨범 자켓 이미지를 직접 선택합니다.
+        정사각형 이미지를 권장합니다. 새 이미지를 선택하지 않으면 기존 자켓이 유지됩니다.
       </small>
     </label>
 
@@ -1879,24 +1865,63 @@
       <img
         id="adminMusicPreviewImage"
         src=""
-        alt="음원 자켓 미리보기"
+        alt="앨범 자켓 미리보기"
       />
     </div>
 
-<label>
-  최근 앨범 링크
+    <div class="admin-music-link-section">
+      <div class="admin-music-link-heading">
+        <strong>음원 플랫폼 링크</strong>
 
-  <input
-    id="adminMusicReleaseUrl"
-    type="url"
-    placeholder="Spotify, Apple Music 또는 YouTube 링크"
-    autocomplete="url"
-  />
+        <small>
+          입력한 플랫폼의 아이콘만 홈페이지에 표시됩니다.
+        </small>
+      </div>
 
-  <small class="admin-field-help">
-    홈페이지의 음원 듣기 버튼으로 연결할 주소를 하나만 입력합니다.
-  </small>
-</label>
+      <label>
+        YouTube
+
+        <input
+          id="adminMusicYoutubeUrl"
+          type="url"
+          inputmode="url"
+          placeholder="https://youtube.com/..."
+        />
+      </label>
+
+      <label>
+        Spotify
+
+        <input
+          id="adminMusicSpotifyUrl"
+          type="url"
+          inputmode="url"
+          placeholder="https://open.spotify.com/..."
+        />
+      </label>
+
+      <label>
+        Apple Music
+
+        <input
+          id="adminMusicAppleUrl"
+          type="url"
+          inputmode="url"
+          placeholder="https://music.apple.com/..."
+        />
+      </label>
+
+      <label>
+        Melon
+
+        <input
+          id="adminMusicMelonUrl"
+          type="url"
+          inputmode="url"
+          placeholder="https://www.melon.com/..."
+        />
+      </label>
+    </div>
 
     <label class="admin-checkbox-label">
       <input
@@ -1928,7 +1953,6 @@
     </div>
   </form>
 </section>
-
 
     <!-- NEWS 작성/수정 -->
     <section
