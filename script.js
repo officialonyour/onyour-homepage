@@ -3246,6 +3246,181 @@ document
   );
 
 /* =========================
+   MEMBERS FORM SUBMIT
+========================= */
+
+document
+  .getElementById("adminMembersForm")
+  ?.addEventListener(
+    "submit",
+    async (event) => {
+      event.preventDefault();
+
+      const form =
+        event.currentTarget;
+
+      const submitButton =
+        form.querySelector(
+          ".admin-form-submit"
+        );
+
+      const id =
+        getAdminFormValue(
+          "adminMemberId"
+        );
+
+      const name =
+        getAdminFormValue(
+          "adminMemberName"
+        );
+
+      const role =
+        getAdminFormValue(
+          "adminMemberRole"
+        );
+
+      if (!name) {
+        alert(
+          "멤버 이름을 입력해 주세요."
+        );
+
+        document
+          .getElementById(
+            "adminMemberName"
+          )
+          ?.focus();
+
+        return;
+      }
+
+      if (!role) {
+        alert(
+          "멤버 역할을 입력해 주세요."
+        );
+
+        document
+          .getElementById(
+            "adminMemberRole"
+          )
+          ?.focus();
+
+        return;
+      }
+
+      const existingItem =
+        adminStore.members.find(
+          (memberItem) =>
+            String(memberItem.id) ===
+            String(id)
+        );
+
+      let imageUrl =
+        existingItem?.imageUrl ||
+        existingItem?.image_url ||
+        "";
+
+      const imageInput =
+        document.getElementById(
+          "adminMemberImage"
+        );
+
+      try {
+        if (submitButton) {
+          submitButton.disabled =
+            true;
+
+          submitButton.textContent =
+            "저장 중...";
+        }
+
+        const selectedImageFile =
+          imageInput?.files?.[0];
+
+        if (selectedImageFile) {
+          if (submitButton) {
+            submitButton.textContent =
+              "사진 업로드 중...";
+          }
+
+          imageUrl =
+            await uploadAdminImage(
+              selectedImageFile,
+              "members"
+            );
+        }
+
+        const data = {
+          id:
+            id ||
+            createAdminId(
+              "members"
+            ),
+
+          name,
+
+          englishName:
+            getAdminFormValue(
+              "adminMemberEnglishName"
+            ),
+
+          role,
+
+          description:
+            getAdminFormValue(
+              "adminMemberDescription"
+            ),
+
+          imageUrl,
+
+          instagram:
+            getAdminFormValue(
+              "adminMemberInstagram"
+            ),
+
+          order:
+            Number(
+              getAdminFormValue(
+                "adminMemberOrder"
+              )
+            ) || 0,
+
+          published:
+            getAdminFormValue(
+              "adminMemberPublished"
+            ),
+        };
+
+        await saveAdminItem(
+          "members",
+          data
+        );
+
+        alert(
+          "멤버 정보가 저장되었습니다."
+        );
+      } catch (error) {
+        console.error(
+          "멤버 저장 실패:",
+          error
+        );
+
+        alert(
+          error.message ||
+          "멤버 정보를 저장하지 못했습니다."
+        );
+      } finally {
+        if (submitButton) {
+          submitButton.disabled =
+            false;
+
+          submitButton.textContent =
+            "저장";
+        }
+      }
+    }
+  );
+
+/* =========================
    MUSIC PROFILE FORM SUBMIT
    - 동적 플랫폼 전체 저장
    - 기존 플랫폼 필드도 함께 유지
@@ -3722,7 +3897,7 @@ document
       }
     }
   );
-  
+
 /* =========================
    SETTINGS TEMPORARY SAVE
 ========================= */
