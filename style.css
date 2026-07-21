@@ -8197,3 +8197,41 @@ body.fan-photo-lightbox-open {
     font-size: 22px;
   }
 }
+
+/* =========================================================
+   MOBILE INPUT AUTO ZOOM FIX
+   - 키보드가 열릴 때 화면 자동 확대 방지
+========================================================= */
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+@media (max-width: 767px) {
+  input,
+  textarea,
+  select,
+  button {
+    font-size: 16px;
+  }
+
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="range"],
+  input[type="file"],
+  input[type="color"] {
+    font-size: initial;
+  }
+
+  .fan-message-form input,
+  .fan-message-form textarea,
+  .admin-view input,
+  .admin-view textarea,
+  .admin-view select,
+  .admin-modal input,
+  .admin-modal textarea,
+  .admin-modal select {
+    font-size: 16px !important;
+  }
+}
