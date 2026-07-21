@@ -1553,70 +1553,54 @@ function fitMusicCardTitle(element) {
 
 function createMusicPlatformLink({
   url,
-  iconUrl,
   label,
 }) {
-  const cleanUrl =
-    String(url || "").trim();
+  const cleanUrl = String(url || "").trim();
 
-  const cleanIconUrl =
-    String(iconUrl || "").trim();
-
-  /*
-   * 링크가 없으면 해당 플랫폼은
-   * 홈페이지에 표시하지 않는다.
-   */
   if (!cleanUrl) {
     return "";
   }
 
-  /*
-   * 아이콘이 저장되어 있으면
-   * 업로드한 이미지를 사용한다.
-   */
-  const iconHtml =
-    cleanIconUrl
-      ? `
-        <img
-          class="music-platform-icon-image"
-          src="${escapeAdminHtml(
-            cleanIconUrl
-          )}"
-          alt=""
-          loading="lazy"
-        />
-      `
-      : `
-        <span
-          class="music-platform-icon-fallback"
-          aria-hidden="true"
-        >
-          ${escapeAdminHtml(
-            label.charAt(0)
-          )}
-        </span>
-      `;
+  const icons = {
+    "YouTube": `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="#FF0000" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8ZM9.6 15.5V8.5L15.8 12Z"/>
+      </svg>
+    `,
+
+    "Spotify": `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="#1DB954" d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0Zm5.5 17.3a.75.75 0 0 1-1 .2c-2.7-1.6-6.1-2-10-.9a.75.75 0 1 1-.1-1.5c4.2-.2 7.9.3 10.9 1.1.4.2.5.8.2 1.1Zm1.4-3.1a.93.93 0 0 1-1.3.3c-3.1-1.9-7.9-2.5-11.6-1.2a.94.94 0 1 1-.6-1.8c4.2-1.4 9.4-.7 13.1 1.5.4.3.5.9.4 1.2Zm.2-3.3c-3.7-2.2-9.8-2.4-13.4-1.3a1.13 1.13 0 1 1-.7-2.1c4.2-1.3 11-1 15.2 1.5a1.12 1.12 0 1 1-1.1 1.9Z"/>
+      </svg>
+    `,
+
+    "Apple Music": `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="#FA243C" d="M16.9 2v13.2a3.5 3.5 0 1 1-1.4-2.8V5.5l-7 1.5v10.2A3.5 3.5 0 1 1 7 14.4V5.8L16.9 2Z"/>
+      </svg>
+    `,
+
+    "Melon": `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" fill="#00CD3C"/>
+        <text x="12" y="16" text-anchor="middle" font-size="9" fill="#fff" font-family="Arial">M</text>
+      </svg>
+    `
+  };
 
   return `
     <a
       class="music-platform-link"
-      href="${escapeAdminHtml(
-        cleanUrl
-      )}"
+      href="${escapeAdminHtml(cleanUrl)}"
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="${escapeAdminHtml(
-        label
-      )}에서 듣기"
-      title="${escapeAdminHtml(
-        label
-      )}"
+      aria-label="${escapeAdminHtml(label)}에서 듣기"
+      title="${escapeAdminHtml(label)}"
     >
-      ${iconHtml}
+      ${icons[label] || ""}
     </a>
   `;
 }
-
 /* =========================================================
    PUBLIC MUSIC LOAD
    - index.html의 기존 카드만 사용
@@ -3228,7 +3212,7 @@ document
       }
     }
   );
-  
+
 /* =========================
    SETTINGS TEMPORARY SAVE
 ========================= */
