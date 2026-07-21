@@ -1,33 +1,54 @@
 /* =========================================================
-   ONYOUR FAN MESSAGES API
-   경로: functions/api/messages.js
+   ONYOUR FAN MESSAGES API V2
+
+   경로:
+   functions/api/messages.js
 
    지원 기능
-   - GET    메시지 목록 조회
+   - GET    공개 메시지 목록 조회
    - POST   새 메시지 등록
    - PUT    작성자 비밀번호 확인 후 수정
-   - DELETE 작성자 비밀번호 확인 후 삭제
+   - DELETE 작성자 또는 관리자 메시지 삭제
+   - PATCH  관리자 메시지 고정 / 고정 해제
 
-   D1 Binding
-   - context.env.DB
+   D1 Binding:
+   context.env.DB
+
+   R2 Binding:
+   context.env.MEDIA
 ========================================================= */
 
 
 /* =========================================================
-   공통 응답
+   공통 상수
 ========================================================= */
 
-function jsonResponse(data, status = 200) {
+const FAN_MESSAGE_PHOTO_PREFIX =
+  "fan-messages/";
+
+
+/* =========================================================
+   공통 JSON 응답
+========================================================= */
+
+function jsonResponse(
+  data,
+  status = 200,
+  extraHeaders = {}
+) {
   return new Response(
     JSON.stringify(data),
     {
       status,
+
       headers: {
         "Content-Type":
           "application/json; charset=utf-8",
 
         "Cache-Control":
           "no-store",
+
+        ...extraHeaders,
       },
     }
   );
@@ -48,29 +69,16 @@ function normalizeText(value) {
 
 
 /* =========================================================
-   숫자 정리
+   Boolean 정리
 ========================================================= */
 
-function normalizeRating(value) {
-  if (
-    value === "" ||
-    value === null ||
-    value === undefined
-  ) {
-    return 0;
-  }
-
-  const rating = Number(value);
-
-  if (
-    !Number.isInteger(rating) ||
-    rating < 0 ||
-    rating > 5
-  ) {
-    return 0;
-  }
-
-  return rating;
+function normalizeBoolean(value) {
+  return (
+    value === true ||
+    value === 1 ||
+    value === "1" ||
+    value === "true"
+  );
 }
 
 
@@ -101,12 +109,14 @@ function createMessageId() {
 ========================================================= */
 
 function arrayBufferToBase64(buffer) {
-  const bytes = new Uint8Array(buffer);
+  const bytes =
+    new Uint8Array(buffer);
 
   let binary = "";
 
   for (const byte of bytes) {
-    binary += String.fromCharCode(byte);
+    binary +=
+      String.fromCharCode(byte);
   }
 
   return btoa(binary);
@@ -118,11 +128,13 @@ function arrayBufferToBase64(buffer) {
 ========================================================= */
 
 function base64ToUint8Array(base64) {
-  const binary = atob(base64);
+  const binary =
+    atob(base64);
 
-  const bytes = new Uint8Array(
-    binary.length
-  );
+  const bytes =
+    new Uint8Array(
+      binary.length
+    );
 
   for (
     let index = 0;
@@ -140,28 +152,29 @@ function base64ToUint8Array(base64) {
 /* =========================================================
    비밀번호 해시 생성
 
-   단순 SHA-256이 아니라
-   PBKDF2 + 개별 Salt를 사용한다.
-
    저장 형식:
    pbkdf2$반복횟수$salt$hash
 ========================================================= */
 
 async function hashPassword(password) {
-  const encoder = new TextEncoder();
+  const encoder =
+    new TextEncoder();
 
-  const salt = crypto.getRandomValues(
-    new Uint8Array(16)
-  );
+  const salt =
+    crypto.getRandomValues(
+      new Uint8Array(16)
+    );
 
-  const iterations = 100000;
+  const iterations =
+    100000;
 
   const keyMaterial =
     await crypto.subtle.importKey(
       "raw",
       encoder.encode(password),
       {
-        name: "PBKDF2",
+        name:
+          "PBKDF2",
       },
       false,
       [
@@ -172,9 +185,14 @@ async function hashPassword(password) {
   const derivedBits =
     await crypto.subtle.deriveBits(
       {
-        name: "PBKDF2",
-        hash: "SHA-256",
+        name:
+          "PBKDF2",
+
+        hash:
+          "SHA-256",
+
         salt,
+
         iterations,
       },
       keyMaterial,
@@ -209,18 +227,24 @@ function timingSafeEqual(
   secondValue
 ) {
   const first =
-    String(firstValue || "");
+    String(
+      firstValue || ""
+    );
 
   const second =
-    String(secondValue || "");
+    String(
+      secondValue || ""
+    );
 
-  const maximumLength = Math.max(
-    first.length,
-    second.length
-  );
+  const maximumLength =
+    Math.max(
+      first.length,
+      second.length
+    );
 
   let difference =
-    first.length ^ second.length;
+    first.length ^
+    second.length;
 
   for (
     let index = 0;
@@ -283,7 +307,8 @@ async function verifyPassword(
   }
 
   try {
-    const encoder = new TextEncoder();
+    const encoder =
+      new TextEncoder();
 
     const salt =
       base64ToUint8Array(
@@ -295,7 +320,8 @@ async function verifyPassword(
         "raw",
         encoder.encode(password),
         {
-          name: "PBKDF2",
+          name:
+            "PBKDF2",
         },
         false,
         [
@@ -306,9 +332,14 @@ async function verifyPassword(
     const derivedBits =
       await crypto.subtle.deriveBits(
         {
-          name: "PBKDF2",
-          hash: "SHA-256",
+          name:
+            "PBKDF2",
+
+          hash:
+            "SHA-256",
+
           salt,
+
           iterations,
         },
         keyMaterial,
@@ -336,7 +367,7 @@ async function verifyPassword(
 
 
 /* =========================================================
-   요청 JSON 읽기
+   JSON 요청 읽기
 ========================================================= */
 
 async function readJsonBody(request) {
@@ -366,13 +397,122 @@ async function readJsonBody(request) {
 
 
 /* =========================================================
+   사진 URL 정리
+========================================================= */
+
+function normalizePhotoUrl(value) {
+  const photoUrl =
+    normalizeText(value);
+
+  if (!photoUrl) {
+    return "";
+  }
+
+  if (
+    !photoUrl.startsWith(
+      "/media/fan-messages/"
+    )
+  ) {
+    throw new Error(
+      "팬 메시지 사진 주소가 올바르지 않습니다."
+    );
+  }
+
+  if (photoUrl.length > 1000) {
+    throw new Error(
+      "사진 주소가 너무 깁니다."
+    );
+  }
+
+  return photoUrl;
+}
+
+
+/* =========================================================
+   사진 R2 Key 정리
+========================================================= */
+
+function normalizePhotoKey(value) {
+  const photoKey =
+    normalizeText(value);
+
+  if (!photoKey) {
+    return "";
+  }
+
+  if (
+    !photoKey.startsWith(
+      FAN_MESSAGE_PHOTO_PREFIX
+    )
+  ) {
+    throw new Error(
+      "팬 메시지 사진 정보가 올바르지 않습니다."
+    );
+  }
+
+  if (
+    photoKey.includes("..") ||
+    photoKey.includes("\\")
+  ) {
+    throw new Error(
+      "팬 메시지 사진 경로가 올바르지 않습니다."
+    );
+  }
+
+  if (photoKey.length > 500) {
+    throw new Error(
+      "사진 경로가 너무 깁니다."
+    );
+  }
+
+  return photoKey;
+}
+
+
+/* =========================================================
+   사진 URL과 Key 조합 검사
+========================================================= */
+
+function normalizePhotoData(
+  photoUrlValue,
+  photoKeyValue
+) {
+  const photoUrl =
+    normalizePhotoUrl(
+      photoUrlValue
+    );
+
+  const photoKey =
+    normalizePhotoKey(
+      photoKeyValue
+    );
+
+  if (
+    Boolean(photoUrl) !==
+    Boolean(photoKey)
+  ) {
+    throw new Error(
+      "사진 주소와 사진 정보가 일치하지 않습니다."
+    );
+  }
+
+  return {
+    photoUrl,
+    photoKey,
+  };
+}
+
+
+/* =========================================================
    새 메시지 입력값 검사
 ========================================================= */
 
 function validateCreateMessage(body) {
-  const nickname = normalizeText(
-    body.nickname ?? body.name
-  );
+  const nickname =
+    normalizeText(
+      body.nickname ??
+      body.name
+    );
 
   const password =
     typeof body.password === "string"
@@ -384,14 +524,15 @@ function validateCreateMessage(body) {
       body.performance
     );
 
-  const rating =
-    normalizeRating(
-      body.rating
-    );
-
   const message =
     normalizeText(
       body.message
+    );
+
+  const photo =
+    normalizePhotoData(
+      body.photoUrl,
+      body.photoKey
     );
 
   if (!nickname) {
@@ -440,23 +581,31 @@ function validateCreateMessage(body) {
     nickname,
     password,
     performance,
-    rating,
     message,
+
+    photoUrl:
+      photo.photoUrl,
+
+    photoKey:
+      photo.photoKey,
   };
 }
 
 
 /* =========================================================
-   수정 입력값 검사
+   메시지 수정 입력값 검사
 ========================================================= */
 
 function validateUpdateMessage(body) {
   const id =
-    normalizeText(body.id);
+    normalizeText(
+      body.id
+    );
 
   const nickname =
     normalizeText(
-      body.nickname ?? body.name
+      body.nickname ??
+      body.name
     );
 
   const password =
@@ -469,15 +618,39 @@ function validateUpdateMessage(body) {
       body.performance
     );
 
-  const rating =
-    normalizeRating(
-      body.rating
-    );
-
   const message =
     normalizeText(
       body.message
     );
+
+  const removePhoto =
+    normalizeBoolean(
+      body.removePhoto
+    );
+
+  const hasPhotoFields =
+    Object.prototype.hasOwnProperty.call(
+      body,
+      "photoUrl"
+    ) ||
+    Object.prototype.hasOwnProperty.call(
+      body,
+      "photoKey"
+    );
+
+  const photo =
+    hasPhotoFields
+      ? normalizePhotoData(
+          body.photoUrl,
+          body.photoKey
+        )
+      : {
+          photoUrl:
+            "",
+
+          photoKey:
+            "",
+        };
 
   if (!id) {
     throw new Error(
@@ -521,13 +694,33 @@ function validateUpdateMessage(body) {
     );
   }
 
+  if (
+    removePhoto &&
+    hasPhotoFields &&
+    (
+      photo.photoUrl ||
+      photo.photoKey
+    )
+  ) {
+    throw new Error(
+      "사진 삭제와 사진 교체를 동시에 요청할 수 없습니다."
+    );
+  }
+
   return {
     id,
     nickname,
     password,
     performance,
-    rating,
     message,
+    removePhoto,
+    hasPhotoFields,
+
+    photoUrl:
+      photo.photoUrl,
+
+    photoKey:
+      photo.photoKey,
   };
 }
 
@@ -538,7 +731,9 @@ function validateUpdateMessage(body) {
 
 function validateDeleteMessage(body) {
   const id =
-    normalizeText(body.id);
+    normalizeText(
+      body.id
+    );
 
   const password =
     typeof body.password === "string"
@@ -557,30 +752,44 @@ function validateDeleteMessage(body) {
   };
 }
 
-/* =========================================================
-   DB 결과를 공개용 데이터로 변환
 
-   password_hash는 절대 브라우저로 보내지 않는다.
+/* =========================================================
+   DB 결과를 공개 데이터로 변환
 ========================================================= */
 
 function mapPublicMessage(row) {
-  return {
-    id: row.id,
+  if (!row) {
+    return null;
+  }
 
-    name: row.nickname,
-    nickname: row.nickname,
+  return {
+    id:
+      row.id,
+
+    name:
+      row.nickname,
+
+    nickname:
+      row.nickname,
 
     performance:
       row.performance || "",
 
-    rating:
-      Number(row.rating) || 0,
-
     message:
       row.message || "",
 
+    photoUrl:
+      row.photo_url || "",
+
+    hasPhoto:
+      Boolean(
+        row.photo_url
+      ),
+
     isPinned:
-      Boolean(row.is_pinned),
+      Boolean(
+        row.is_pinned
+      ),
 
     createdAt:
       row.created_at,
@@ -605,6 +814,7 @@ function ensureDatabase(context) {
   return context.env.DB;
 }
 
+
 /* =========================================================
    관리자 요청 확인
 ========================================================= */
@@ -612,7 +822,8 @@ function ensureDatabase(context) {
 function verifyAdminRequest(context) {
   const storedAdminPassword =
     String(
-      context.env.ADMIN_PASSWORD || ""
+      context.env.ADMIN_PASSWORD ||
+      ""
     );
 
   const requestedAdminPassword =
@@ -636,14 +847,90 @@ function verifyAdminRequest(context) {
   );
 }
 
+
+/* =========================================================
+   R2 사진 삭제
+========================================================= */
+
+async function deletePhotoFromR2(
+  context,
+  photoKey
+) {
+  const normalizedPhotoKey =
+    normalizeText(
+      photoKey
+    );
+
+  if (!normalizedPhotoKey) {
+    return;
+  }
+
+  if (
+    !normalizedPhotoKey.startsWith(
+      FAN_MESSAGE_PHOTO_PREFIX
+    )
+  ) {
+    console.warn(
+      "삭제하지 않은 잘못된 사진 Key:",
+      normalizedPhotoKey
+    );
+
+    return;
+  }
+
+  if (!context.env.MEDIA) {
+    console.warn(
+      "R2 MEDIA 바인딩이 없어 사진을 삭제하지 못했습니다:",
+      normalizedPhotoKey
+    );
+
+    return;
+  }
+
+  try {
+    await context.env.MEDIA.delete(
+      normalizedPhotoKey
+    );
+  } catch (error) {
+    console.error(
+      "R2 팬 메시지 사진 삭제 실패:",
+      error
+    );
+  }
+}
+
+
+/* =========================================================
+   공개 메시지 SELECT 공통
+========================================================= */
+
+async function selectMessageById(
+  db,
+  id
+) {
+  return db
+    .prepare(`
+      SELECT
+        id,
+        nickname,
+        performance,
+        message,
+        photo_url,
+        is_hidden,
+        is_pinned,
+        created_at,
+        updated_at
+      FROM fan_messages
+      WHERE id = ?
+    `)
+    .bind(id)
+    .first();
+}
+
+
 /* =========================================================
    GET
    공개 메시지 목록 조회
-
-   사용 예:
-   /api/messages
-   /api/messages?limit=6
-   /api/messages?limit=6&offset=6
 ========================================================= */
 
 export async function onRequestGet(
@@ -660,34 +947,40 @@ export async function onRequestGet(
 
     const requestedLimit =
       Number(
-        url.searchParams.get("limit")
+        url.searchParams.get(
+          "limit"
+        )
       );
 
     const requestedOffset =
       Number(
-        url.searchParams.get("offset")
+        url.searchParams.get(
+          "offset"
+        )
       );
 
-    const limit = Number.isInteger(
-      requestedLimit
-    )
-      ? Math.min(
-          Math.max(
-            requestedLimit,
-            1
-          ),
-          50
-        )
-      : 6;
+    const limit =
+      Number.isInteger(
+        requestedLimit
+      )
+        ? Math.min(
+            Math.max(
+              requestedLimit,
+              1
+            ),
+            50
+          )
+        : 6;
 
-    const offset = Number.isInteger(
-      requestedOffset
-    )
-      ? Math.max(
-          requestedOffset,
-          0
-        )
-      : 0;
+    const offset =
+      Number.isInteger(
+        requestedOffset
+      )
+        ? Math.max(
+            requestedOffset,
+            0
+          )
+        : 0;
 
     const messagesResult =
       await db
@@ -696,8 +989,8 @@ export async function onRequestGet(
             id,
             nickname,
             performance,
-            rating,
             message,
+            photo_url,
             is_hidden,
             is_pinned,
             created_at,
@@ -741,7 +1034,8 @@ export async function onRequestGet(
       ) || 0;
 
     return jsonResponse({
-      success: true,
+      success:
+        true,
 
       messages,
 
@@ -751,7 +1045,8 @@ export async function onRequestGet(
         total,
 
         hasMore:
-          offset + messages.length <
+          offset +
+          messages.length <
           total,
       },
     });
@@ -763,7 +1058,8 @@ export async function onRequestGet(
 
     return jsonResponse(
       {
-        success: false,
+        success:
+          false,
 
         message:
           error.message ||
@@ -793,13 +1089,16 @@ export async function onRequestPost(
       );
 
     const data =
-      validateCreateMessage(body);
+      validateCreateMessage(
+        body
+      );
 
     const id =
       createMessageId();
 
     const now =
-      new Date().toISOString();
+      new Date()
+        .toISOString();
 
     const passwordHash =
       await hashPassword(
@@ -813,14 +1112,16 @@ export async function onRequestPost(
           nickname,
           password_hash,
           performance,
-          rating,
           message,
+          photo_url,
+          photo_key,
           is_hidden,
           is_pinned,
           created_at,
           updated_at
         )
         VALUES (
+          ?,
           ?,
           ?,
           ?,
@@ -838,35 +1139,24 @@ export async function onRequestPost(
         data.nickname,
         passwordHash,
         data.performance,
-        data.rating,
         data.message,
+        data.photoUrl,
+        data.photoKey,
         now,
         now
       )
       .run();
 
     const createdMessage =
-      await db
-        .prepare(`
-          SELECT
-            id,
-            nickname,
-            performance,
-            rating,
-            message,
-            is_hidden,
-            is_pinned,
-            created_at,
-            updated_at
-          FROM fan_messages
-          WHERE id = ?
-        `)
-        .bind(id)
-        .first();
+      await selectMessageById(
+        db,
+        id
+      );
 
     return jsonResponse(
       {
-        success: true,
+        success:
+          true,
 
         message:
           "팬 메시지가 등록되었습니다.",
@@ -884,34 +1174,16 @@ export async function onRequestPost(
       error
     );
 
-    const isValidationError =
-      error instanceof Error &&
-      (
-        error.message.includes(
-          "입력"
-        ) ||
-        error.message.includes(
-          "이하"
-        ) ||
-        error.message.includes(
-          "이상"
-        ) ||
-        error.message.includes(
-          "JSON"
-        )
-      );
-
     return jsonResponse(
       {
-        success: false,
+        success:
+          false,
 
         message:
           error.message ||
           "메시지를 등록하지 못했습니다.",
       },
-      isValidationError
-        ? 400
-        : 500
+      400
     );
   }
 }
@@ -935,24 +1207,31 @@ export async function onRequestPut(
       );
 
     const data =
-      validateUpdateMessage(body);
+      validateUpdateMessage(
+        body
+      );
 
     const existingMessage =
       await db
         .prepare(`
           SELECT
             id,
-            password_hash
+            password_hash,
+            photo_url,
+            photo_key
           FROM fan_messages
           WHERE id = ?
         `)
-        .bind(data.id)
+        .bind(
+          data.id
+        )
         .first();
 
     if (!existingMessage) {
       return jsonResponse(
         {
-          success: false,
+          success:
+            false,
 
           message:
             "수정할 메시지를 찾을 수 없습니다.",
@@ -970,7 +1249,8 @@ export async function onRequestPut(
     if (!isPasswordCorrect) {
       return jsonResponse(
         {
-          success: false,
+          success:
+            false,
 
           message:
             "비밀번호가 올바르지 않습니다.",
@@ -979,8 +1259,50 @@ export async function onRequestPut(
       );
     }
 
+    let nextPhotoUrl =
+      existingMessage.photo_url ||
+      "";
+
+    let nextPhotoKey =
+      existingMessage.photo_key ||
+      "";
+
+    let oldPhotoKeyToDelete =
+      "";
+
+    if (data.removePhoto) {
+      oldPhotoKeyToDelete =
+        nextPhotoKey;
+
+      nextPhotoUrl =
+        "";
+
+      nextPhotoKey =
+        "";
+    } else if (
+      data.hasPhotoFields &&
+      data.photoUrl &&
+      data.photoKey
+    ) {
+      if (
+        nextPhotoKey &&
+        nextPhotoKey !==
+          data.photoKey
+      ) {
+        oldPhotoKeyToDelete =
+          nextPhotoKey;
+      }
+
+      nextPhotoUrl =
+        data.photoUrl;
+
+      nextPhotoKey =
+        data.photoKey;
+    }
+
     const now =
-      new Date().toISOString();
+      new Date()
+        .toISOString();
 
     const updateResult =
       await db
@@ -989,16 +1311,18 @@ export async function onRequestPut(
           SET
             nickname = ?,
             performance = ?,
-            rating = ?,
             message = ?,
+            photo_url = ?,
+            photo_key = ?,
             updated_at = ?
           WHERE id = ?
         `)
         .bind(
           data.nickname,
           data.performance,
-          data.rating,
           data.message,
+          nextPhotoUrl,
+          nextPhotoKey,
           now,
           data.id
         )
@@ -1011,7 +1335,8 @@ export async function onRequestPut(
     ) {
       return jsonResponse(
         {
-          success: false,
+          success:
+            false,
 
           message:
             "메시지를 수정하지 못했습니다.",
@@ -1020,27 +1345,22 @@ export async function onRequestPut(
       );
     }
 
+    if (oldPhotoKeyToDelete) {
+      await deletePhotoFromR2(
+        context,
+        oldPhotoKeyToDelete
+      );
+    }
+
     const updatedMessage =
-      await db
-        .prepare(`
-          SELECT
-            id,
-            nickname,
-            performance,
-            rating,
-            message,
-            is_hidden,
-            is_pinned,
-            created_at,
-            updated_at
-          FROM fan_messages
-          WHERE id = ?
-        `)
-        .bind(data.id)
-        .first();
+      await selectMessageById(
+        db,
+        data.id
+      );
 
     return jsonResponse({
-      success: true,
+      success:
+        true,
 
       message:
         "메시지가 수정되었습니다.",
@@ -1058,7 +1378,8 @@ export async function onRequestPut(
 
     return jsonResponse(
       {
-        success: false,
+        success:
+          false,
 
         message:
           error.message ||
@@ -1069,11 +1390,6 @@ export async function onRequestPut(
   }
 }
 
-
-/* =========================================================
-   DELETE
-   작성자 비밀번호 확인 후 메시지 삭제
-========================================================= */
 
 /* =========================================================
    DELETE
@@ -1093,24 +1409,31 @@ export async function onRequestDelete(
       );
 
     const data =
-      validateDeleteMessage(body);
+      validateDeleteMessage(
+        body
+      );
 
     const existingMessage =
       await db
         .prepare(`
           SELECT
             id,
-            password_hash
+            password_hash,
+            photo_key
           FROM fan_messages
           WHERE id = ?
         `)
-        .bind(data.id)
+        .bind(
+          data.id
+        )
         .first();
 
     if (!existingMessage) {
       return jsonResponse(
         {
-          success: false,
+          success:
+            false,
+
           message:
             "삭제할 메시지를 찾을 수 없습니다.",
         },
@@ -1119,13 +1442,17 @@ export async function onRequestDelete(
     }
 
     const isAdmin =
-      verifyAdminRequest(context);
+      verifyAdminRequest(
+        context
+      );
 
     if (!isAdmin) {
       if (!data.password) {
         return jsonResponse(
           {
-            success: false,
+            success:
+              false,
+
             message:
               "비밀번호를 입력해 주세요.",
           },
@@ -1142,7 +1469,9 @@ export async function onRequestDelete(
       if (!isPasswordCorrect) {
         return jsonResponse(
           {
-            success: false,
+            success:
+              false,
+
             message:
               "비밀번호가 올바르지 않습니다.",
           },
@@ -1157,7 +1486,9 @@ export async function onRequestDelete(
           DELETE FROM fan_messages
           WHERE id = ?
         `)
-        .bind(data.id)
+        .bind(
+          data.id
+        )
         .run();
 
     if (
@@ -1167,7 +1498,9 @@ export async function onRequestDelete(
     ) {
       return jsonResponse(
         {
-          success: false,
+          success:
+            false,
+
           message:
             "메시지를 삭제하지 못했습니다.",
         },
@@ -1175,12 +1508,21 @@ export async function onRequestDelete(
       );
     }
 
-    return jsonResponse({
-      success: true,
+    if (existingMessage.photo_key) {
+      await deletePhotoFromR2(
+        context,
+        existingMessage.photo_key
+      );
+    }
 
-      message: isAdmin
-        ? "관리자 권한으로 메시지가 삭제되었습니다."
-        : "메시지가 삭제되었습니다.",
+    return jsonResponse({
+      success:
+        true,
+
+      message:
+        isAdmin
+          ? "관리자 권한으로 메시지가 삭제되었습니다."
+          : "메시지가 삭제되었습니다.",
 
       id:
         data.id,
@@ -1193,7 +1535,8 @@ export async function onRequestDelete(
 
     return jsonResponse(
       {
-        success: false,
+        success:
+          false,
 
         message:
           error.message ||
@@ -1203,6 +1546,7 @@ export async function onRequestDelete(
     );
   }
 }
+
 
 /* =========================================================
    PATCH
@@ -1217,12 +1561,16 @@ export async function onRequestPatch(
       ensureDatabase(context);
 
     const isAdmin =
-      verifyAdminRequest(context);
+      verifyAdminRequest(
+        context
+      );
 
     if (!isAdmin) {
       return jsonResponse(
         {
-          success: false,
+          success:
+            false,
+
           message:
             "관리자 인증에 실패했습니다.",
         },
@@ -1236,16 +1584,21 @@ export async function onRequestPatch(
       );
 
     const id =
-      normalizeText(body.id);
+      normalizeText(
+        body.id
+      );
 
     const isPinned =
-      body.isPinned === true ||
-      body.isPinned === 1;
+      normalizeBoolean(
+        body.isPinned
+      );
 
     if (!id) {
       return jsonResponse(
         {
-          success: false,
+          success:
+            false,
+
           message:
             "메시지 ID가 없습니다.",
         },
@@ -1266,7 +1619,9 @@ export async function onRequestPatch(
     if (!existingMessage) {
       return jsonResponse(
         {
-          success: false,
+          success:
+            false,
+
           message:
             "메시지를 찾을 수 없습니다.",
         },
@@ -1274,8 +1629,41 @@ export async function onRequestPatch(
       );
     }
 
+    if (isPinned) {
+      const pinnedCount =
+        await db
+          .prepare(`
+            SELECT
+              COUNT(*) AS total
+            FROM fan_messages
+            WHERE
+              is_pinned = 1
+              AND id != ?
+          `)
+          .bind(id)
+          .first();
+
+      if (
+        Number(
+          pinnedCount?.total
+        ) >= 3
+      ) {
+        return jsonResponse(
+          {
+            success:
+              false,
+
+            message:
+              "메인 고정 메시지는 최대 3개까지 가능합니다.",
+          },
+          400
+        );
+      }
+    }
+
     const now =
-      new Date().toISOString();
+      new Date()
+        .toISOString();
 
     const updateResult =
       await db
@@ -1287,7 +1675,10 @@ export async function onRequestPatch(
           WHERE id = ?
         `)
         .bind(
-          isPinned ? 1 : 0,
+          isPinned
+            ? 1
+            : 0,
+
           now,
           id
         )
@@ -1300,7 +1691,9 @@ export async function onRequestPatch(
     ) {
       return jsonResponse(
         {
-          success: false,
+          success:
+            false,
+
           message:
             "고정 상태를 변경하지 못했습니다.",
         },
@@ -1309,30 +1702,19 @@ export async function onRequestPatch(
     }
 
     const updatedMessage =
-      await db
-        .prepare(`
-          SELECT
-            id,
-            nickname,
-            performance,
-            rating,
-            message,
-            is_hidden,
-            is_pinned,
-            created_at,
-            updated_at
-          FROM fan_messages
-          WHERE id = ?
-        `)
-        .bind(id)
-        .first();
+      await selectMessageById(
+        db,
+        id
+      );
 
     return jsonResponse({
-      success: true,
+      success:
+        true,
 
-      message: isPinned
-        ? "메시지가 메인에 고정되었습니다."
-        : "메시지 고정이 해제되었습니다.",
+      message:
+        isPinned
+          ? "메시지가 메인에 고정되었습니다."
+          : "메시지 고정이 해제되었습니다.",
 
       data:
         mapPublicMessage(
@@ -1347,7 +1729,8 @@ export async function onRequestPatch(
 
     return jsonResponse(
       {
-        success: false,
+        success:
+          false,
 
         message:
           error.message ||
@@ -1358,6 +1741,7 @@ export async function onRequestPatch(
   }
 }
 
+
 /* =========================================================
    OPTIONS
 ========================================================= */
@@ -1366,14 +1750,15 @@ export function onRequestOptions() {
   return new Response(
     null,
     {
-      status: 204,
+      status:
+        204,
 
       headers: {
         "Access-Control-Allow-Methods":
-          "GET, POST, PUT, DELETE, OPTIONS",
+          "GET, POST, PUT, DELETE, PATCH, OPTIONS",
 
         "Access-Control-Allow-Headers":
-          "Content-Type",
+          "Content-Type, X-Admin-Password",
 
         "Access-Control-Max-Age":
           "86400",
