@@ -9207,26 +9207,25 @@ html {
 }
 
 /* =========================================================
-   MUSIC PLATFORM AREA - FINAL DESIGN
-   - 한 줄 최대 4개
-   - 동일 너비
-   - 플랫폼별 색상 강조
-   - 준비중 영역 새 디자인
+   MUSIC PLATFORM AREA - CLEAN FINAL
+   - PC: 한 줄 4개 고정
+   - 모바일: 한 줄 2개
+   - 준비중 카드 전체 폭
+   - 기존 중복 규칙 최종 덮어쓰기
 ========================================================= */
 
-.music-platform-links {
-  --music-platform-count: 1;
+#music .music-platform-links {
+  --music-platform-count: 4;
 
   display: grid;
-  grid-template-columns: repeat(
-    min(var(--music-platform-count), 4),
-    minmax(0, 1fr)
-  );
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: stretch;
   gap: 8px;
 
   width: 100%;
-  margin-top: 18px;
-  padding: 10px;
+  max-width: none;
+  margin: 20px 0 0;
+  padding: 9px;
 
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 14px;
@@ -9234,14 +9233,19 @@ html {
   background:
     linear-gradient(
       145deg,
-      rgba(255, 255, 255, 0.045),
-      rgba(255, 255, 255, 0.015)
+      rgba(255, 255, 255, 0.05),
+      rgba(255, 255, 255, 0.018)
     );
 
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
 
   overflow: hidden;
+  box-sizing: border-box;
+}
+
+#music .music-platform-links[hidden] {
+  display: none !important;
 }
 
 
@@ -9249,56 +9253,57 @@ html {
    플랫폼 버튼
 ========================= */
 
-.music-platform-link {
+#music .music-platform-link {
   position: relative;
 
-  display: flex;
+  display: flex !important;
   align-items: center;
   justify-content: center;
-  gap: 7px;
+  gap: 6px;
 
+  width: 100% !important;
   min-width: 0;
+  height: 42px !important;
   min-height: 42px;
-  padding: 9px 10px;
+  padding: 0 8px !important;
+
+  overflow: hidden;
 
   border: 1px solid
     color-mix(
       in srgb,
-      var(--music-platform-color) 36%,
+      var(--music-platform-color) 34%,
       rgba(255, 255, 255, 0.1)
-    );
+    ) !important;
 
-  border-radius: 9px;
+  border-radius: 9px !important;
 
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.92);
+
   background:
     color-mix(
       in srgb,
       var(--music-platform-color) 14%,
       rgba(255, 255, 255, 0.025)
-    );
+    ) !important;
 
-  font-size: 12px;
+  box-shadow: none !important;
+
+  font-size: 11px;
   font-weight: 700;
   line-height: 1;
 
-  text-align: center;
   text-decoration: none;
+
+  opacity: 1 !important;
 
   transition:
     transform 0.2s ease,
     border-color 0.2s ease,
-    background 0.2s ease,
-    box-shadow 0.2s ease,
-    color 0.2s ease;
+    background 0.2s ease;
 }
 
-
-/* =========================
-   플랫폼 버튼 위 강조선
-========================= */
-
-.music-platform-link::before {
+#music .music-platform-link::before {
   content: "";
 
   position: absolute;
@@ -9319,114 +9324,86 @@ html {
   opacity: 0.75;
 }
 
-
-/* =========================
-   플랫폼 버튼 hover
-========================= */
-
-.music-platform-link:hover {
+#music .music-platform-link:hover {
   transform: translateY(-2px);
-
-  color: #ffffff;
 
   border-color:
     color-mix(
       in srgb,
-      var(--music-platform-color) 68%,
+      var(--music-platform-color) 65%,
       rgba(255, 255, 255, 0.15)
-    );
+    ) !important;
 
   background:
     color-mix(
       in srgb,
-      var(--music-platform-color) 23%,
+      var(--music-platform-color) 22%,
       rgba(255, 255, 255, 0.035)
-    );
-
-  box-shadow:
-    0 8px 18px
-    color-mix(
-      in srgb,
-      var(--music-platform-color) 18%,
-      transparent
-    );
+    ) !important;
 }
 
-
-/* =========================
-   플랫폼 버튼 클릭
-========================= */
-
-.music-platform-link:active {
+#music .music-platform-link:active {
   transform: translateY(0);
 }
 
+#music .music-platform-link.is-disabled {
+  display: none !important;
+}
+
 
 /* =========================
-   플랫폼 아이콘
+   플랫폼 아이콘과 이름
 ========================= */
 
-.music-platform-icon {
+#music .music-platform-icon {
   display: inline-flex;
+  flex: 0 0 auto;
   align-items: center;
   justify-content: center;
 
-  flex: 0 0 auto;
-
-  width: 17px;
-  height: 17px;
+  width: 16px;
+  height: 16px;
 
   color: var(--music-platform-color);
 }
 
-.music-platform-icon svg {
+#music .music-platform-icon svg {
   display: block;
 
-  width: 17px;
-  height: 17px;
+  width: 16px;
+  height: 16px;
 }
 
-.music-platform-icon i {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
+#music .music-platform-icon i {
   font-size: 15px;
   line-height: 1;
 }
 
-
-/* =========================
-   플랫폼 글자
-========================= */
-
-.music-platform-name {
+#music .music-platform-name {
   min-width: 0;
 
   overflow: hidden;
+
+  color: rgba(255, 255, 255, 0.94);
+
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-
-/* =========================
-   알파벳형 플랫폼 아이콘
-========================= */
-
-.music-platform-letter {
+#music .music-platform-letter {
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  width: 17px;
-  height: 17px;
+  width: 16px;
+  height: 16px;
 
   border-radius: 50%;
 
   color: #111111;
   background: var(--music-platform-color);
 
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 900;
   line-height: 1;
 }
@@ -9436,9 +9413,10 @@ html {
    준비중 상태
 ========================================================= */
 
-.music-platform-links.is-empty {
+#music .music-platform-links.is-empty {
   display: block;
 
+  width: 100%;
   padding: 0;
 
   border: 0;
@@ -9446,14 +9424,10 @@ html {
 
   background: transparent;
   box-shadow: none;
+  overflow: visible;
 }
 
-
-/* =========================
-   준비중 카드
-========================= */
-
-.music-platform-coming-soon {
+#music .music-platform-coming-soon {
   position: relative;
 
   display: grid;
@@ -9461,8 +9435,10 @@ html {
   align-items: center;
   gap: 14px;
 
-  min-height: 96px;
-  padding: 18px;
+  width: 100%;
+  min-width: 0;
+  min-height: 88px;
+  padding: 17px 18px;
 
   border: 1px solid rgba(178, 154, 220, 0.22);
   border-radius: 14px;
@@ -9470,24 +9446,20 @@ html {
   background:
     radial-gradient(
       circle at top left,
-      rgba(178, 154, 220, 0.16),
+      rgba(178, 154, 220, 0.15),
       transparent 42%
     ),
     linear-gradient(
       145deg,
-      rgba(255, 255, 255, 0.055),
+      rgba(255, 255, 255, 0.052),
       rgba(255, 255, 255, 0.018)
     );
 
+  box-sizing: border-box;
   overflow: hidden;
 }
 
-
-/* =========================
-   준비중 장식선
-========================= */
-
-.music-platform-coming-soon::before {
+#music .music-platform-coming-soon::before {
   content: "";
 
   position: absolute;
@@ -9501,17 +9473,12 @@ html {
     linear-gradient(
       90deg,
       transparent,
-      rgba(197, 175, 238, 0.7),
+      rgba(197, 175, 238, 0.72),
       transparent
     );
 }
 
-
-/* =========================
-   준비중 아이콘
-========================= */
-
-.music-platform-coming-soon > span {
+#music .music-platform-coming-soon > span {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -9533,125 +9500,34 @@ html {
 
   font-size: 18px;
   line-height: 1;
-
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-
-/* =========================
-   준비중 문구
-========================= */
-
-.music-platform-coming-soon div {
+#music .music-platform-coming-soon div {
   min-width: 0;
 }
 
-.music-platform-coming-soon strong {
+#music .music-platform-coming-soon strong {
   display: block;
 
-  margin-bottom: 7px;
+  margin: 0 0 5px;
 
   color: #ffffff;
 
   font-size: 13px;
   font-weight: 800;
   line-height: 1.35;
-
-  letter-spacing: -0.02em;
 }
 
-.music-platform-coming-soon p {
+#music .music-platform-coming-soon p {
   margin: 0;
 
-  color: rgba(255, 255, 255, 0.52);
+  color: rgba(255, 255, 255, 0.54);
 
   font-size: 11px;
   font-weight: 500;
-  line-height: 1.65;
+  line-height: 1.6;
 
   word-break: keep-all;
-}
-
-
-/* =========================================================
-   MUSIC CARD INFO 정리
-========================================================= */
-
-.music-info {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 16px;
-
-  margin-top: 15px;
-  padding: 0 6px;
-}
-
-.music-info > div {
-  min-width: 0;
-}
-
-.music-artist,
-.music-type {
-  margin: 0;
-}
-
-.music-artist {
-  margin-bottom: 13px;
-
-  color: #ffffff;
-
-  font-size: 21px;
-  font-weight: 800;
-  line-height: 1.15;
-
-  letter-spacing: -0.04em;
-}
-
-.music-type {
-  margin-bottom: 7px;
-
-  color: rgba(182, 207, 255, 0.8);
-
-  font-size: 9px;
-  font-weight: 800;
-  line-height: 1;
-
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.music-info h3 {
-  width: 100%;
-  margin: 0;
-
-  color: #ffffff;
-
-  font-size: 27px;
-  font-weight: 500;
-  line-height: 1.15;
-
-  letter-spacing: -0.05em;
-
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-
-/* =========================================================
-   태블릿
-========================================================= */
-
-@media (max-width: 900px) {
-  .music-platform-links {
-    grid-template-columns:
-      repeat(
-        min(var(--music-platform-count), 2),
-        minmax(0, 1fr)
-      );
-  }
 }
 
 
@@ -9659,52 +9535,79 @@ html {
    모바일
 ========================================================= */
 
-@media (max-width: 640px) {
-  .music-platform-links {
+@media (max-width: 767px) {
+  #music .music-platform-links {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
 
-    gap: 7px;
+    margin-top: 16px;
+    padding: 7px;
 
-    margin-top: 15px;
-    padding: 8px;
+    border-radius: 11px;
   }
 
-  .music-platform-link {
-    min-height: 40px;
-    padding: 8px 7px;
+  #music .music-platform-link {
+    height: 36px !important;
+    min-height: 36px;
+    padding: 0 6px !important;
 
+    border-radius: 8px !important;
+
+    font-size: 9px;
+  }
+
+  #music .music-platform-icon,
+  #music .music-platform-icon svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  #music .music-platform-icon i {
+    font-size: 14px;
+  }
+
+  #music .music-platform-coming-soon {
+    grid-template-columns: 38px minmax(0, 1fr);
+    gap: 11px;
+
+    min-height: 78px;
+    padding: 14px;
+  }
+
+  #music .music-platform-coming-soon > span {
+    width: 38px;
+    height: 38px;
+
+    border-radius: 10px;
+
+    font-size: 15px;
+  }
+
+  #music .music-platform-coming-soon strong {
     font-size: 11px;
   }
 
-  .music-platform-coming-soon {
-    grid-template-columns: 40px minmax(0, 1fr);
-    gap: 12px;
-
-    min-height: 88px;
-    padding: 15px;
-  }
-
-  .music-platform-coming-soon > span {
-    width: 40px;
-    height: 40px;
-
-    font-size: 16px;
-  }
-
-  .music-platform-coming-soon strong {
-    font-size: 12px;
-  }
-
-  .music-platform-coming-soon p {
-    font-size: 10px;
+  #music .music-platform-coming-soon p {
+    font-size: 9px;
     line-height: 1.55;
   }
+}
 
-  .music-artist {
-    font-size: 19px;
+
+/* =========================================================
+   작은 모바일
+========================================================= */
+
+@media (max-width: 390px) {
+  #music .music-platform-links {
+    gap: 5px;
+    padding: 6px;
   }
 
-  .music-info h3 {
-    font-size: 23px;
+  #music .music-platform-link {
+    height: 33px !important;
+    min-height: 33px;
+
+    font-size: 8px;
   }
 }
