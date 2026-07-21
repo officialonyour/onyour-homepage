@@ -94,21 +94,33 @@ const CONTENT_CONFIG = {
     },
   },
 
-  members: {
-    table: "members",
-    orderBy: "sort_order ASC, created_at ASC",
+members: {
+  table: "members",
+  orderBy: "sort_order ASC, created_at ASC",
 
-    fields: {
-      name: "name",
-      englishName: "english_name",
-      role: "role",
-      description: "description",
-      imageUrl: "image_url",
-      instagram: "instagram_url",
-      order: "sort_order",
-      published: "published",
-    },
+  fields: {
+    name: "name",
+    englishName: "english_name",
+    role: "role",
+    description: "description",
+    imageUrl: "image_url",
+    instagram: "instagram_url",
+    order: "sort_order",
+    published: "published",
+
+    imagePositionX:
+      "image_position_x",
+
+    imagePositionY:
+      "image_position_y",
+
+    imageScale:
+      "image_scale",
+
+    socialLinksJson:
+      "social_links_json",
   },
+},
 };
 
 
@@ -634,12 +646,16 @@ function normalizeContentData(
         value = value ? 1 : 0;
       } else if (
         databaseColumn === "sort_order" ||
-        databaseColumn === "track_count"
+        databaseColumn === "track_count" ||
+        databaseColumn === "image_position_x" ||
+        databaseColumn === "image_position_y" ||
+        databaseColumn === "image_scale"
       ) {
         value =
           Number.parseInt(value, 10) || 0;
       } else if (
-        databaseColumn === "platforms_json"
+        databaseColumn === "platforms_json" ||
+        databaseColumn === "social_links_json"
       ) {
         if (Array.isArray(value)) {
           value = JSON.stringify(value);
@@ -666,6 +682,32 @@ function normalizeContentData(
     !result.video_type
   ) {
     result.video_type = "youtube";
+  }
+
+  if (type === "members") {
+    result.image_position_x =
+      Number.parseInt(
+        result.image_position_x,
+        10
+      ) || 50;
+
+    result.image_position_y =
+      Number.parseInt(
+        result.image_position_y,
+        10
+      ) || 50;
+
+    result.image_scale =
+      Number.parseInt(
+        result.image_scale,
+        10
+      ) || 100;
+
+    if (
+      !result.social_links_json
+    ) {
+      result.social_links_json = "[]";
+    }
   }
 
   return result;

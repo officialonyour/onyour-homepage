@@ -2416,21 +2416,269 @@ async function loadPublicMembers() {
     },
   ];
 
-  try {
-    const response = await fetch(
-      "/api/content?type=members",
-      {
-        method: "GET",
+  const socialPlatformSettings = {
+    instagram: {
+      label: "Instagram",
+      icon: "◎",
+    },
 
-        headers: {
-          Accept: "application/json",
-        },
+    youtube: {
+      label: "YouTube",
+      icon: "▶",
+    },
 
-        cache: "no-store",
+    spotify: {
+      label: "Spotify",
+      icon: "●",
+    },
+
+    apple: {
+      label: "Apple Music",
+      icon: "♪",
+    },
+
+    applemusic: {
+      label: "Apple Music",
+      icon: "♪",
+    },
+
+    melon: {
+      label: "Melon",
+      icon: "M",
+    },
+
+    soundcloud: {
+      label: "SoundCloud",
+      icon: "☁",
+    },
+
+    tiktok: {
+      label: "TikTok",
+      icon: "♪",
+    },
+
+    x: {
+      label: "X",
+      icon: "𝕏",
+    },
+
+    twitter: {
+      label: "X",
+      icon: "𝕏",
+    },
+
+    facebook: {
+      label: "Facebook",
+      icon: "f",
+    },
+
+    homepage: {
+      label: "Website",
+      icon: "↗",
+    },
+
+    website: {
+      label: "Website",
+      icon: "↗",
+    },
+
+    other: {
+      label: "Link",
+      icon: "↗",
+    },
+  };
+
+  function normalizeMemberSocialLinks(
+    item
+  ) {
+    let socialLinks = [];
+
+    const rawSocialLinks =
+      item?.socialLinks ??
+      item?.social_links ??
+      item?.socialLinksJson ??
+      item?.social_links_json ??
+      [];
+
+    if (
+      Array.isArray(rawSocialLinks)
+    ) {
+      socialLinks =
+        rawSocialLinks;
+    } else if (
+      typeof rawSocialLinks ===
+      "string"
+    ) {
+      try {
+        const parsedValue =
+          JSON.parse(
+            rawSocialLinks
+          );
+
+        socialLinks =
+          Array.isArray(parsedValue)
+            ? parsedValue
+            : [];
+      } catch {
+        socialLinks = [];
+      }
+    }
+
+    const normalizedLinks =
+      socialLinks
+        .map((socialLink) => {
+          const platform =
+            String(
+              socialLink.platform ||
+              socialLink.key ||
+              socialLink.type ||
+              "other"
+            )
+              .trim()
+              .toLowerCase();
+
+          const url =
+            String(
+              socialLink.url ||
+              socialLink.href ||
+              socialLink.link ||
+              ""
+            ).trim();
+
+          const label =
+            String(
+              socialLink.label ||
+              socialLink.name ||
+              ""
+            ).trim();
+
+          return {
+            platform,
+            url,
+            label,
+          };
+        })
+        .filter(
+          (socialLink) =>
+            socialLink.url
+        );
+
+    const oldInstagramUrl =
+      String(
+        item?.instagram ||
+        item?.instagramUrl ||
+        item?.instagram_url ||
+        ""
+      ).trim();
+
+    const hasInstagram =
+      normalizedLinks.some(
+        (socialLink) =>
+          socialLink.platform ===
+          "instagram"
+      );
+
+    if (
+      oldInstagramUrl &&
+      !hasInstagram
+    ) {
+      normalizedLinks.push({
+        platform: "instagram",
+        label: "Instagram",
+        url: oldInstagramUrl,
+      });
+    }
+
+    const uniqueLinks =
+      new Map();
+
+    normalizedLinks.forEach(
+      (socialLink) => {
+        const uniqueKey =
+          `${socialLink.platform}:${socialLink.url}`;
+
+        if (
+          !uniqueLinks.has(
+            uniqueKey
+          )
+        ) {
+          uniqueLinks.set(
+            uniqueKey,
+            socialLink
+          );
+        }
       }
     );
 
-    const result = await response.json();
+    return Array.from(
+      uniqueLinks.values()
+    );
+  }
+
+  function createMemberSocialLinkHtml(
+    socialLink
+  ) {
+    const platformSetting =
+      socialPlatformSettings[
+        socialLink.platform
+      ] ||
+      socialPlatformSettings.other;
+
+    const label =
+      socialLink.label ||
+      platformSetting.label;
+
+    return `
+      <a
+        class="member-link member-social-link"
+        href="${escapeAdminHtml(
+          socialLink.url
+        )}"
+        target="_blank"
+        rel="noopener noreferrer"
+        data-social-platform="${escapeAdminHtml(
+          socialLink.platform
+        )}"
+        aria-label="${escapeAdminHtml(
+          label
+        )} 새 창에서 열기"
+      >
+        <span
+          class="member-social-icon"
+          aria-hidden="true"
+        >
+          ${escapeAdminHtml(
+            platformSetting.icon
+          )}
+        </span>
+
+        <span class="member-social-label">
+          ${escapeAdminHtml(
+            label
+          )}
+        </span>
+      </a>
+    `;
+  }
+
+  try {
+    const response =
+      await fetch(
+        "/api/content?type=members",
+        {
+          method: "GET",
+
+          headers: {
+            Accept:
+              "application/json",
+          },
+
+          cache: "no-store",
+        }
+      );
+
+    const result =
+      await response.json();
 
     if (
       !response.ok ||
@@ -2450,20 +2698,22 @@ async function loadPublicMembers() {
       .filter(
         (item) =>
           item.published !== false &&
-          Number(item.published) !== 0
+          Number(
+            item.published
+          ) !== 0
       )
       .sort(
-        (first, second) =>
+        (firstItem, secondItem) =>
           Number(
-            first.order ??
-            first.sortOrder ??
-            first.sort_order ??
+            firstItem.order ??
+            firstItem.sortOrder ??
+            firstItem.sort_order ??
             0
           ) -
           Number(
-            second.order ??
-            second.sortOrder ??
-            second.sort_order ??
+            secondItem.order ??
+            secondItem.sortOrder ??
+            secondItem.sort_order ??
             0
           )
       );
@@ -2501,12 +2751,15 @@ async function loadPublicMembers() {
             `memberDescription${suffix}`
           );
 
-        const instagram =
+        const socialContainer =
           document.getElementById(
-            `memberInstagram${suffix}`
+            `memberSocialLinks${suffix}`
           );
 
         const card =
+          document.querySelector(
+            `[data-member="${suffix}"]`
+          ) ||
           name?.closest(
             ".member-card"
           );
@@ -2525,17 +2778,20 @@ async function loadPublicMembers() {
 
         const memberName =
           String(
-            item.name || "멤버"
+            item.name ||
+            "멤버"
           ).trim();
 
         const memberRole =
           String(
-            item.role || ""
+            item.role ||
+            ""
           ).trim();
 
         const memberDescription =
           String(
-            item.description || ""
+            item.description ||
+            ""
           ).trim();
 
         const imageUrl =
@@ -2545,13 +2801,26 @@ async function loadPublicMembers() {
             ""
           ).trim();
 
-        const instagramUrl =
-          String(
-            item.instagram ||
-            item.instagramUrl ||
-            item.instagram_url ||
-            ""
-          ).trim();
+        const imagePositionX =
+          Number(
+            item.imagePositionX ??
+            item.image_position_x ??
+            50
+          );
+
+        const imagePositionY =
+          Number(
+            item.imagePositionY ??
+            item.image_position_y ??
+            50
+          );
+
+        const imageScale =
+          Number(
+            item.imageScale ??
+            item.image_scale ??
+            100
+          );
 
         if (name) {
           name.textContent =
@@ -2565,18 +2834,10 @@ async function loadPublicMembers() {
 
         if (description) {
           description.textContent =
-            memberDescription ||
-            "ONYOUR의 음악과 무대를 함께 만들어갑니다.";
-        }
+            memberDescription;
 
-        const roleBadge =
-          card?.querySelector(
-            ".member-role-badge"
-          );
-
-        if (roleBadge) {
-          roleBadge.textContent =
-            memberRole;
+          description.hidden =
+            !memberDescription;
         }
 
         if (
@@ -2595,57 +2856,73 @@ async function loadPublicMembers() {
 
             fallback.hidden =
               true;
+
+            image.style.objectPosition =
+              `${imagePositionX}% ${imagePositionY}%`;
+
+            image.style.transform =
+              `scale(${imageScale / 100})`;
+
+            image.style.transformOrigin =
+              "center center";
+
+            image.onerror =
+              () => {
+                image.removeAttribute(
+                  "src"
+                );
+
+                image.alt = "";
+                image.hidden = true;
+
+                fallback.hidden =
+                  false;
+
+                fallback.textContent =
+                  setting.fallbackText;
+              };
           } else {
             image.removeAttribute(
               "src"
             );
 
             image.alt = "";
+            image.hidden = true;
 
-            image.hidden =
-              true;
+            image.style.objectPosition =
+              "50% 50%";
+
+            image.style.transform =
+              "scale(1)";
 
             fallback.hidden =
               false;
 
-            const fallbackText =
-              fallback.querySelector(
-                "span"
-              );
-
-            if (fallbackText) {
-              fallbackText.textContent =
-                setting.fallbackText;
-            }
+            fallback.textContent =
+              setting.fallbackText;
           }
         }
 
-        if (instagram) {
-          if (instagramUrl) {
-            instagram.href =
-              instagramUrl;
-
-            instagram.target =
-              "_blank";
-
-            instagram.rel =
-              "noopener noreferrer";
-
-            instagram.hidden =
-              false;
-
-            instagram.setAttribute(
-              "aria-label",
-              `${memberName} Instagram 열기`
-            );
-          } else {
-            instagram.removeAttribute(
-              "href"
+        if (socialContainer) {
+          const socialLinks =
+            normalizeMemberSocialLinks(
+              item
             );
 
-            instagram.hidden =
-              true;
-          }
+          socialContainer.innerHTML =
+            socialLinks
+              .map(
+                createMemberSocialLinkHtml
+              )
+              .join("");
+
+          socialContainer.hidden =
+            socialLinks.length === 0;
+
+          socialContainer.classList.toggle(
+            "is-empty",
+            socialLinks.length === 0
+          );
         }
       }
     );
@@ -2656,6 +2933,695 @@ async function loadPublicMembers() {
     );
   }
 }
+
+/* =========================================================
+   MEMBER SOCIAL LINKS EDITOR
+   - SNS 링크 추가
+   - 플랫폼 선택
+   - 이름 및 URL 입력
+   - 개별 삭제
+   - JSON 변환 및 복원
+========================================================= */
+
+const ADMIN_MEMBER_SOCIAL_PLATFORMS = [
+  {
+    value: "instagram",
+    label: "Instagram",
+  },
+  {
+    value: "youtube",
+    label: "YouTube",
+  },
+  {
+    value: "spotify",
+    label: "Spotify",
+  },
+  {
+    value: "apple-music",
+    label: "Apple Music",
+  },
+  {
+    value: "tiktok",
+    label: "TikTok",
+  },
+  {
+    value: "soundcloud",
+    label: "SoundCloud",
+  },
+  {
+    value: "website",
+    label: "Website",
+  },
+  {
+    value: "other",
+    label: "기타",
+  },
+];
+
+const adminMemberSocialList =
+  document.getElementById(
+    "adminMemberSocialList"
+  );
+
+const adminMemberSocialAddButton =
+  document.getElementById(
+    "adminMemberSocialAddButton"
+  );
+
+const adminMemberSocialLinksJson =
+  document.getElementById(
+    "adminMemberSocialLinksJson"
+  );
+
+
+/* =========================
+   HTML 특수문자 처리
+========================= */
+
+function escapeAdminMemberSocialHtml(
+  value
+) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+
+/* =========================
+   URL 기본 형식 정리
+========================= */
+
+function normalizeAdminMemberSocialUrl(
+  value
+) {
+  const url =
+    String(value ?? "").trim();
+
+  if (!url) {
+    return "";
+  }
+
+  if (
+    url.startsWith("http://") ||
+    url.startsWith("https://")
+  ) {
+    return url;
+  }
+
+  return `https://${url}`;
+}
+
+
+/* =========================
+   플랫폼 이름 가져오기
+========================= */
+
+function getAdminMemberSocialPlatformLabel(
+  platform
+) {
+  const matchedPlatform =
+    ADMIN_MEMBER_SOCIAL_PLATFORMS.find(
+      (item) =>
+        item.value === platform
+    );
+
+  return (
+    matchedPlatform?.label ||
+    "기타"
+  );
+}
+
+
+/* =========================
+   플랫폼 선택 옵션 생성
+========================= */
+
+function createAdminMemberSocialPlatformOptions(
+  selectedPlatform = "instagram"
+) {
+  return ADMIN_MEMBER_SOCIAL_PLATFORMS
+    .map((platformItem) => {
+      const selected =
+        platformItem.value ===
+        selectedPlatform
+          ? " selected"
+          : "";
+
+      return `
+        <option
+          value="${escapeAdminMemberSocialHtml(
+            platformItem.value
+          )}"
+          ${selected}
+        >
+          ${escapeAdminMemberSocialHtml(
+            platformItem.label
+          )}
+        </option>
+      `;
+    })
+    .join("");
+}
+
+
+/* =========================
+   SNS 링크 한 줄 생성
+========================= */
+
+function createAdminMemberSocialRow(
+  socialLink = {}
+) {
+  const platform =
+    String(
+      socialLink.platform ||
+      "instagram"
+    ).trim();
+
+  const defaultLabel =
+    getAdminMemberSocialPlatformLabel(
+      platform
+    );
+
+  const label =
+    String(
+      socialLink.label ||
+      defaultLabel
+    ).trim();
+
+  const url =
+    String(
+      socialLink.url || ""
+    ).trim();
+
+  const row =
+    document.createElement("div");
+
+  row.className =
+    "admin-member-social-row";
+
+  row.dataset.memberSocialRow =
+    "true";
+
+  row.innerHTML = `
+    <div class="admin-member-social-row-fields">
+
+      <label>
+        <span>종류</span>
+
+        <select
+          class="admin-member-social-platform"
+          data-member-social-platform
+        >
+          ${createAdminMemberSocialPlatformOptions(
+            platform
+          )}
+        </select>
+      </label>
+
+      <label>
+        <span>표시 이름</span>
+
+        <input
+          class="admin-member-social-label"
+          data-member-social-label
+          type="text"
+          maxlength="30"
+          value="${escapeAdminMemberSocialHtml(
+            label
+          )}"
+          placeholder="예: Instagram"
+        />
+      </label>
+
+      <label class="admin-member-social-url-field">
+        <span>링크 주소</span>
+
+        <input
+          class="admin-member-social-url"
+          data-member-social-url
+          type="url"
+          value="${escapeAdminMemberSocialHtml(
+            url
+          )}"
+          placeholder="https://..."
+        />
+      </label>
+
+    </div>
+
+    <button
+      class="admin-member-social-remove"
+      type="button"
+      data-member-social-remove
+      aria-label="링크 삭제"
+    >
+      삭제
+    </button>
+  `;
+
+  return row;
+}
+
+
+/* =========================
+   빈 화면 표시
+========================= */
+
+function renderAdminMemberSocialEmpty() {
+  if (!adminMemberSocialList) {
+    return;
+  }
+
+  const rows =
+    adminMemberSocialList.querySelectorAll(
+      "[data-member-social-row]"
+    );
+
+  const existingEmpty =
+    adminMemberSocialList.querySelector(
+      ".admin-member-social-empty"
+    );
+
+  if (rows.length > 0) {
+    existingEmpty?.remove();
+    return;
+  }
+
+  if (existingEmpty) {
+    return;
+  }
+
+  const emptyElement =
+    document.createElement("div");
+
+  emptyElement.className =
+    "admin-member-social-empty";
+
+  emptyElement.innerHTML = `
+    <strong>
+      등록된 링크가 없습니다.
+    </strong>
+
+    <p>
+      링크 추가 버튼을 눌러 SNS를 추가하세요.
+    </p>
+  `;
+
+  adminMemberSocialList.appendChild(
+    emptyElement
+  );
+}
+
+
+/* =========================
+   SNS 링크 한 줄 추가
+========================= */
+
+function addAdminMemberSocialLink(
+  socialLink = {}
+) {
+  if (!adminMemberSocialList) {
+    return;
+  }
+
+  adminMemberSocialList
+    .querySelector(
+      ".admin-member-social-empty"
+    )
+    ?.remove();
+
+  const row =
+    createAdminMemberSocialRow(
+      socialLink
+    );
+
+  adminMemberSocialList.appendChild(
+    row
+  );
+
+  updateAdminMemberSocialLinksJson();
+
+  const urlInput =
+    row.querySelector(
+      "[data-member-social-url]"
+    );
+
+  urlInput?.focus();
+}
+
+
+/* =========================
+   현재 입력값 배열로 가져오기
+========================= */
+
+function getAdminMemberSocialLinks() {
+  if (!adminMemberSocialList) {
+    return [];
+  }
+
+  const rows = [
+    ...adminMemberSocialList.querySelectorAll(
+      "[data-member-social-row]"
+    ),
+  ];
+
+  return rows
+    .map((row) => {
+      const platform =
+        row
+          .querySelector(
+            "[data-member-social-platform]"
+          )
+          ?.value?.trim() ||
+        "other";
+
+      const defaultLabel =
+        getAdminMemberSocialPlatformLabel(
+          platform
+        );
+
+      const label =
+        row
+          .querySelector(
+            "[data-member-social-label]"
+          )
+          ?.value?.trim() ||
+        defaultLabel;
+
+      const rawUrl =
+        row
+          .querySelector(
+            "[data-member-social-url]"
+          )
+          ?.value?.trim() ||
+        "";
+
+      const url =
+        normalizeAdminMemberSocialUrl(
+          rawUrl
+        );
+
+      return {
+        platform,
+        label,
+        url,
+      };
+    })
+    .filter(
+      (socialLink) =>
+        Boolean(socialLink.url)
+    );
+}
+
+
+/* =========================
+   hidden JSON 값 갱신
+========================= */
+
+function updateAdminMemberSocialLinksJson() {
+  const socialLinks =
+    getAdminMemberSocialLinks();
+
+  const jsonValue =
+    JSON.stringify(
+      socialLinks
+    );
+
+  if (
+    adminMemberSocialLinksJson
+  ) {
+    adminMemberSocialLinksJson.value =
+      jsonValue;
+  }
+
+  return jsonValue;
+}
+
+
+/* =========================
+   저장값을 편집창에 복원
+========================= */
+
+function setAdminMemberSocialLinks(
+  socialLinks = []
+) {
+  if (!adminMemberSocialList) {
+    return;
+  }
+
+  adminMemberSocialList.innerHTML =
+    "";
+
+  const normalizedLinks =
+    Array.isArray(socialLinks)
+      ? socialLinks.filter(
+          (socialLink) =>
+            socialLink &&
+            typeof socialLink ===
+              "object"
+        )
+      : [];
+
+  normalizedLinks.forEach(
+    (socialLink) => {
+      addAdminMemberSocialLink(
+        socialLink
+      );
+    }
+  );
+
+  renderAdminMemberSocialEmpty();
+  updateAdminMemberSocialLinksJson();
+}
+
+
+/* =========================
+   JSON 문자열 안전하게 읽기
+========================= */
+
+function parseAdminMemberSocialLinks(
+  value
+) {
+  if (Array.isArray(value)) {
+    return value;
+  }
+
+  if (
+    value &&
+    typeof value === "object"
+  ) {
+    return [];
+  }
+
+  const stringValue =
+    String(value ?? "").trim();
+
+  if (!stringValue) {
+    return [];
+  }
+
+  try {
+    const parsedValue =
+      JSON.parse(stringValue);
+
+    return Array.isArray(parsedValue)
+      ? parsedValue
+      : [];
+  } catch (error) {
+    console.warn(
+      "멤버 SNS JSON 변환 실패:",
+      error
+    );
+
+    return [];
+  }
+}
+
+
+/* =========================
+   멤버 데이터에서 SNS 읽기
+========================= */
+
+function getMemberSocialLinksFromItem(
+  item = {}
+) {
+  const directLinks =
+    item.socialLinks ||
+    item.social_links;
+
+  if (Array.isArray(directLinks)) {
+    return directLinks;
+  }
+
+  const jsonLinks =
+    item.socialLinksJson ??
+    item.social_links_json ??
+    "";
+
+  const parsedLinks =
+    parseAdminMemberSocialLinks(
+      jsonLinks
+    );
+
+  if (parsedLinks.length > 0) {
+    return parsedLinks;
+  }
+
+  /*
+   * 기존 Instagram 데이터 호환
+   */
+  const legacyInstagram =
+    item.instagram ||
+    item.instagramUrl ||
+    item.instagram_url ||
+    "";
+
+  if (legacyInstagram) {
+    return [
+      {
+        platform: "instagram",
+        label: "Instagram",
+        url: legacyInstagram,
+      },
+    ];
+  }
+
+  return [];
+}
+
+
+/* =========================
+   SNS 편집창 초기화
+========================= */
+
+function resetAdminMemberSocialEditor() {
+  setAdminMemberSocialLinks([]);
+}
+
+
+/* =========================
+   링크 추가 버튼
+========================= */
+
+adminMemberSocialAddButton
+  ?.addEventListener(
+    "click",
+    () => {
+      addAdminMemberSocialLink({
+        platform: "instagram",
+        label: "Instagram",
+        url: "",
+      });
+    }
+  );
+
+
+/* =========================
+   SNS 목록 이벤트
+========================= */
+
+adminMemberSocialList
+  ?.addEventListener(
+    "click",
+    (event) => {
+      const removeButton =
+        event.target.closest(
+          "[data-member-social-remove]"
+        );
+
+      if (!removeButton) {
+        return;
+      }
+
+      const row =
+        removeButton.closest(
+          "[data-member-social-row]"
+        );
+
+      row?.remove();
+
+      renderAdminMemberSocialEmpty();
+      updateAdminMemberSocialLinksJson();
+    }
+  );
+
+
+adminMemberSocialList
+  ?.addEventListener(
+    "input",
+    () => {
+      updateAdminMemberSocialLinksJson();
+    }
+  );
+
+
+adminMemberSocialList
+  ?.addEventListener(
+    "change",
+    (event) => {
+      const platformSelect =
+        event.target.closest(
+          "[data-member-social-platform]"
+        );
+
+      if (!platformSelect) {
+        updateAdminMemberSocialLinksJson();
+        return;
+      }
+
+      const row =
+        platformSelect.closest(
+          "[data-member-social-row]"
+        );
+
+      const labelInput =
+        row?.querySelector(
+          "[data-member-social-label]"
+        );
+
+      if (labelInput) {
+        const previousPlatform =
+          platformSelect.dataset
+            .previousPlatform ||
+          "";
+
+        const previousLabel =
+          getAdminMemberSocialPlatformLabel(
+            previousPlatform
+          );
+
+        const currentLabel =
+          labelInput.value.trim();
+
+        if (
+          !currentLabel ||
+          currentLabel ===
+            previousLabel
+        ) {
+          labelInput.value =
+            getAdminMemberSocialPlatformLabel(
+              platformSelect.value
+            );
+        }
+      }
+
+      platformSelect.dataset.previousPlatform =
+        platformSelect.value;
+
+      updateAdminMemberSocialLinksJson();
+    }
+  );
+
+
+/* =========================
+   최초 빈 상태
+========================= */
+
+renderAdminMemberSocialEmpty();
+updateAdminMemberSocialLinksJson();
 
 /* =========================
    FORM TITLE
@@ -3209,47 +4175,60 @@ function fillAdminMembersForm(item) {
     item.image_url ||
     "";
 
+  const imagePositionX =
+    Number(
+      item.imagePositionX ??
+        item.image_position_x ??
+        50
+    );
+
+  const imagePositionY =
+    Number(
+      item.imagePositionY ??
+        item.image_position_y ??
+        50
+    );
+
+  const imageScale =
+    Number(
+      item.imageScale ??
+        item.image_scale ??
+        100
+    );
+
   setAdminFormValue(
     "adminMemberId",
-    item.id
+    item.id || ""
   );
 
   setAdminFormValue(
     "adminMemberName",
-    item.name
+    item.name || ""
   );
 
   setAdminFormValue(
     "adminMemberEnglishName",
     item.englishName ||
-    item.english_name ||
-    ""
+      item.english_name ||
+      ""
   );
 
   setAdminFormValue(
     "adminMemberRole",
-    item.role
+    item.role || ""
   );
 
   setAdminFormValue(
     "adminMemberDescription",
-    item.description
-  );
-
-  setAdminFormValue(
-    "adminMemberInstagram",
-    item.instagram ||
-    item.instagramUrl ||
-    item.instagram_url ||
-    ""
+    item.description || ""
   );
 
   setAdminFormValue(
     "adminMemberOrder",
     item.order ??
-    item.sortOrder ??
-    item.sort_order ??
-    0
+      item.sortOrder ??
+      item.sort_order ??
+      0
   );
 
   setAdminFormValue(
@@ -3257,49 +4236,79 @@ function fillAdminMembersForm(item) {
     item.published
   );
 
-  const previewBox =
-    document.getElementById(
-      "adminMemberImagePreview"
-    );
-
-  const previewImage =
-    document.getElementById(
-      "adminMemberPreviewImage"
-    );
+  /*
+   * 기존 프로필 이미지 미리보기
+   */
 
   if (
-    previewBox &&
-    previewImage &&
+    adminMemberImagePreview &&
+    adminMemberPreviewImage &&
     imageUrl
   ) {
-    previewImage.src = imageUrl;
+    adminMemberPreviewImage.src =
+      imageUrl;
 
-    previewImage.alt =
+    adminMemberPreviewImage.alt =
       `${
         item.name || "멤버"
       } 프로필 사진 미리보기`;
 
-    previewBox.hidden = false;
+    adminMemberPreviewImage.style.display =
+      "block";
+
+    adminMemberImagePreview.hidden =
+      false;
   } else if (
-    previewBox &&
-    previewImage
+    adminMemberImagePreview &&
+    adminMemberPreviewImage
   ) {
-    previewImage.removeAttribute(
+    adminMemberPreviewImage.removeAttribute(
       "src"
     );
 
-    previewImage.alt = "";
+    adminMemberPreviewImage.alt =
+      "";
 
-    previewBox.hidden = true;
+    adminMemberPreviewImage.style.display =
+      "none";
+
+    adminMemberImagePreview.hidden =
+      true;
   }
 
-  const imageInput =
-    document.getElementById(
-      "adminMemberImage"
+  /*
+   * 사진 위치 및 확대값 복원
+   */
+
+  setAdminMemberImageEditorValues({
+    imagePositionX,
+    imagePositionY,
+    imageScale,
+  });
+
+  /*
+   * SNS 링크 복원
+   */
+
+  const socialLinks =
+    getMemberSocialLinksFromItem(
+      item
     );
 
-  if (imageInput) {
-    imageInput.value = "";
+  setAdminMemberSocialLinks(
+    socialLinks
+  );
+
+  /*
+   * 파일 선택창 초기화
+   * 기존 사진은 유지하고 새 파일 선택값만 제거
+   */
+
+  if (
+    adminMemberImageInput
+  ) {
+    adminMemberImageInput.value =
+      "";
   }
 }
 
@@ -3577,9 +4586,14 @@ document
     }
   );
 
-/* =========================
+/* =========================================================
    MEMBERS FORM SUBMIT
-========================= */
+   - 프로필 사진 업로드
+   - 사진 위치 및 확대값 저장
+   - 동적 SNS 링크 저장
+   - 기존 Instagram 데이터 호환
+   - 홈페이지 멤버 카드 즉시 갱신
+========================================================= */
 
 document
   .getElementById("adminMembersForm")
@@ -3611,6 +4625,10 @@ document
           "adminMemberRole"
         );
 
+      /*
+       * 필수 입력값 검사
+       */
+
       if (!name) {
         alert(
           "멤버 이름을 입력해 주세요."
@@ -3639,12 +4657,21 @@ document
         return;
       }
 
+      /*
+       * 현재 수정 중인 멤버 찾기
+       */
+
       const existingItem =
         adminStore.members.find(
           (memberItem) =>
             String(memberItem.id) ===
             String(id)
         );
+
+      /*
+       * 새 사진을 선택하지 않으면
+       * 기존 사진 주소 유지
+       */
 
       let imageUrl =
         existingItem?.imageUrl ||
@@ -3656,19 +4683,79 @@ document
           "adminMemberImage"
         );
 
+      /*
+       * 사진 위치 및 확대값
+       */
+
+      const imageEditorValues =
+        getAdminMemberImageEditorValues();
+
+      const imagePositionX =
+        Number(
+          imageEditorValues.imagePositionX
+        );
+
+      const imagePositionY =
+        Number(
+          imageEditorValues.imagePositionY
+        );
+
+      const imageScale =
+        Number(
+          imageEditorValues.imageScale
+        );
+
+      /*
+       * SNS 편집기에 입력된 링크 전체
+       */
+
+      const socialLinks =
+        getAdminMemberSocialLinks();
+
+      const socialLinksJson =
+        JSON.stringify(
+          socialLinks
+        );
+
+      /*
+       * 기존 Instagram 필드 호환
+       * SNS 목록에서 Instagram 링크를 찾아 저장
+       */
+
+      const instagramUrl =
+        socialLinks.find(
+          (socialLink) =>
+            socialLink.platform ===
+            "instagram"
+        )?.url || "";
+
       try {
         if (submitButton) {
           submitButton.disabled =
             true;
 
           submitButton.textContent =
-            "저장 중...";
+            "저장 준비 중...";
         }
+
+        /*
+         * 새 프로필 사진 업로드
+         */
 
         const selectedImageFile =
           imageInput?.files?.[0];
 
         if (selectedImageFile) {
+          if (
+            !selectedImageFile.type.startsWith(
+              "image/"
+            )
+          ) {
+            throw new Error(
+              "이미지 파일만 선택할 수 있습니다."
+            );
+          }
+
           if (submitButton) {
             submitButton.textContent =
               "사진 업로드 중...";
@@ -3679,7 +4766,22 @@ document
               selectedImageFile,
               "members"
             );
+
+          if (!imageUrl) {
+            throw new Error(
+              "프로필 사진 주소를 받지 못했습니다."
+            );
+          }
         }
+
+        if (submitButton) {
+          submitButton.textContent =
+            "멤버 정보 저장 중...";
+        }
+
+        /*
+         * 서버로 전송할 멤버 데이터
+         */
 
         const data = {
           id:
@@ -3704,10 +4806,23 @@ document
 
           imageUrl,
 
+          imagePositionX,
+          imagePositionY,
+          imageScale,
+
+          /*
+           * 기존 데이터 호환용
+           */
+
           instagram:
-            getAdminFormValue(
-              "adminMemberInstagram"
-            ),
+            instagramUrl,
+
+          /*
+           * 새로운 SNS 데이터
+           */
+
+          socialLinks,
+          socialLinksJson,
 
           order:
             Number(
@@ -3722,10 +4837,91 @@ document
             ),
         };
 
-        await saveAdminItem(
-          "members",
-          data
-        );
+        /*
+         * D1 저장
+         */
+
+        const savedItem =
+          await saveAdminItem(
+            "members",
+            data
+          );
+
+        /*
+         * 서버 응답과 현재 입력값 병합
+         */
+
+        const normalizedSavedItem = {
+          ...(existingItem || {}),
+          ...data,
+          ...(savedItem || {}),
+
+          imageUrl:
+            savedItem?.imageUrl ||
+            savedItem?.image_url ||
+            imageUrl,
+
+          imagePositionX:
+            savedItem?.imagePositionX ??
+            savedItem?.image_position_x ??
+            imagePositionX,
+
+          imagePositionY:
+            savedItem?.imagePositionY ??
+            savedItem?.image_position_y ??
+            imagePositionY,
+
+          imageScale:
+            savedItem?.imageScale ??
+            savedItem?.image_scale ??
+            imageScale,
+
+          instagram:
+            savedItem?.instagram ||
+            savedItem?.instagramUrl ||
+            savedItem?.instagram_url ||
+            instagramUrl,
+
+          socialLinks:
+            savedItem?.socialLinks ||
+            savedItem?.social_links ||
+            socialLinks,
+
+          socialLinksJson:
+            savedItem?.socialLinksJson ||
+            savedItem?.social_links_json ||
+            socialLinksJson,
+        };
+
+        /*
+         * 관리자 목록 데이터 갱신
+         */
+
+        const savedIndex =
+          adminStore.members.findIndex(
+            (memberItem) =>
+              String(memberItem.id) ===
+              String(
+                normalizedSavedItem.id
+              )
+          );
+
+        if (savedIndex >= 0) {
+          adminStore.members[
+            savedIndex
+          ] =
+            normalizedSavedItem;
+        } else {
+          adminStore.members.unshift(
+            normalizedSavedItem
+          );
+        }
+
+        renderAllAdminLists();
+
+        /*
+         * 홈페이지 멤버 카드 즉시 갱신
+         */
 
         await loadPublicMembers();
 
@@ -3753,6 +4949,7 @@ document
       }
     }
   );
+
 
 /* =========================
    MUSIC PROFILE FORM SUBMIT
@@ -4284,8 +5481,14 @@ document
 
 renderAllAdminLists();
 
-/* =========================
+/* =========================================================
    IMAGE PREVIEW
+   - 일반 이미지 미리보기
+   - 멤버 사진 위치 및 확대 편집
+========================================================= */
+
+/* =========================
+   일반 이미지 미리보기
 ========================= */
 
 function connectImagePreview(
@@ -4310,34 +5513,476 @@ function connectImagePreview(
     return;
   }
 
-  input.addEventListener("change", () => {
-    const file = input.files?.[0];
+  input.addEventListener(
+    "change",
+    () => {
+      const file =
+        input.files?.[0];
 
-    if (!file) {
-      previewBox.hidden = true;
-      previewImage.removeAttribute("src");
-      return;
+      if (!file) {
+        previewBox.hidden = true;
+
+        previewImage.removeAttribute(
+          "src"
+        );
+
+        return;
+      }
+
+      if (
+        !file.type.startsWith(
+          "image/"
+        )
+      ) {
+        input.value = "";
+
+        previewBox.hidden = true;
+
+        previewImage.removeAttribute(
+          "src"
+        );
+
+        alert(
+          "이미지 파일만 선택할 수 있습니다."
+        );
+
+        return;
+      }
+
+      const imageUrl =
+        URL.createObjectURL(file);
+
+      previewImage.src =
+        imageUrl;
+
+      previewBox.hidden =
+        false;
+
+      previewImage.onload =
+        () => {
+          URL.revokeObjectURL(
+            imageUrl
+          );
+        };
     }
-
-    if (!file.type.startsWith("image/")) {
-      input.value = "";
-      previewBox.hidden = true;
-
-      alert("이미지 파일만 선택할 수 있습니다.");
-      return;
-    }
-
-    const imageUrl =
-      URL.createObjectURL(file);
-
-    previewImage.src = imageUrl;
-    previewBox.hidden = false;
-
-    previewImage.onload = () => {
-      URL.revokeObjectURL(imageUrl);
-    };
-  });
+  );
 }
+
+
+/* =========================
+   멤버 이미지 편집 요소
+========================= */
+
+const adminMemberImageInput =
+  document.getElementById(
+    "adminMemberImage"
+  );
+
+const adminMemberImagePreview =
+  document.getElementById(
+    "adminMemberImagePreview"
+  );
+
+const adminMemberPreviewImage =
+  document.getElementById(
+    "adminMemberPreviewImage"
+  );
+
+const adminMemberImageScale =
+  document.getElementById(
+    "adminMemberImageScale"
+  );
+
+const adminMemberImagePosX =
+  document.getElementById(
+    "adminMemberImagePosX"
+  );
+
+const adminMemberImagePosY =
+  document.getElementById(
+    "adminMemberImagePosY"
+  );
+
+const adminMemberImageScaleValue =
+  document.getElementById(
+    "adminMemberImageScaleValue"
+  );
+
+const adminMemberImagePosXValue =
+  document.getElementById(
+    "adminMemberImagePosXValue"
+  );
+
+const adminMemberImagePosYValue =
+  document.getElementById(
+    "adminMemberImagePosYValue"
+  );
+
+const adminMemberImageReset =
+  document.getElementById(
+    "adminMemberImageReset"
+  );
+
+
+/* =========================
+   멤버 이미지 값 제한
+========================= */
+
+function clampAdminMemberImageValue(
+  value,
+  minimum,
+  maximum,
+  fallback
+) {
+  const numberValue =
+    Number.parseInt(
+      value,
+      10
+    );
+
+  if (
+    !Number.isFinite(
+      numberValue
+    )
+  ) {
+    return fallback;
+  }
+
+  return Math.min(
+    maximum,
+    Math.max(
+      minimum,
+      numberValue
+    )
+  );
+}
+
+
+/* =========================
+   멤버 이미지 편집값 가져오기
+========================= */
+
+function getAdminMemberImageEditorValues() {
+  return {
+    imagePositionX:
+      clampAdminMemberImageValue(
+        adminMemberImagePosX?.value,
+        0,
+        100,
+        50
+      ),
+
+    imagePositionY:
+      clampAdminMemberImageValue(
+        adminMemberImagePosY?.value,
+        0,
+        100,
+        50
+      ),
+
+    imageScale:
+      clampAdminMemberImageValue(
+        adminMemberImageScale?.value,
+        100,
+        180,
+        100
+      ),
+  };
+}
+
+
+/* =========================
+   멤버 이미지 미리보기 갱신
+========================= */
+
+function updateAdminMemberImagePreview() {
+  const {
+    imagePositionX,
+    imagePositionY,
+    imageScale,
+  } =
+    getAdminMemberImageEditorValues();
+
+  if (
+    adminMemberImageScaleValue
+  ) {
+    adminMemberImageScaleValue.textContent =
+      `${imageScale}%`;
+  }
+
+  if (
+    adminMemberImagePosXValue
+  ) {
+    adminMemberImagePosXValue.textContent =
+      `${imagePositionX}%`;
+  }
+
+  if (
+    adminMemberImagePosYValue
+  ) {
+    adminMemberImagePosYValue.textContent =
+      `${imagePositionY}%`;
+  }
+
+  if (
+    !adminMemberPreviewImage
+  ) {
+    return;
+  }
+
+  adminMemberPreviewImage.style.objectPosition =
+    `${imagePositionX}% ${imagePositionY}%`;
+
+  adminMemberPreviewImage.style.transform =
+    `scale(${imageScale / 100})`;
+
+  adminMemberPreviewImage.style.transformOrigin =
+    "center center";
+
+  adminMemberPreviewImage.style.display =
+    adminMemberPreviewImage.getAttribute("src")
+      ? "block"
+      : "none";
+}
+
+
+/* =========================
+   멤버 이미지 편집값 설정
+========================= */
+
+function setAdminMemberImageEditorValues({
+  imagePositionX = 50,
+  imagePositionY = 50,
+  imageScale = 100,
+} = {}) {
+  const cleanPositionX =
+    clampAdminMemberImageValue(
+      imagePositionX,
+      0,
+      100,
+      50
+    );
+
+  const cleanPositionY =
+    clampAdminMemberImageValue(
+      imagePositionY,
+      0,
+      100,
+      50
+    );
+
+  const cleanScale =
+    clampAdminMemberImageValue(
+      imageScale,
+      100,
+      180,
+      100
+    );
+
+  if (
+    adminMemberImagePosX
+  ) {
+    adminMemberImagePosX.value =
+      String(cleanPositionX);
+  }
+
+  if (
+    adminMemberImagePosY
+  ) {
+    adminMemberImagePosY.value =
+      String(cleanPositionY);
+  }
+
+  if (
+    adminMemberImageScale
+  ) {
+    adminMemberImageScale.value =
+      String(cleanScale);
+  }
+
+  if (
+    adminMemberImagePosXValue
+  ) {
+    adminMemberImagePosXValue.textContent =
+      `${cleanPositionX}%`;
+  }
+
+  if (
+    adminMemberImagePosYValue
+  ) {
+    adminMemberImagePosYValue.textContent =
+      `${cleanPositionY}%`;
+  }
+
+  if (
+    adminMemberImageScaleValue
+  ) {
+    adminMemberImageScaleValue.textContent =
+      `${cleanScale}%`;
+  }
+
+  updateAdminMemberImagePreview();
+}
+
+
+/* =========================
+   멤버 이미지 편집 초기화
+========================= */
+
+function resetAdminMemberImageEditor({
+  hidePreview = true,
+  clearImage = true,
+  clearFile = true,
+} = {}) {
+  setAdminMemberImageEditorValues({
+    imagePositionX: 50,
+    imagePositionY: 50,
+    imageScale: 100,
+  });
+
+  if (
+    clearFile &&
+    adminMemberImageInput
+  ) {
+    adminMemberImageInput.value = "";
+  }
+
+  if (
+    clearImage &&
+    adminMemberPreviewImage
+  ) {
+    adminMemberPreviewImage.removeAttribute(
+      "src"
+    );
+
+    adminMemberPreviewImage.alt = "";
+
+    adminMemberPreviewImage.style.objectPosition =
+      "50% 50%";
+
+    adminMemberPreviewImage.style.transform =
+      "scale(1)";
+
+    adminMemberPreviewImage.style.transformOrigin =
+      "center center";
+  }
+
+  if (
+    hidePreview &&
+    adminMemberImagePreview
+  ) {
+    adminMemberImagePreview.hidden = true;
+  }
+}
+
+
+/* =========================
+   멤버 사진 선택
+========================= */
+
+adminMemberImageInput
+  ?.addEventListener(
+    "change",
+    () => {
+      const file =
+        adminMemberImageInput
+          .files?.[0];
+
+      if (!file) {
+        return;
+      }
+
+      if (
+        !file.type.startsWith(
+          "image/"
+        )
+      ) {
+        adminMemberImageInput.value =
+          "";
+
+        alert(
+          "이미지 파일만 선택할 수 있습니다."
+        );
+
+        return;
+      }
+
+      const imageUrl =
+        URL.createObjectURL(
+          file
+        );
+
+      if (
+        adminMemberPreviewImage
+      ) {
+        adminMemberPreviewImage.src =
+          imageUrl;
+
+        adminMemberPreviewImage.alt =
+          "선택한 멤버 프로필 사진 미리보기";
+
+        adminMemberPreviewImage.onload =
+          () => {
+            URL.revokeObjectURL(
+              imageUrl
+            );
+          };
+      }
+
+      if (
+        adminMemberImagePreview
+      ) {
+        adminMemberImagePreview.hidden =
+          false;
+      }
+
+      setAdminMemberImageEditorValues({
+        imagePositionX: 50,
+        imagePositionY: 50,
+        imageScale: 100,
+      });
+    }
+  );
+
+
+/* =========================
+   슬라이더 실시간 반영
+========================= */
+
+[
+  adminMemberImageScale,
+  adminMemberImagePosX,
+  adminMemberImagePosY,
+].forEach(
+  (rangeInput) => {
+    rangeInput?.addEventListener(
+      "input",
+      updateAdminMemberImagePreview
+    );
+  }
+);
+
+
+/* =========================
+   위치 초기화 버튼
+========================= */
+
+adminMemberImageReset
+  ?.addEventListener(
+    "click",
+    () => {
+      setAdminMemberImageEditorValues({
+        imagePositionX: 50,
+        imagePositionY: 50,
+        imageScale: 100,
+      });
+    }
+  );
+
+
+/* =========================
+   일반 이미지 미리보기 연결
+========================= */
 
 connectImagePreview(
   "adminMusicImage",
@@ -4346,17 +5991,21 @@ connectImagePreview(
 );
 
 connectImagePreview(
-  "adminMemberImage",
-  "adminMemberImagePreview",
-  "adminMemberPreviewImage"
-);
-
-connectImagePreview(
   "adminSettingHeroImage",
   "adminSettingHeroPreview",
   "adminSettingHeroPreviewImage"
 );
 
+
+/* =========================
+   멤버 편집기 최초 상태
+========================= */
+
+setAdminMemberImageEditorValues({
+  imagePositionX: 50,
+  imagePositionY: 50,
+  imageScale: 100,
+});
 
 /* =========================
    YOUTUBE PREVIEW

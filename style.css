@@ -1391,38 +1391,195 @@ main {
   word-break: keep-all;
 }
 
+/* =========================================================
+   MEMBER SOCIAL LINKS
+   - SNS가 1개면 가로 전체
+   - SNS가 2개 이상이면 자동 2열
+   - 플랫폼 아이콘과 이름 정렬
+========================================================= */
+
 .member-links {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 8px;
+
   margin-top: 22px;
+}
+
+.member-links[hidden],
+.member-links.is-empty {
+  display: none;
+}
+
+.member-links .member-link:only-child {
+  grid-column: 1 / -1;
 }
 
 .member-link {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  min-height: 49px;
-  padding: 0 16px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 13px;
-  background: rgba(255, 255, 255, 0.03);
-  color: rgba(255, 255, 255, 0.84);
-  font-size: 11px;
+  justify-content: flex-start;
+  gap: 9px;
+
+  min-width: 0;
+  min-height: 46px;
+  padding: 0 13px;
+
+  overflow: hidden;
+
+  border: 1px solid
+    rgba(255, 255, 255, 0.11);
+  border-radius: 12px;
+
+  background:
+    rgba(255, 255, 255, 0.035);
+
+  color:
+    rgba(255, 255, 255, 0.82);
+
+  font-size: 10px;
   font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+
   transition:
     transform 0.22s ease,
+    border-color 0.22s ease,
     background 0.22s ease,
-    border-color 0.22s ease;
+    color 0.22s ease;
 }
 
 .member-link::after {
   content: "↗";
-  font-size: 14px;
+
+  flex: 0 0 auto;
+
+  margin-left: auto;
+
+  color:
+    rgba(255, 255, 255, 0.36);
+
+  font-size: 12px;
+  font-weight: 500;
+
+  transition:
+    transform 0.22s ease,
+    color 0.22s ease;
+}
+
+.member-social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 23px;
+
+  width: 23px;
+  height: 23px;
+
+  border: 1px solid
+    rgba(255, 255, 255, 0.1);
+  border-radius: 7px;
+
+  background:
+    rgba(255, 255, 255, 0.055);
+
+  color: #fff;
+
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.member-social-label {
+  min-width: 0;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .member-link:hover {
-  transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.22);
-  background: rgba(255, 255, 255, 0.075);
+  transform:
+    translateY(-2px);
+
+  border-color:
+    rgba(255, 255, 255, 0.22);
+
+  background:
+    rgba(255, 255, 255, 0.075);
+
+  color: #fff;
+}
+
+.member-link:hover::after {
+  transform:
+    translate(2px, -2px);
+
+  color:
+    rgba(255, 255, 255, 0.85);
+}
+
+.member-link:focus-visible {
+  outline: 2px solid
+    rgba(255, 255, 255, 0.78);
+  outline-offset: 3px;
+}
+
+/* 플랫폼별 아주 은은한 구분 */
+
+.member-link[
+  data-social-platform="instagram"
+]
+.member-social-icon {
+  background:
+    rgba(225, 48, 108, 0.14);
+}
+
+.member-link[
+  data-social-platform="youtube"
+]
+.member-social-icon {
+  background:
+    rgba(255, 0, 0, 0.14);
+}
+
+.member-link[
+  data-social-platform="spotify"
+]
+.member-social-icon {
+  background:
+    rgba(30, 215, 96, 0.14);
+}
+
+.member-link[
+  data-social-platform="apple"
+]
+.member-social-icon,
+.member-link[
+  data-social-platform="applemusic"
+]
+.member-social-icon {
+  background:
+    rgba(255, 255, 255, 0.1);
+}
+
+.member-link[
+  data-social-platform="soundcloud"
+]
+.member-social-icon {
+  background:
+    rgba(255, 85, 0, 0.14);
+}
+
+.member-link[
+  data-social-platform="melon"
+]
+.member-social-icon {
+  background:
+    rgba(0, 205, 60, 0.14);
 }
 
 /* 태블릿 */
@@ -9610,4 +9767,106 @@ html {
 
     font-size: 8px;
   }
+}
+
+/* =========================================================
+   MEMBER IMAGE EDITOR
+========================================================= */
+
+.admin-member-image-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 18px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 18px;
+  background: rgba(255,255,255,.03);
+}
+
+.admin-member-image-heading{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+}
+
+.admin-member-image-heading strong{
+  display:block;
+  font-size:15px;
+  font-weight:700;
+  margin-bottom:4px;
+}
+
+.admin-member-image-preview{
+  display:flex;
+  gap:22px;
+  align-items:flex-start;
+}
+
+.admin-member-image-frame{
+  width:220px;
+  height:220px;
+  overflow:hidden;
+  border-radius:18px;
+  background:#181818;
+  border:1px solid rgba(255,255,255,.08);
+  flex-shrink:0;
+}
+
+.admin-member-image-frame img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+  transition:.2s;
+}
+
+.admin-member-image-controls{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+
+.admin-member-image-controls label{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.admin-member-image-controls span{
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  color:#d8d8d8;
+}
+
+.admin-member-image-controls output{
+  color:#fff;
+  font-weight:600;
+}
+
+.admin-member-image-controls input[type=range]{
+  width:100%;
+}
+
+.admin-member-image-reset{
+  margin-top:4px;
+  height:42px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+@media (max-width:768px){
+
+.admin-member-image-preview{
+  flex-direction:column;
+}
+
+.admin-member-image-frame{
+  width:100%;
+  max-width:260px;
+  margin:auto;
+}
+
 }
