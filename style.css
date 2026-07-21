@@ -8585,3 +8585,129 @@ html {
     font-size: 9px;
   }
 }
+
+/* =========================
+   MUSIC PLATFORM LINKS
+========================= */
+
+.music-platform-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.music-platform-link {
+  position: relative;
+  display: inline-flex;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.035);
+  color: rgba(255, 255, 255, 0.92);
+  text-decoration: none;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.music-platform-link:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.42);
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.music-platform-icon {
+  display: inline-flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.music-platform-name {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.music-platform-link.is-disabled {
+  cursor: default;
+  opacity: 0.28;
+  pointer-events: none;
+}
+
+.music-platform-link:not(.is-disabled) {
+  opacity: 1;
+}
+
+/* YouTube */
+.music-platform-link[title="YouTube"]
+  .music-platform-icon {
+  padding-left: 2px;
+  font-size: 17px;
+}
+
+/* Spotify */
+.music-platform-link[title="Spotify"]
+  .music-platform-icon {
+  font-size: 19px;
+}
+
+/* Apple Music */
+.music-platform-link[title="Apple Music"]
+  .music-platform-icon {
+  font-size: 22px;
+}
+
+/* Melon */
+.music-platform-link[title="Melon"]
+  .music-platform-icon {
+  font-family: Arial, sans-serif;
+  font-size: 19px;
+  font-weight: 800;
+  text-transform: lowercase;
+}
+
+@media (max-width: 767px) {
+  .music-platform-links {
+    gap: 8px;
+    margin-top: 18px;
+  }
+
+  .music-platform-link {
+    width: 40px;
+    height: 40px;
+    flex-basis: 40px;
+  }
+
+  .music-platform-icon {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 390px) {
+  .music-platform-links {
+    gap: 6px;
+  }
+
+  .music-platform-link {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+  }
+}
