@@ -638,6 +638,19 @@ function normalizeContentData(
       ) {
         value =
           Number.parseInt(value, 10) || 0;
+      } else if (
+        databaseColumn === "platforms_json"
+      ) {
+        if (Array.isArray(value)) {
+          value = JSON.stringify(value);
+        } else if (
+          typeof value === "string" &&
+          value.trim()
+        ) {
+          value = value.trim();
+        } else {
+          value = "[]";
+        }
       } else if (value == null) {
         value = "";
       } else {
