@@ -9170,29 +9170,58 @@ function renderAdminMusicPlatforms(
     return;
   }
 
-  const cleanPlatforms =
+  const savedPlatforms =
     Array.isArray(platforms)
-      ? platforms.filter(
-          (platformItem) =>
-            platformItem &&
-            typeof platformItem ===
-              "object"
-        )
+      ? platforms
       : [];
 
-  if (
-    cleanPlatforms.length === 0
-  ) {
-    platformList.innerHTML = "";
+  const requiredPlatforms = [
+    {
+      key: "youtube",
+      label: "YouTube",
+    },
+    {
+      key: "spotify",
+      label: "Spotify",
+    },
+    {
+      key: "apple",
+      label: "Apple Music",
+    },
+    {
+      key: "melon",
+      label: "Melon",
+    },
+  ];
 
-    updateAdminMusicPlatformEmptyState();
-    syncAdminMusicPlatformsJson();
+  const mergedPlatforms =
+    requiredPlatforms.map(
+      (requiredPlatform) => {
+        const savedPlatform =
+          savedPlatforms.find(
+            (platformItem) =>
+              String(
+                platformItem?.key || ""
+              ).toLowerCase() ===
+              requiredPlatform.key
+          );
 
-    return;
-  }
+        return {
+          key:
+            requiredPlatform.key,
+
+          label:
+            requiredPlatform.label,
+
+          url:
+            savedPlatform?.url ||
+            "",
+        };
+      }
+    );
 
   platformList.innerHTML =
-    cleanPlatforms
+    mergedPlatforms
       .map(
         createAdminMusicPlatformRow
       )
