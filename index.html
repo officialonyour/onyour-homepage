@@ -1015,6 +1015,7 @@
         </div>
 
         <a
+          id="performanceInstagramButton"
           class="performance-instagram-link"
           href="https://www.instagram.com/official_onyour"
           target="_blank"
@@ -3530,268 +3531,42 @@
         </div>
       </div>
 
-<form
-  class="admin-content-form"
-  id="adminMembersForm"
->
-  <input
-    id="adminMemberId"
-    type="hidden"
-  />
-
-  <label>
-    이름
-
-    <input
-      id="adminMemberName"
-      type="text"
-      placeholder="멤버 이름"
-      required
-    />
-  </label>
-
-  <label>
-    영문 이름 또는 활동명
-
-    <input
-      id="adminMemberEnglishName"
-      type="text"
-      placeholder="영문 이름"
-    />
-  </label>
-
-  <label>
-    역할
-
-    <input
-      id="adminMemberRole"
-      type="text"
-      placeholder="예: Producer · Rap"
-      required
-    />
-  </label>
-
-  <label>
-    소개
-
-    <textarea
-      id="adminMemberDescription"
-      rows="5"
-      placeholder="멤버 소개"
-    ></textarea>
-  </label>
-
-  <!-- =========================
-       프로필 사진 편집
-  ========================== -->
-
-  <section class="admin-member-image-editor">
-
-    <div class="admin-member-image-heading">
-      <div>
-        <strong>프로필 사진</strong>
-
-        <small class="admin-field-help">
-          확대와 위치를 조절할 수 있습니다.
-        </small>
-      </div>
-    </div>
-
-    <label class="admin-member-image-upload">
-      사진 선택
-
-      <input
-        id="adminMemberImage"
-        type="file"
-        accept="image/jpeg,image/png,image/webp,image/gif"
-      />
-
-      <small class="admin-field-help">
-        새 사진을 선택하지 않으면 기존 사진이 유지됩니다.
-      </small>
-    </label>
-
-    <div
-      id="adminMemberImagePreview"
-      class="admin-member-image-preview"
-      hidden
-    >
-
-      <div class="admin-member-image-frame">
-        <img
-          id="adminMemberPreviewImage"
-          src=""
-          alt="멤버 프로필 미리보기"
-        />
-      </div>
-
-      <div class="admin-member-image-controls">
-
-        <label>
-          <span>
-            확대
-            <output id="adminMemberImageScaleValue">
-              100%
-            </output>
-          </span>
-
-          <input
-            id="adminMemberImageScale"
-            type="range"
-            min="100"
-            max="180"
-            value="100"
-          />
-        </label>
-
-        <label>
-          <span>
-            좌우 위치
-            <output id="adminMemberImagePosXValue">
-              50%
-            </output>
-          </span>
-
-          <input
-            id="adminMemberImagePosX"
-            type="range"
-            min="0"
-            max="100"
-            value="50"
-          />
-        </label>
-
-        <label>
-          <span>
-            상하 위치
-            <output id="adminMemberImagePosYValue">
-              50%
-            </output>
-          </span>
-
-          <input
-            id="adminMemberImagePosY"
-            type="range"
-            min="0"
-            max="100"
-            value="50"
-          />
-        </label>
-
-        <button
-          id="adminMemberImageReset"
-          class="admin-member-image-reset"
-          type="button"
-        >
-          위치 초기화
-        </button>
-
-      </div>
-
-    </div>
-
-  </section>
-
-  <!-- =========================
-       SNS 링크 관리
-  ========================== -->
-
-  <section class="admin-member-social-editor">
-
-    <div class="admin-member-social-heading">
-
-      <div>
-
-        <strong>SNS 및 외부 링크</strong>
-
-        <small class="admin-field-help">
-          Instagram, YouTube, Spotify, Apple Music, TikTok 등 원하는 만큼 추가할 수 있습니다.
-        </small>
-
-      </div>
-
-      <button
-        id="adminMemberSocialAddButton"
-        class="admin-member-social-add-button"
-        type="button"
+      <form
+        class="admin-content-form"
+        id="adminSettingsForm"
       >
-        + 링크 추가
-      </button>
+        <label>
+          공식 Instagram URL
 
-    </div>
+          <input
+            id="adminSettingInstagramUrl"
+            type="url"
+            placeholder="https://www.instagram.com/official_onyour"
+            required
+          />
 
-    <input
-      id="adminMemberSocialLinksJson"
-      type="hidden"
-      value="[]"
-    />
+          <small class="admin-field-help">
+            저장하면 홈페이지의 모든 공식 Instagram 버튼에 동시에 적용됩니다.
+          </small>
+        </label>
 
-    <div
-      id="adminMemberSocialList"
-      class="admin-member-social-list"
-    >
+        <div class="admin-form-actions">
+          <button
+            class="admin-form-cancel"
+            type="button"
+            data-admin-back="home"
+          >
+            취소
+          </button>
 
-      <div class="admin-member-social-empty">
-
-        <strong>
-          등록된 링크가 없습니다.
-        </strong>
-
-        <p>
-          링크 추가 버튼을 눌러 SNS를 추가하세요.
-        </p>
-
-      </div>
-
-    </div>
-
-  </section>
-
-  <label>
-    표시 순서
-
-    <input
-      id="adminMemberOrder"
-      type="number"
-      min="1"
-      value="1"
-    />
-  </label>
-
-  <label class="admin-checkbox-label">
-
-    <input
-      id="adminMemberPublished"
-      type="checkbox"
-      checked
-    />
-
-    <span>
-      홈페이지에 공개
-    </span>
-
-  </label>
-
-  <div class="admin-form-actions">
-
-    <button
-      class="admin-form-cancel"
-      type="button"
-      data-admin-back="members"
-    >
-      취소
-    </button>
-
-    <button
-      class="admin-form-submit"
-      type="submit"
-    >
-      저장
-    </button>
-
-  </div>
-
-</form>
+          <button
+            class="admin-form-submit"
+            type="submit"
+          >
+            저장
+          </button>
+        </div>
+      </form>
     </section>
 
   </div>

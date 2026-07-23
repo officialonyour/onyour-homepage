@@ -94,7 +94,7 @@ const CONTENT_CONFIG = {
     },
   },
 
-members: {
+  members: {
   table: "members",
   orderBy: "sort_order ASC, created_at ASC",
 
@@ -121,6 +121,16 @@ members: {
       "social_links_json",
   },
 },
+
+  settings: {
+    table: "site_settings",
+    orderBy: "created_at ASC",
+
+    fields: {
+      instagramUrl: "instagram_url",
+      published: "published",
+    },
+  },
 };
 
 
@@ -153,6 +163,10 @@ export async function onRequestGet(context) {
 
     if (!config) {
       return invalidTypeResponse();
+    }
+
+    if (type === "settings") {
+      await ensureSiteSettingsTable(env.DB);
     }
 
     if (includePrivate) {
@@ -303,6 +317,10 @@ export async function onRequestDelete(context) {
       return invalidTypeResponse();
     }
 
+    if (type === "settings") {
+      await ensureSiteSettingsTable(env.DB);
+    }
+
     if (!id) {
       return jsonResponse(
         {
@@ -401,6 +419,10 @@ async function saveContent(
 
     if (!config) {
       return invalidTypeResponse();
+    }
+
+    if (type === "settings") {
+      await ensureSiteSettingsTable(env.DB);
     }
 
     const body = await readJsonBody(request);
@@ -920,6 +942,10 @@ function getContentConfig(type) {
 }
 
 function createContentId(type) {
+  if (type === "settings") {
+    return "site";
+  }
+
   const prefix =
     type === "members"
       ? "member"
@@ -1180,4 +1206,20 @@ function jsonResponse(
       },
     }
   );
+}
+
+async function ensureSiteSettingsTable(database) {
+  await database
+    .prepare(
+      `
+        CREATE TABLE IF NOT EXISTS site_settings (
+          id TEXT PRIMARY KEY,
+          instagram_url TEXT NOT NULL DEFAULT '',
+          published INTEGER NOT NULL DEFAULT 1,
+          created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+      `
+    )
+    .run();
 }

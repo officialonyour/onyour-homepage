@@ -5430,23 +5430,181 @@ document
   );
 
 /* =========================
-   SETTINGS TEMPORARY SAVE
+   SITE SETTINGS
 ========================= */
+
+const DEFAULT_TEAM_INSTAGRAM_URL =
+  "https://www.instagram.com/official_onyour";
+
+function normalizeInstagramUrl(value) {
+  const rawValue = String(value || "").trim();
+
+  if (!rawValue) {
+    return DEFAULT_TEAM_INSTAGRAM_URL;
+  }
+
+  const urlValue = /^https?:\/\//i.test(rawValue)
+    ? rawValue
+    : `https://${rawValue}`;
+
+  try {
+    const parsedUrl = new URL(urlValue);
+
+    if (
+      parsedUrl.protocol !== "https:" &&
+      parsedUrl.protocol !== "http:"
+    ) {
+      return "";
+    }
+
+    return parsedUrl.href;
+  } catch {
+    return "";
+  }
+}
+
+function applyTeamInstagramUrl(value) {
+  const instagramUrl =
+    normalizeInstagramUrl(value) ||
+    DEFAULT_TEAM_INSTAGRAM_URL;
+
+  [
+    "heroInstagramButton",
+    "performanceInstagramButton",
+    "teamInstagramButton",
+  ].forEach((elementId) => {
+    const link = document.getElementById(elementId);
+
+    if (link) {
+      link.href = instagramUrl;
+    }
+  });
+
+  const input = document.getElementById(
+    "adminSettingInstagramUrl"
+  );
+
+  if (input) {
+    input.value = instagramUrl;
+  }
+}
+
+async function loadSiteSettings() {
+  try {
+    const response = await fetch(
+      "/api/content?type=settings"
+    );
+
+    if (!response.ok) {
+      return;
+    }
+
+    const result = await response.json();
+    const settings = Array.isArray(result.items)
+      ? result.items[0]
+      : null;
+
+    applyTeamInstagramUrl(
+      settings?.instagramUrl
+    );
+  } catch (error) {
+    console.error(
+      "홈페이지 설정 불러오기 실패:",
+      error
+    );
+  }
+}
 
 document
   .getElementById("adminSettingsForm")
   ?.addEventListener(
     "submit",
-    (event) => {
+    async (event) => {
       event.preventDefault();
 
-      alert(
-        "홈페이지 설정이 현재 화면에 임시 저장되었습니다.\n다음 단계에서 실제 홈페이지 및 D1과 연결합니다."
+      const input = document.getElementById(
+        "adminSettingInstagramUrl"
       );
+      const submitButton =
+        event.currentTarget.querySelector(
+          ".admin-form-submit"
+        );
+      const instagramUrl =
+        normalizeInstagramUrl(input?.value);
 
-      openAdminView("home");
+      if (!instagramUrl) {
+        alert(
+          "올바른 Instagram 주소를 입력해 주세요."
+        );
+        input?.focus();
+        return;
+      }
+
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = "저장 중...";
+      }
+
+      try {
+        let settingsId = "";
+
+        const currentResult =
+          await adminApiRequest(
+            "/api/content?type=settings&includePrivate=true"
+          );
+
+        if (Array.isArray(currentResult.items)) {
+          settingsId =
+            currentResult.items[0]?.id || "";
+        }
+
+        const requestUrl = settingsId
+          ? `/api/content?type=settings&id=${encodeURIComponent(
+              settingsId
+            )}`
+          : "/api/content?type=settings";
+
+        const savedResult = await adminApiRequest(
+          requestUrl,
+          {
+            method: settingsId ? "PUT" : "POST",
+            body: JSON.stringify({
+              id: settingsId || "site",
+              instagramUrl,
+              published: true,
+            }),
+          }
+        );
+
+        applyTeamInstagramUrl(
+          savedResult.item?.instagramUrl ||
+          instagramUrl
+        );
+
+        alert(
+          "공식 Instagram 주소가 저장되었습니다."
+        );
+        openAdminView("home");
+      } catch (error) {
+        console.error(
+          "홈페이지 설정 저장 실패:",
+          error
+        );
+
+        alert(
+          error.message ||
+          "홈페이지 설정을 저장하지 못했습니다."
+        );
+      } finally {
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.textContent = "저장";
+        }
+      }
     }
   );
+
+loadSiteSettings();
 
 
 /* =========================
