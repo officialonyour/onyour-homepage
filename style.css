@@ -10024,7 +10024,7 @@ html {
 
 }
 
-/* MUSIC MOBILE COMPACT — FINAL OVERRIDE */
+/* MUSIC MOBILE COMPACT — PLATFORM + ALBUM INFO FIX */
 @media (max-width: 767px) {
   #music {
     padding-top: 18px;
@@ -10061,42 +10061,67 @@ html {
   #music .music-card-body {
     display: grid;
     grid-template-rows: auto auto auto;
-    gap: 6px;
+    gap: 5px;
     padding: 9px 3px 3px;
   }
 
-  #music .music-profile-label,
-  #music .music-release-type {
+  #music .music-profile-label {
     display: none;
   }
 
   #music .music-profile-name {
     overflow: hidden;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 750;
-    line-height: 1.15;
+    line-height: 1.2;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   #music .music-release-block {
+    display: grid;
+    gap: 2px;
     min-width: 0;
     margin-top: 0;
   }
 
-  #music .music-album-title {
+  #music .music-release-type {
+    display: block;
     overflow: hidden;
-    color: rgba(255, 255, 255, 0.68);
-    font-size: 11px;
-    line-height: 1.25;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.42);
+    font-size: 7px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0.08em;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
+  #music .music-release-type span {
+    display: none;
+  }
+
+  #music .music-album-title {
+    display: -webkit-box;
+    overflow: hidden;
+    min-height: 24px;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.68);
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 1.2;
+    white-space: normal;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
   #music .music-platform-links {
     display: flex;
+    align-items: center;
+    gap: 4px;
     width: 100%;
-    min-height: 29px;
+    min-height: 27px;
     margin-top: 0;
     padding: 0;
     border: 0;
@@ -10107,27 +10132,29 @@ html {
   }
 
   #music .music-platform-link {
-    width: 100% !important;
-    height: 29px !important;
-    min-height: 29px;
-    padding: 0 8px !important;
-    border-radius: 8px !important;
-    font-size: 9px;
-  }
-
-  #music .music-platform-link:not(.is-disabled) ~
-  .music-platform-link:not(.is-disabled) {
-    display: none !important;
+    display: inline-flex !important;
+    flex: 1 1 0;
+    width: auto !important;
+    min-width: 0;
+    height: 27px !important;
+    min-height: 27px;
+    padding: 0 !important;
+    border-radius: 7px !important;
+    font-size: 0;
   }
 
   #music .music-platform-icon,
   #music .music-platform-icon svg {
-    width: 13px;
-    height: 13px;
+    width: 12px;
+    height: 12px;
   }
 
   #music .music-platform-icon i {
-    font-size: 13px;
+    font-size: 12px;
+  }
+
+  #music .music-platform-name {
+    display: none;
   }
 
   #music .music-platform-coming-soon {
@@ -10164,10 +10191,10 @@ html {
   }
 
   #music .music-profile-name {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   #music .music-album-title {
-    font-size: 10px;
+    font-size: 9px;
   }
 }

@@ -1525,6 +1525,16 @@ function fitMusicCardTitle(element) {
   if (!element) return;
 
   element.style.fontSize = "";
+  element.style.whiteSpace = "";
+
+  if (
+    window.matchMedia(
+      "(max-width: 767px)"
+    ).matches
+  ) {
+    return;
+  }
+
   element.style.whiteSpace = "nowrap";
 
   const maxSize = 28;
@@ -4556,99 +4566,33 @@ document
   .getElementById("adminVideoForm")
   ?.addEventListener(
     "submit",
-    async (event) => {
+    (event) => {
       event.preventDefault();
-
-      const form = event.currentTarget;
-
-      const submitButton =
-        form.querySelector(
-          ".admin-form-submit"
-        );
 
       const id = getAdminFormValue(
         "adminVideoId"
       );
 
       const data = {
-        id:
-          id ||
-          createAdminId("video"),
-
+        id: id || createAdminId("video"),
         title: getAdminFormValue(
           "adminVideoTitle"
         ),
-
         url: getAdminFormValue(
           "adminVideoUrl"
         ),
-
-        description:
-          getAdminFormValue(
-            "adminVideoDescription"
-          ),
-
-        featured:
-          getAdminFormValue(
-            "adminVideoFeatured"
-          ),
-
-        published:
-          getAdminFormValue(
-            "adminVideoPublished"
-          ),
+        description: getAdminFormValue(
+          "adminVideoDescription"
+        ),
+        featured: getAdminFormValue(
+          "adminVideoFeatured"
+        ),
+        published: getAdminFormValue(
+          "adminVideoPublished"
+        ),
       };
 
-      if (
-        !getYoutubeEmbedUrl(data.url)
-      ) {
-        alert(
-          "올바른 YouTube 영상 주소를 입력해 주세요."
-        );
-
-        document
-          .getElementById(
-            "adminVideoUrl"
-          )
-          ?.focus();
-
-        return;
-      }
-
-      if (submitButton) {
-        submitButton.disabled = true;
-        submitButton.textContent =
-          "저장 중...";
-      }
-
-      try {
-        await saveAdminItem(
-          "video",
-          data
-        );
-
-        await loadPublicFeaturedVideo();
-
-        alert(
-          "대표 영상이 저장되었습니다."
-        );
-      } catch (error) {
-        console.error(
-          "대표 영상 저장 실패:",
-          error
-        );
-
-        alert(
-          error.message ||
-          "대표 영상을 저장하지 못했습니다."
-        );
-      } finally {
-        if (submitButton) {
-          submitButton.disabled = false;
-          submitButton.textContent =
-            "저장";
-        }
-      }
+      saveAdminItem("video", data);
     }
   );
 
@@ -6231,198 +6175,71 @@ setAdminMemberImageEditorValues({
   imageScale: 100,
 });
 
-/* =========================================================
-   YOUTUBE URL
-   - 일반 영상, Shorts, 단축 주소 지원
-========================================================= */
+/* =========================
+   YOUTUBE PREVIEW
+========================= */
 
 function getYoutubeEmbedUrl(url) {
-  const value = String(url || "").trim();
-
-  if (!value) {
-    return "";
-  }
+  if (!url) return "";
 
   try {
-    const parsedUrl = new URL(value);
-    const hostname = parsedUrl.hostname
-      .replace(/^www\./, "")
-      .toLowerCase();
+    const parsedUrl = new URL(url);
 
     let videoId = "";
 
-    if (hostname === "youtu.be") {
-      videoId = parsedUrl.pathname
-        .split("/")
-        .filter(Boolean)[0] || "";
+    if (
+      parsedUrl.hostname.includes(
+        "youtu.be"
+      )
+    ) {
+      videoId =
+        parsedUrl.pathname
+          .replace("/", "")
+          .trim();
     }
 
     if (
-      hostname === "youtube.com" ||
-      hostname === "m.youtube.com" ||
-      hostname === "music.youtube.com"
+      parsedUrl.hostname.includes(
+        "youtube.com"
+      )
     ) {
-      if (parsedUrl.pathname === "/watch") {
+      if (
+        parsedUrl.pathname === "/watch"
+      ) {
         videoId =
-          parsedUrl.searchParams.get("v") || "";
-      } else {
-        const pathParts = parsedUrl.pathname
-          .split("/")
-          .filter(Boolean);
+          parsedUrl.searchParams.get("v") ||
+          "";
+      }
 
-        if (
-          ["shorts", "embed", "live"].includes(
-            pathParts[0]
-          )
-        ) {
-          videoId = pathParts[1] || "";
-        }
+      if (
+        parsedUrl.pathname.startsWith(
+          "/shorts/"
+        )
+      ) {
+        videoId =
+          parsedUrl.pathname
+            .split("/shorts/")[1]
+            ?.split("/")[0] || "";
+      }
+
+      if (
+        parsedUrl.pathname.startsWith(
+          "/embed/"
+        )
+      ) {
+        videoId =
+          parsedUrl.pathname
+            .split("/embed/")[1]
+            ?.split("/")[0] || "";
       }
     }
 
-    videoId = videoId.replace(
-      /[^a-zA-Z0-9_-]/g,
-      ""
-    );
-
-    if (!videoId) {
-      return "";
-    }
+    if (!videoId) return "";
 
     return `https://www.youtube.com/embed/${videoId}`;
-  } catch (error) {
+  } catch {
     return "";
   }
-}
-
-/* =========================================================
-   PUBLIC FEATURED VIDEO
-   - D1 대표 영상 불러오기
-   - 메인 라이브 영역 반영
-========================================================= */
-
-function applyPublicFeaturedVideo(
-  video
-) {
-  if (!video) {
-    return;
-  }
-
-  const videoUrl = String(
-    video.url || ""
-  ).trim();
-
-  const embedUrl =
-    getYoutubeEmbedUrl(videoUrl);
-
-  if (!embedUrl) {
-    return;
-  }
-
-  const featuredVideo =
-    document.getElementById(
-      "featuredVideo"
-    );
-
-  const liveTitle =
-    document.getElementById(
-      "liveTitle"
-    );
-
-  const liveDescription =
-    document.getElementById(
-      "liveDescription"
-    );
-
-  const youtubeVideoButton =
-    document.getElementById(
-      "youtubeVideoButton"
-    );
-
-  if (featuredVideo) {
-    featuredVideo.src = embedUrl;
-
-    featuredVideo.title =
-      video.title ||
-      "ONYOUR 대표 라이브 영상";
-  }
-
-  if (liveTitle) {
-    liveTitle.textContent =
-      video.title ||
-      "ONYOUR Live Session";
-  }
-
-  if (liveDescription) {
-    liveDescription.textContent =
-      video.description ||
-      "ONYOUR의 대표 라이브 영상을 감상해 보세요.";
-  }
-
-  if (youtubeVideoButton) {
-    youtubeVideoButton.href =
-      videoUrl;
-  }
-}
-
-async function loadPublicFeaturedVideo() {
-  try {
-    const response = await fetch(
-      "/api/content?type=video",
-      {
-        cache: "no-store",
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(
-        "대표 영상 정보를 불러오지 못했습니다."
-      );
-    }
-
-    const result =
-      await response.json();
-
-    const videos =
-      Array.isArray(result.items)
-        ? result.items
-        : [];
-
-    const featuredVideo =
-      videos.find(
-        (video) =>
-          video.published === true &&
-          video.featured === true
-      ) ||
-      videos.find(
-        (video) =>
-          video.published === true
-      );
-
-    if (!featuredVideo) {
-      return;
-    }
-
-    applyPublicFeaturedVideo(
-      featuredVideo
-    );
-  } catch (error) {
-    console.error(
-      "대표 영상 불러오기 실패:",
-      error
-    );
-  }
-}
-
-if (
-  document.readyState === "loading"
-) {
-  document.addEventListener(
-    "DOMContentLoaded",
-    loadPublicFeaturedVideo
-  );
-} else {
-  loadPublicFeaturedVideo();
 }
 
 const adminVideoUrl =
