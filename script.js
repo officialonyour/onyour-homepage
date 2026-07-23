@@ -6232,6 +6232,70 @@ setAdminMemberImageEditorValues({
 });
 
 /* =========================================================
+   YOUTUBE URL
+   - 일반 영상, Shorts, 단축 주소 지원
+========================================================= */
+
+function getYoutubeEmbedUrl(url) {
+  const value = String(url || "").trim();
+
+  if (!value) {
+    return "";
+  }
+
+  try {
+    const parsedUrl = new URL(value);
+    const hostname = parsedUrl.hostname
+      .replace(/^www\./, "")
+      .toLowerCase();
+
+    let videoId = "";
+
+    if (hostname === "youtu.be") {
+      videoId = parsedUrl.pathname
+        .split("/")
+        .filter(Boolean)[0] || "";
+    }
+
+    if (
+      hostname === "youtube.com" ||
+      hostname === "m.youtube.com" ||
+      hostname === "music.youtube.com"
+    ) {
+      if (parsedUrl.pathname === "/watch") {
+        videoId =
+          parsedUrl.searchParams.get("v") || "";
+      } else {
+        const pathParts = parsedUrl.pathname
+          .split("/")
+          .filter(Boolean);
+
+        if (
+          ["shorts", "embed", "live"].includes(
+            pathParts[0]
+          )
+        ) {
+          videoId = pathParts[1] || "";
+        }
+      }
+    }
+
+    videoId = videoId.replace(
+      /[^a-zA-Z0-9_-]/g,
+      ""
+    );
+
+    if (!videoId) {
+      return "";
+    }
+
+    return `https://www.youtube.com/embed/${videoId}`;
+  } catch (error) {
+    return "";
+  }
+}
+
+/* =========================================================
    PUBLIC FEATURED VIDEO
    - D1 대표 영상 불러오기
    - 메인 라이브 영역 반영
