@@ -6242,6 +6242,126 @@ function getYoutubeEmbedUrl(url) {
   }
 }
 
+function applyPublicFeaturedVideo(video) {
+  if (!video) {
+    return;
+  }
+
+  const videoUrl = String(
+    video.url ||
+    video.videoUrl ||
+    video.video_url ||
+    ""
+  ).trim();
+
+  const embedUrl =
+    getYoutubeEmbedUrl(videoUrl);
+
+  const featuredVideo =
+    document.getElementById(
+      "featuredVideo"
+    );
+
+  const youtubeVideoButton =
+    document.getElementById(
+      "youtubeVideoButton"
+    );
+
+  const liveTitle =
+    document.getElementById(
+      "liveTitle"
+    );
+
+  const liveDescription =
+    document.getElementById(
+      "liveDescription"
+    );
+
+  if (
+    featuredVideo &&
+    embedUrl
+  ) {
+    featuredVideo.src = embedUrl;
+  }
+
+  if (
+    youtubeVideoButton &&
+    videoUrl
+  ) {
+    youtubeVideoButton.href =
+      videoUrl;
+  }
+
+  if (
+    liveTitle &&
+    video.title
+  ) {
+    liveTitle.textContent =
+      video.title;
+  }
+
+  if (
+    liveDescription &&
+    video.description
+  ) {
+    liveDescription.textContent =
+      video.description;
+  }
+}
+
+
+async function loadPublicFeaturedVideo() {
+  try {
+    const response = await fetch(
+      "/api/content?type=video"
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        "영상 정보를 불러오지 못했습니다."
+      );
+    }
+
+    const result =
+      await response.json();
+
+    const videos =
+      Array.isArray(result.items)
+        ? result.items
+        : [];
+
+    const publishedVideos =
+      videos.filter(
+        (video) =>
+          video.published === true ||
+          video.published === 1 ||
+          video.published === "1"
+      );
+
+    const featuredVideo =
+      publishedVideos.find(
+        (video) =>
+          video.featured === true ||
+          video.featured === 1 ||
+          video.featured === "1"
+      ) ||
+      publishedVideos[0];
+
+    if (!featuredVideo) {
+      return;
+    }
+
+    applyPublicFeaturedVideo(
+      featuredVideo
+    );
+  } catch (error) {
+    console.error(
+      "대표 영상 불러오기 실패:",
+      error
+    );
+  }
+}
+
 const adminVideoUrl =
   document.getElementById("adminVideoUrl");
 
@@ -9572,13 +9692,19 @@ function resetAdminMusicPlatforms() {
   renderAdminMusicPlatforms([]);
 }
 
+function initializePublicDynamicContent() {
+  loadPublicMembers();
+  loadPublicFeaturedVideo();
+}
+
+
 if (
   document.readyState === "loading"
 ) {
   document.addEventListener(
     "DOMContentLoaded",
-    loadPublicMembers
+    initializePublicDynamicContent
   );
 } else {
-  loadPublicMembers();
+  initializePublicDynamicContent();
 }
