@@ -779,6 +779,187 @@ main {
    HOMEPAGE V2 · ABOUT
 ========================================================= */
 
+/* =========================================================
+   ONYOUR · COMPACT INTRO
+========================================================= */
+
+.onyour-intro-section {
+  padding-top: clamp(52px, 7vw, 88px);
+  padding-bottom: clamp(52px, 7vw, 88px);
+}
+
+.onyour-intro-card {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(30px, 4vw, 58px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 28px;
+  background:
+    radial-gradient(
+      circle at 92% 8%,
+      rgba(137, 117, 255, 0.17),
+      transparent 36%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.065),
+      rgba(255, 255, 255, 0.018)
+    ),
+    #101010;
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.045);
+}
+
+.onyour-intro-card::after {
+  content: "ONYOUR";
+  position: absolute;
+  right: -0.04em;
+  bottom: -0.22em;
+  color: rgba(255, 255, 255, 0.025);
+  font-size: clamp(90px, 15vw, 220px);
+  font-weight: 800;
+  line-height: 0.8;
+  letter-spacing: -0.08em;
+  pointer-events: none;
+  user-select: none;
+}
+
+.onyour-intro-top,
+.onyour-intro-content,
+.onyour-intro-tags {
+  position: relative;
+  z-index: 1;
+}
+
+.onyour-intro-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.onyour-intro-founded {
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.onyour-intro-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+  gap: clamp(30px, 6vw, 90px);
+  align-items: end;
+  margin-top: clamp(50px, 7vw, 92px);
+}
+
+.onyour-intro-content h2 {
+  max-width: 760px;
+  margin: 0;
+  color: #fff;
+  font-size: clamp(36px, 4.7vw, 68px);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.06em;
+  word-break: keep-all;
+}
+
+.onyour-intro-copy {
+  padding-bottom: 4px;
+}
+
+.onyour-intro-copy p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 14px;
+  line-height: 1.85;
+  word-break: keep-all;
+}
+
+.onyour-intro-copy p + p {
+  margin-top: 12px;
+}
+
+.onyour-intro-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: clamp(38px, 5vw, 64px);
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.onyour-intro-tags span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 29px;
+  padding: 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.025);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 767px) {
+  .onyour-intro-section {
+    padding-top: 26px;
+    padding-bottom: 26px;
+  }
+
+  .onyour-intro-card {
+    padding: 24px 20px;
+    border-radius: 19px;
+  }
+
+  .onyour-intro-card::after {
+    right: -10px;
+    bottom: -5px;
+    font-size: 92px;
+  }
+
+  .onyour-intro-founded {
+    font-size: 7px;
+  }
+
+  .onyour-intro-content {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-top: 50px;
+  }
+
+  .onyour-intro-content h2 {
+    font-size: clamp(28px, 8.8vw, 38px);
+    line-height: 1.12;
+  }
+
+  .onyour-intro-copy p {
+    font-size: 12px;
+    line-height: 1.78;
+  }
+
+  .onyour-intro-copy p + p {
+    margin-top: 9px;
+  }
+
+  .onyour-intro-tags {
+    gap: 6px;
+    margin-top: 32px;
+    padding-top: 16px;
+  }
+
+  .onyour-intro-tags span {
+    min-height: 26px;
+    padding: 0 9px;
+    font-size: 6px;
+  }
+}
+
 .about-section-v2 {
   position: relative;
   overflow: hidden;
@@ -5809,8 +5990,8 @@ body.admin-dashboard-open {
 /* 모바일 */
 @media (max-width: 768px) {
   .fan-messages-section {
-    padding-top: 68px;
-    padding-bottom: 72px;
+    padding-top: 52px;
+    padding-bottom: 52px;
   }
 
   .fan-messages-inner {
@@ -6905,7 +7086,7 @@ body.admin-dashboard-open {
 
 @media (max-width: 767px) {
   :root {
-    --mobile-section-gap: 72px;
+    --mobile-section-gap: 52px;
     --mobile-card-gap: 10px;
     --mobile-card-radius: 18px;
   }
@@ -7132,7 +7313,7 @@ body.admin-dashboard-open {
   }
 
   .footer {
-    margin-top: 72px;
+    margin-top: 52px;
     padding-top: 28px;
     padding-bottom: 26px;
   }
