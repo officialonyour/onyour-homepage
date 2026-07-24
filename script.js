@@ -874,8 +874,7 @@ async function saveAdminItem(
   }
 
   if (!savedItem.id) {
-    savedItem.id =
-      data.id;
+    savedItem.id = data.id;
   }
 
   if (isUpdate) {
@@ -889,6 +888,27 @@ async function saveAdminItem(
   }
 
   renderAllAdminLists();
+
+  /*
+   * News·공연 공개 화면 즉시 갱신
+   */
+  if (
+    sectionName === "news" &&
+    typeof loadPublicNews ===
+      "function"
+  ) {
+    await loadPublicNews();
+  }
+
+  if (
+    sectionName ===
+      "performance" &&
+    typeof loadPublicPerformances ===
+      "function"
+  ) {
+    await loadPublicPerformances();
+  }
+
   openAdminView(sectionName);
 
   return savedItem;
@@ -5626,7 +5646,9 @@ async function deleteAdminItem(
 
   try {
     await adminApiRequest(
-      `/api/content?type=${sectionName}&id=${encodeURIComponent(
+      `/api/content?type=${encodeURIComponent(
+        sectionName
+      )}&id=${encodeURIComponent(
         itemId
       )}`,
       {
@@ -5637,10 +5659,31 @@ async function deleteAdminItem(
     adminStore[sectionName] =
       adminStore[sectionName].filter(
         (entry) =>
-          entry.id !== itemId
+          String(entry.id) !==
+          String(itemId)
       );
 
     renderAllAdminLists();
+
+    /*
+     * News·공연 공개 화면 즉시 갱신
+     */
+    if (
+      sectionName === "news" &&
+      typeof loadPublicNews ===
+        "function"
+    ) {
+      await loadPublicNews();
+    }
+
+    if (
+      sectionName ===
+        "performance" &&
+      typeof loadPublicPerformances ===
+        "function"
+    ) {
+      await loadPublicPerformances();
+    }
 
     alert("삭제되었습니다.");
   } catch (error) {
