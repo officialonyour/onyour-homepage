@@ -6681,19 +6681,26 @@ document
 const DEFAULT_TEAM_INSTAGRAM_URL =
   "https://www.instagram.com/official_onyour";
 
+const DEFAULT_BOOKING_URL =
+  "https://www.instagram.com/official_onyour";
+
+
 function normalizeInstagramUrl(value) {
-  const rawValue = String(value || "").trim();
+  const rawValue =
+    String(value || "").trim();
 
   if (!rawValue) {
     return DEFAULT_TEAM_INSTAGRAM_URL;
   }
 
-  const urlValue = /^https?:\/\//i.test(rawValue)
-    ? rawValue
-    : `https://${rawValue}`;
+  const urlValue =
+    /^https?:\/\//i.test(rawValue)
+      ? rawValue
+      : `https://${rawValue}`;
 
   try {
-    const parsedUrl = new URL(urlValue);
+    const parsedUrl =
+      new URL(urlValue);
 
     if (
       parsedUrl.protocol !== "https:" &&
@@ -6708,6 +6715,38 @@ function normalizeInstagramUrl(value) {
   }
 }
 
+
+function normalizeBookingUrl(value) {
+  const rawValue =
+    String(value || "").trim();
+
+  if (!rawValue) {
+    return DEFAULT_BOOKING_URL;
+  }
+
+  const urlValue =
+    /^https?:\/\//i.test(rawValue)
+      ? rawValue
+      : `https://${rawValue}`;
+
+  try {
+    const parsedUrl =
+      new URL(urlValue);
+
+    if (
+      parsedUrl.protocol !== "https:" &&
+      parsedUrl.protocol !== "http:"
+    ) {
+      return "";
+    }
+
+    return parsedUrl.href;
+  } catch {
+    return "";
+  }
+}
+
+
 function applyTeamInstagramUrl(value) {
   const instagramUrl =
     normalizeInstagramUrl(value) ||
@@ -6718,21 +6757,242 @@ function applyTeamInstagramUrl(value) {
     "performanceInstagramButton",
     "teamInstagramButton",
   ].forEach((elementId) => {
-    const link = document.getElementById(elementId);
+    const link =
+      document.getElementById(elementId);
 
     if (link) {
       link.href = instagramUrl;
     }
   });
 
-  const input = document.getElementById(
-    "adminSettingInstagramUrl"
-  );
+  const input =
+    document.getElementById(
+      "adminSettingInstagramUrl"
+    );
 
   if (input) {
     input.value = instagramUrl;
   }
 }
+
+
+function applyBookingContactUrl(value) {
+  const bookingUrl =
+    normalizeBookingUrl(value) ||
+    DEFAULT_BOOKING_URL;
+
+  const bookingButton =
+    document.getElementById(
+      "bookingContactButton"
+    );
+
+  if (bookingButton) {
+    bookingButton.href = bookingUrl;
+  }
+
+  const input =
+    document.getElementById(
+      "adminSettingBookingUrl"
+    );
+
+  if (input) {
+    input.value = bookingUrl;
+  }
+}
+
+
+async function loadSiteSettings() {
+  try {
+    const response = await fetch(
+      "/api/content?type=settings"
+    );
+
+    if (!response.ok) {
+      applyTeamInstagramUrl(
+        DEFAULT_TEAM_INSTAGRAM_URL
+      );
+
+      applyBookingContactUrl(
+        DEFAULT_BOOKING_URL
+      );
+
+      return;
+    }
+
+    const result =
+      await response.json();
+
+    const settings =
+      Array.isArray(result.items)
+        ? result.items[0]
+        : null;
+
+    applyTeamInstagramUrl(
+      settings?.instagramUrl
+    );
+
+    applyBookingContactUrl(
+      settings?.bookingUrl ||
+      settings?.booking_url
+    );
+  } catch (error) {
+    console.error(
+      "홈페이지 설정 불러오기 실패:",
+      error
+    );
+
+    applyTeamInstagramUrl(
+      DEFAULT_TEAM_INSTAGRAM_URL
+    );
+
+    applyBookingContactUrl(
+      DEFAULT_BOOKING_URL
+    );
+  }
+}
+
+
+document
+  .getElementById("adminSettingsForm")
+  ?.addEventListener(
+    "submit",
+    async (event) => {
+      event.preventDefault();
+
+      const instagramInput =
+        document.getElementById(
+          "adminSettingInstagramUrl"
+        );
+
+      const bookingInput =
+        document.getElementById(
+          "adminSettingBookingUrl"
+        );
+
+      const submitButton =
+        event.currentTarget.querySelector(
+          ".admin-form-submit"
+        );
+
+      const instagramUrl =
+        normalizeInstagramUrl(
+          instagramInput?.value
+        );
+
+      const bookingUrl =
+        normalizeBookingUrl(
+          bookingInput?.value
+        );
+
+      if (!instagramUrl) {
+        alert(
+          "올바른 Instagram 주소를 입력해 주세요."
+        );
+
+        instagramInput?.focus();
+        return;
+      }
+
+      if (!bookingUrl) {
+        alert(
+          "올바른 공연·협업 문의 주소를 입력해 주세요."
+        );
+
+        bookingInput?.focus();
+        return;
+      }
+
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent =
+          "저장 중...";
+      }
+
+      try {
+        let settingsId = "";
+
+        const currentResult =
+          await adminApiRequest(
+            "/api/content?type=settings&includePrivate=true"
+          );
+
+        if (
+          Array.isArray(
+            currentResult.items
+          )
+        ) {
+          settingsId =
+            currentResult.items[0]?.id ||
+            "";
+        }
+
+        const requestUrl =
+          settingsId
+            ? `/api/content?type=settings&id=${encodeURIComponent(
+                settingsId
+              )}`
+            : "/api/content?type=settings";
+
+        const savedResult =
+          await adminApiRequest(
+            requestUrl,
+            {
+              method: settingsId
+                ? "PUT"
+                : "POST",
+
+              body: JSON.stringify({
+                id:
+                  settingsId ||
+                  "site",
+
+                instagramUrl,
+                bookingUrl,
+                published: true,
+              }),
+            }
+          );
+
+        const savedSettings =
+          savedResult.item || {};
+
+        applyTeamInstagramUrl(
+          savedSettings.instagramUrl ||
+          instagramUrl
+        );
+
+        applyBookingContactUrl(
+          savedSettings.bookingUrl ||
+          savedSettings.booking_url ||
+          bookingUrl
+        );
+
+        alert(
+          "홈페이지 설정이 저장되었습니다."
+        );
+
+        openAdminView("home");
+      } catch (error) {
+        console.error(
+          "홈페이지 설정 저장 실패:",
+          error
+        );
+
+        alert(
+          error.message ||
+          "홈페이지 설정을 저장하지 못했습니다."
+        );
+      } finally {
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.textContent =
+            "저장";
+        }
+      }
+    }
+  );
+
+loadSiteSettings();
 
 async function loadSiteSettings() {
   try {

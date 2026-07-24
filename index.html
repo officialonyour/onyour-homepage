@@ -1705,29 +1705,57 @@
     </section>
   </main>
 
-  <footer class="site-footer">
+<footer class="site-footer">
+  <div class="footer-main">
     <div>
-      <p class="footer-logo">ONYOUR</p>
+      <p class="footer-logo">
+        ONYOUR
+      </p>
+
       <p class="footer-copy">
         Music that stays with you.
       </p>
     </div>
 
-    <div class="footer-bottom">
-      <p>© <span id="currentYear"></span> ONYOUR</p>
+    <a
+      id="bookingContactButton"
+      class="footer-contact-button"
+      href="https://www.instagram.com/official_onyour"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="오뉴월 공연 및 협업 문의"
+    >
+      <span>
+        <small>
+          Booking & Collaboration
+        </small>
 
-<button
-  class="footer-admin-button"
-  type="button"
-  onclick="openAdminLogin()"
->
-  Admin
-</button>
+        공연·협업 문의
+      </span>
 
-    </div>
-  </footer>
+      <span
+        class="footer-contact-arrow"
+        aria-hidden="true"
+      >
+        ↗
+      </span>
+    </a>
+  </div>
 
+  <div class="footer-bottom">
+    <p>
+      © <span id="currentYear"></span> ONYOUR
+    </p>
 
+    <button
+      class="footer-admin-button"
+      type="button"
+      onclick="openAdminLogin()"
+    >
+      Admin
+    </button>
+  </div>
+</footer>
 
 <!-- ADMIN LOGIN -->
 <div
@@ -3622,67 +3650,82 @@
 </section>
 
 
-    <!-- =========================
-         홈페이지 설정
-    ========================== -->
-    <section
-      class="admin-section-view admin-view"
-      id="adminSettingsView"
-      data-admin-view="settings"
-      aria-hidden="true"
+<!-- =========================
+     홈페이지 설정
+========================== -->
+<section
+  class="admin-section-view admin-view"
+  id="adminSettingsView"
+  data-admin-view="settings"
+  aria-hidden="true"
+>
+  <div class="admin-section-header">
+    <button
+      class="admin-section-back"
+      type="button"
+      data-admin-back="home"
     >
-      <div class="admin-section-header">
-        <button
-          class="admin-section-back"
-          type="button"
-          data-admin-back="home"
-        >
-          ←
-        </button>
+      ←
+    </button>
 
-        <div>
-          <p>SITE SETTINGS</p>
-          <h3>홈페이지 설정</h3>
-        </div>
-      </div>
+    <div>
+      <p>SITE SETTINGS</p>
+      <h3>홈페이지 설정</h3>
+    </div>
+  </div>
 
-      <form
-        class="admin-content-form"
-        id="adminSettingsForm"
+  <form
+    class="admin-content-form"
+    id="adminSettingsForm"
+  >
+    <label>
+      공식 Instagram URL
+
+      <input
+        id="adminSettingInstagramUrl"
+        type="url"
+        placeholder="https://www.instagram.com/official_onyour"
+        required
+      />
+
+      <small class="admin-field-help">
+        홈페이지의 공식 Instagram 버튼에 적용됩니다.
+      </small>
+    </label>
+
+    <label>
+      공연·협업 문의 URL
+
+      <input
+        id="adminSettingBookingUrl"
+        type="url"
+        placeholder="https://www.instagram.com/official_onyour"
+        required
+      />
+
+      <small class="admin-field-help">
+        Footer의 공연·협업 문의 버튼에 적용됩니다.
+      </small>
+    </label>
+
+    <div class="admin-form-actions">
+      <button
+        class="admin-form-cancel"
+        type="button"
+        data-admin-back="home"
       >
-        <label>
-          공식 Instagram URL
+        취소
+      </button>
 
-          <input
-            id="adminSettingInstagramUrl"
-            type="url"
-            placeholder="https://www.instagram.com/official_onyour"
-            required
-          />
-
-          <small class="admin-field-help">
-            저장하면 홈페이지의 모든 공식 Instagram 버튼에 동시에 적용됩니다.
-          </small>
-        </label>
-
-        <div class="admin-form-actions">
-          <button
-            class="admin-form-cancel"
-            type="button"
-            data-admin-back="home"
-          >
-            취소
-          </button>
-
-          <button
-            class="admin-form-submit"
-            type="submit"
-          >
-            저장
-          </button>
-        </div>
-      </form>
-    </section>
+      <button
+        class="admin-form-submit"
+        type="submit"
+      >
+        저장
+      </button>
+    </div>
+  </form>
+</section>
 
   </div>
 </div>
