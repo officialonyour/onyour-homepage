@@ -2119,6 +2119,1197 @@ function updateMusicComingSoonArtwork({
   );
 }
 
+/* =========================================================
+   PUBLIC NEWS LOAD
+   관리자 News → 공개 홈페이지
+========================================================= */
+
+async function loadPublicNews() {
+  const publicNewsList =
+    document.getElementById(
+      "publicNewsList"
+    );
+
+  if (!publicNewsList) {
+    return;
+  }
+
+  const categorySettings = {
+    release: {
+      kicker: "Music Release",
+      icon: "♪",
+      linkText: "음원 보기",
+      linkUrl: "#music",
+    },
+
+    performance: {
+      kicker: "Live Performance",
+      icon: "◆",
+      linkText: "공연 정보",
+      linkUrl: "#performances",
+    },
+
+    video: {
+      kicker: "Live Session",
+      icon: "▶",
+      linkText: "영상 보기",
+      linkUrl: "#live",
+    },
+
+    notice: {
+      kicker: "ONYOUR Notice",
+      icon: "●",
+      linkText: "소식 보기",
+      linkUrl: "#news",
+    },
+  };
+
+  function isPublishedNews(item) {
+    const publishedValue =
+      item?.published;
+
+    return (
+      publishedValue !== false &&
+      publishedValue !== 0 &&
+      publishedValue !== "0" &&
+      String(
+        publishedValue
+      ).toLowerCase() !== "false"
+    );
+  }
+
+  function isFeaturedNews(item) {
+    const featuredValue =
+      item?.featured;
+
+    return (
+      featuredValue === true ||
+      featuredValue === 1 ||
+      featuredValue === "1" ||
+      String(
+        featuredValue
+      ).toLowerCase() === "true"
+    );
+  }
+
+  function createPublicNewsCard(
+    item,
+    index
+  ) {
+    const category =
+      String(
+        item.category ||
+        "Notice"
+      ).trim();
+
+    const categoryKey =
+      category.toLowerCase();
+
+    const setting =
+      categorySettings[
+        categoryKey
+      ] ||
+      categorySettings.notice;
+
+    const title =
+      String(
+        item.title ||
+        "새로운 소식"
+      ).trim();
+
+    const date =
+      String(
+        item.date ||
+        "Coming Soon"
+      ).trim();
+
+    const description =
+      String(
+        item.description ||
+        "ONYOUR의 새로운 소식을 준비하고 있습니다."
+      ).trim();
+
+    const cardNumber =
+      String(
+        index + 1
+      ).padStart(2, "0");
+
+    const isFeaturedCard =
+      index === 0;
+
+    if (isFeaturedCard) {
+      return `
+        <article
+          class="news-card news-card-featured reveal visible"
+        >
+          <div
+            class="news-card-number"
+            aria-hidden="true"
+          >
+            ${cardNumber}
+          </div>
+
+          <div class="news-meta">
+            <span class="news-category">
+              ${escapeAdminHtml(
+                category
+              )}
+            </span>
+
+            <time
+              datetime="${escapeAdminHtml(
+                date
+              )}"
+            >
+              ${escapeAdminHtml(
+                date
+              )}
+            </time>
+          </div>
+
+          <div class="news-content">
+            <div
+              class="news-icon"
+              aria-hidden="true"
+            >
+              <span>
+                ${escapeAdminHtml(
+                  setting.icon
+                )}
+              </span>
+            </div>
+
+            <div class="news-text">
+              <p class="news-kicker">
+                ${escapeAdminHtml(
+                  setting.kicker
+                )}
+              </p>
+
+              <h3>
+                ${escapeAdminHtml(
+                  title
+                )}
+              </h3>
+
+              <p>
+                ${escapeAdminHtml(
+                  description
+                )}
+              </p>
+            </div>
+          </div>
+
+          <div class="news-card-footer">
+            <span class="news-status">
+              <span
+                class="news-status-dot"
+                aria-hidden="true"
+              ></span>
+
+              Featured News
+            </span>
+
+            <span
+              class="news-card-line"
+              aria-hidden="true"
+            ></span>
+          </div>
+        </article>
+      `;
+    }
+
+    return `
+      <article
+        class="news-card news-card-compact reveal visible"
+      >
+        <div
+          class="news-card-number"
+          aria-hidden="true"
+        >
+          ${cardNumber}
+        </div>
+
+        <div class="news-meta">
+          <span class="news-category">
+            ${escapeAdminHtml(
+              category
+            )}
+          </span>
+
+          <time
+            datetime="${escapeAdminHtml(
+              date
+            )}"
+          >
+            ${escapeAdminHtml(
+              date
+            )}
+          </time>
+        </div>
+
+        <div class="news-content">
+          <div
+            class="news-icon"
+            aria-hidden="true"
+          >
+            <span>
+              ${escapeAdminHtml(
+                setting.icon
+              )}
+            </span>
+          </div>
+
+          <div class="news-text">
+            <p class="news-kicker">
+              ${escapeAdminHtml(
+                setting.kicker
+              )}
+            </p>
+
+            <h3>
+              ${escapeAdminHtml(
+                title
+              )}
+            </h3>
+
+            <p>
+              ${escapeAdminHtml(
+                description
+              )}
+            </p>
+          </div>
+        </div>
+
+        <a
+          class="news-link"
+          href="${setting.linkUrl}"
+          aria-label="${escapeAdminHtml(
+            setting.linkText
+          )}"
+        >
+          <span>
+            ${escapeAdminHtml(
+              setting.linkText
+            )}
+          </span>
+
+          <span aria-hidden="true">
+            ↘
+          </span>
+        </a>
+      </article>
+    `;
+  }
+
+  try {
+    const response = await fetch(
+      "/api/content?type=news",
+      {
+        method: "GET",
+
+        headers: {
+          Accept:
+            "application/json",
+        },
+
+        cache: "no-store",
+      }
+    );
+
+    const result =
+      await response.json();
+
+    if (
+      !response.ok ||
+      result.success === false
+    ) {
+      throw new Error(
+        result.message ||
+        "News를 불러오지 못했습니다."
+      );
+    }
+
+    const publishedNews = (
+      Array.isArray(result.items)
+        ? result.items
+        : []
+    ).filter(
+      isPublishedNews
+    );
+
+    const featuredIndex =
+      publishedNews.findIndex(
+        isFeaturedNews
+      );
+
+    if (featuredIndex > 0) {
+      const [featuredItem] =
+        publishedNews.splice(
+          featuredIndex,
+          1
+        );
+
+      publishedNews.unshift(
+        featuredItem
+      );
+    }
+
+    const latestNews =
+      publishedNews.slice(0, 3);
+
+    if (!latestNews.length) {
+      return;
+    }
+
+    publicNewsList.innerHTML =
+      latestNews
+        .map(
+          createPublicNewsCard
+        )
+        .join("");
+  } catch (error) {
+    console.error(
+      "공개 News 불러오기 실패:",
+      error
+    );
+  }
+}
+
+
+/* =========================================================
+   PUBLIC NEWS 실행
+========================================================= */
+
+if (
+  document.readyState ===
+  "loading"
+) {
+  document.addEventListener(
+    "DOMContentLoaded",
+    loadPublicNews
+  );
+} else {
+  loadPublicNews();
+}
+
+/* =========================================================
+   PUBLIC PERFORMANCE LOAD
+   관리자 공연 → 공개 홈페이지
+========================================================= */
+
+async function loadPublicPerformances() {
+  const publicPerformanceList =
+    document.getElementById(
+      "publicPerformanceList"
+    );
+
+  if (!publicPerformanceList) {
+    return;
+  }
+
+  function isPublishedPerformance(
+    item
+  ) {
+    const value = item?.published;
+
+    return (
+      value !== false &&
+      value !== 0 &&
+      value !== "0" &&
+      String(value).toLowerCase() !==
+        "false"
+    );
+  }
+
+  function parsePerformanceDate(
+    value
+  ) {
+    const match = String(value || "")
+      .trim()
+      .match(
+        /^(\d{4})-(\d{2})-(\d{2})$/
+      );
+
+    if (!match) {
+      return null;
+    }
+
+    const date = new Date(
+      Number(match[1]),
+      Number(match[2]) - 1,
+      Number(match[3])
+    );
+
+    return Number.isNaN(date.getTime())
+      ? null
+      : date;
+  }
+
+  function getTodayDate() {
+    const today = new Date();
+
+    return new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate()
+    );
+  }
+
+  function getPerformanceDateParts(
+    value
+  ) {
+    const date =
+      parsePerformanceDate(value);
+
+    if (!date) {
+      return {
+        month: "NEW",
+        day: "—",
+        year: "SOON",
+        shortDate: "Coming Soon",
+      };
+    }
+
+    return {
+      month: date
+        .toLocaleString("en-US", {
+          month: "short",
+        })
+        .toUpperCase(),
+
+      day: String(
+        date.getDate()
+      ).padStart(2, "0"),
+
+      year: String(
+        date.getFullYear()
+      ),
+
+      shortDate: [
+        String(
+          date.getMonth() + 1
+        ).padStart(2, "0"),
+
+        String(
+          date.getDate()
+        ).padStart(2, "0"),
+      ].join("."),
+    };
+  }
+
+  function getPerformanceStatus(
+    value
+  ) {
+    const date =
+      parsePerformanceDate(value);
+
+    if (!date) {
+      return "Live Schedule";
+    }
+
+    const today = getTodayDate();
+
+    const difference =
+      Math.round(
+        (
+          date.getTime() -
+          today.getTime()
+        ) /
+          86400000
+      );
+
+    if (difference === 0) {
+      return "Live Today";
+    }
+
+    if (difference > 0) {
+      return "Upcoming Live";
+    }
+
+    return "Past Live";
+  }
+
+  function normalizePerformanceUrl(
+    value
+  ) {
+    const rawValue =
+      String(value || "").trim();
+
+    if (!rawValue) {
+      return "";
+    }
+
+    try {
+      const parsedUrl =
+        new URL(rawValue);
+
+      if (
+        parsedUrl.protocol !==
+          "https:" &&
+        parsedUrl.protocol !==
+          "http:"
+      ) {
+        return "";
+      }
+
+      return parsedUrl.href;
+    } catch {
+      return "";
+    }
+  }
+
+  function getPerformanceSetlist(
+    value
+  ) {
+    return String(value || "")
+      .split(/\r?\n/)
+      .map((song) => song.trim())
+      .filter(Boolean)
+      .slice(0, 8);
+  }
+
+  function createSetlistHtml(
+    setlist
+  ) {
+    if (!setlist.length) {
+      return `
+        <li>
+          <span>—</span>
+
+          <strong>
+            Set list 준비 중
+          </strong>
+        </li>
+      `;
+    }
+
+    return setlist
+      .map(
+        (song, index) => `
+          <li>
+            <span>
+              ${String(
+                index + 1
+              ).padStart(2, "0")}
+            </span>
+
+            <strong>
+              ${escapeAdminHtml(
+                song
+              )}
+            </strong>
+          </li>
+        `
+      )
+      .join("");
+  }
+
+  function createMainPerformanceCard(
+    item
+  ) {
+    const dateParts =
+      getPerformanceDateParts(
+        item.date
+      );
+
+    const title =
+      String(
+        item.title ||
+          "ONYOUR LIVE"
+      ).trim();
+
+    const time =
+      String(
+        item.time || ""
+      ).trim();
+
+    const location =
+      String(
+        item.location || ""
+      ).trim();
+
+    const address =
+      String(
+        item.address || ""
+      ).trim();
+
+    const description =
+      String(
+        item.description ||
+          "ONYOUR의 새로운 무대를 함께해 주세요."
+      ).trim();
+
+    const ticketUrl =
+      normalizePerformanceUrl(
+        item.ticketUrl
+      );
+
+    const locationText = [
+      location,
+      address,
+    ]
+      .filter(Boolean)
+      .join(" · ");
+
+    const kickerText = [
+      location,
+      time
+        ? `${time} START`
+        : "Live Stage",
+    ]
+      .filter(Boolean)
+      .join(" · ");
+
+    const setlist =
+      getPerformanceSetlist(
+        item.setlist
+      );
+
+    return `
+      <article
+        class="performance-card performance-main-card reveal visible"
+      >
+        <div class="performance-main-header">
+          <div class="performance-status-group">
+            <span class="performance-status">
+              ${escapeAdminHtml(
+                getPerformanceStatus(
+                  item.date
+                )
+              )}
+            </span>
+
+            <span class="performance-dday">
+              ${escapeAdminHtml(
+                dateParts.shortDate
+              )}
+            </span>
+          </div>
+
+          <span
+            class="performance-card-number"
+            aria-hidden="true"
+          >
+            01
+          </span>
+        </div>
+
+        <div class="performance-main-content">
+          <div class="performance-date">
+            <span class="performance-month">
+              ${escapeAdminHtml(
+                dateParts.month
+              )}
+            </span>
+
+            <strong>
+              ${escapeAdminHtml(
+                dateParts.day
+              )}
+            </strong>
+
+            <span class="performance-year">
+              ${escapeAdminHtml(
+                dateParts.year
+              )}
+            </span>
+          </div>
+
+          <div class="performance-info">
+            <p class="performance-kicker">
+              ${escapeAdminHtml(
+                kickerText
+              )}
+            </p>
+
+            <h3>
+              ${escapeAdminHtml(
+                title
+              )}
+            </h3>
+
+            <p class="performance-location">
+              ${escapeAdminHtml(
+                locationText ||
+                  "공연 장소 안내 예정"
+              )}
+            </p>
+
+            <p class="performance-description">
+              ${escapeAdminHtml(
+                description
+              )}
+            </p>
+          </div>
+        </div>
+
+        <div class="performance-bottom">
+          <div class="performance-setlist">
+            <p class="performance-setlist-label">
+              Set List
+            </p>
+
+            <ol>
+              ${createSetlistHtml(
+                setlist
+              )}
+            </ol>
+          </div>
+
+          <div class="performance-live-note">
+            <span>
+              ${escapeAdminHtml(
+                time
+                  ? `${time} START`
+                  : "ONYOUR LIVE"
+              )}
+            </span>
+
+            <p>
+              ${escapeAdminHtml(
+                address ||
+                  "상세 공연 정보는 공식 SNS에서 안내됩니다."
+              )}
+            </p>
+
+            ${
+              ticketUrl
+                ? `
+                  <a
+                    class="performance-instagram-link"
+                    href="${escapeAdminHtml(
+                      ticketUrl
+                    )}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    공연 안내
+
+                    <span aria-hidden="true">
+                      ↗
+                    </span>
+                  </a>
+                `
+                : ""
+            }
+          </div>
+        </div>
+      </article>
+    `;
+  }
+
+  function createSidePerformanceCard(
+    item
+  ) {
+    if (!item) {
+      return `
+        <article
+          class="performance-side-card reveal visible"
+        >
+          <div class="performance-side-top">
+            <span class="performance-side-number">
+              02
+            </span>
+
+            <span class="performance-side-label">
+              Next Schedule
+            </span>
+          </div>
+
+          <div>
+            <p class="performance-side-kicker">
+              More stages coming soon
+            </p>
+
+            <h3>
+              다음 무대도<br />
+              준비하고 있습니다.
+            </h3>
+
+            <p class="performance-side-description">
+              새로운 공연 일정과 현장 소식은
+              ONYOUR 공식 Instagram에서
+              가장 먼저 만나보세요.
+            </p>
+          </div>
+
+          <a
+            id="performanceInstagramButton"
+            class="performance-instagram-link"
+            href="https://www.instagram.com/official_onyour"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Instagram
+
+            <span aria-hidden="true">
+              ↗
+            </span>
+          </a>
+        </article>
+      `;
+    }
+
+    const dateParts =
+      getPerformanceDateParts(
+        item.date
+      );
+
+    const title =
+      String(
+        item.title ||
+          "다음 공연"
+      ).trim();
+
+    const time =
+      String(
+        item.time || ""
+      ).trim();
+
+    const location =
+      String(
+        item.location || ""
+      ).trim();
+
+    const address =
+      String(
+        item.address || ""
+      ).trim();
+
+    const description =
+      String(
+        item.description ||
+          "다음 무대의 자세한 정보를 확인해 주세요."
+      ).trim();
+
+    const ticketUrl =
+      normalizePerformanceUrl(
+        item.ticketUrl
+      );
+
+    const kickerText = [
+      dateParts.shortDate,
+      time,
+    ]
+      .filter(Boolean)
+      .join(" · ");
+
+    const locationText = [
+      location,
+      address,
+    ]
+      .filter(Boolean)
+      .join(" · ");
+
+    return `
+      <article
+        class="performance-side-card reveal visible"
+      >
+        <div class="performance-side-top">
+          <span class="performance-side-number">
+            02
+          </span>
+
+          <span class="performance-side-label">
+            ${escapeAdminHtml(
+              getPerformanceStatus(
+                item.date
+              )
+            )}
+          </span>
+        </div>
+
+        <div>
+          <p class="performance-side-kicker">
+            ${escapeAdminHtml(
+              kickerText
+            )}
+          </p>
+
+          <h3>
+            ${escapeAdminHtml(
+              title
+            )}
+          </h3>
+
+          <p class="performance-side-description">
+            ${escapeAdminHtml(
+              locationText
+            )}
+
+            ${
+              locationText &&
+              description
+                ? "<br /><br />"
+                : ""
+            }
+
+            ${escapeAdminHtml(
+              description
+            )}
+          </p>
+        </div>
+
+        ${
+          ticketUrl
+            ? `
+              <a
+                class="performance-instagram-link"
+                href="${escapeAdminHtml(
+                  ticketUrl
+                )}"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                공연 안내
+
+                <span aria-hidden="true">
+                  ↗
+                </span>
+              </a>
+            `
+            : `
+              <a
+                id="performanceInstagramButton"
+                class="performance-instagram-link"
+                href="https://www.instagram.com/official_onyour"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Instagram
+
+                <span aria-hidden="true">
+                  ↗
+                </span>
+              </a>
+            `
+        }
+      </article>
+    `;
+  }
+
+  function createPerformanceQuoteCard() {
+    return `
+      <article
+        class="performance-quote-card reveal visible"
+      >
+        <p class="performance-quote-label">
+          ONYOUR LIVE
+        </p>
+
+        <blockquote>
+          “무대가 끝난 뒤에도<br />
+          오래 머무는 음악.”
+        </blockquote>
+
+        <span>
+          Music that stays with you.
+        </span>
+      </article>
+    `;
+  }
+
+  function createEmptyPerformanceCard() {
+    return `
+      <article
+        class="performance-card performance-main-card reveal visible"
+      >
+        <div class="performance-main-header">
+          <div class="performance-status-group">
+            <span class="performance-status">
+              Live Schedule
+            </span>
+
+            <span class="performance-dday">
+              Coming Soon
+            </span>
+          </div>
+
+          <span
+            class="performance-card-number"
+            aria-hidden="true"
+          >
+            01
+          </span>
+        </div>
+
+        <div class="performance-main-content">
+          <div class="performance-date">
+            <span class="performance-month">
+              NEW
+            </span>
+
+            <strong>—</strong>
+
+            <span class="performance-year">
+              SOON
+            </span>
+          </div>
+
+          <div class="performance-info">
+            <p class="performance-kicker">
+              More stages coming soon
+            </p>
+
+            <h3>
+              다음 무대를 준비하고 있습니다.
+            </h3>
+
+            <p class="performance-location">
+              새로운 공연 일정은 곧 공개됩니다.
+            </p>
+
+            <p class="performance-description">
+              ONYOUR의 다음 무대 소식은
+              공식 홈페이지와 Instagram을 통해
+              안내하겠습니다.
+            </p>
+          </div>
+        </div>
+      </article>
+    `;
+  }
+
+  try {
+    const response = await fetch(
+      "/api/content?type=performance",
+      {
+        method: "GET",
+
+        headers: {
+          Accept:
+            "application/json",
+        },
+
+        cache: "no-store",
+      }
+    );
+
+    const result =
+      await response.json();
+
+    if (
+      !response.ok ||
+      result.success === false
+    ) {
+      throw new Error(
+        result.message ||
+          "공연 정보를 불러오지 못했습니다."
+      );
+    }
+
+    const today = getTodayDate();
+
+    const performances = (
+      Array.isArray(result.items)
+        ? result.items
+        : []
+    )
+      .filter(
+        isPublishedPerformance
+      )
+      .sort((first, second) => {
+        const firstDate =
+          parsePerformanceDate(
+            first.date
+          );
+
+        const secondDate =
+          parsePerformanceDate(
+            second.date
+          );
+
+        if (
+          !firstDate &&
+          !secondDate
+        ) {
+          return 0;
+        }
+
+        if (!firstDate) {
+          return 1;
+        }
+
+        if (!secondDate) {
+          return -1;
+        }
+
+        const firstUpcoming =
+          firstDate >= today;
+
+        const secondUpcoming =
+          secondDate >= today;
+
+        if (
+          firstUpcoming !==
+          secondUpcoming
+        ) {
+          return firstUpcoming
+            ? -1
+            : 1;
+        }
+
+        return firstUpcoming
+          ? firstDate - secondDate
+          : secondDate - firstDate;
+      })
+      .slice(0, 2);
+
+    const mainPerformance =
+      performances[0] || null;
+
+    const sidePerformance =
+      performances[1] || null;
+
+    publicPerformanceList.innerHTML = `
+      ${
+        mainPerformance
+          ? createMainPerformanceCard(
+              mainPerformance
+            )
+          : createEmptyPerformanceCard()
+      }
+
+      <div class="performance-side">
+        ${createSidePerformanceCard(
+          sidePerformance
+        )}
+
+        ${createPerformanceQuoteCard()}
+      </div>
+    `;
+
+    if (
+      typeof loadSiteSettings ===
+      "function"
+    ) {
+      await loadSiteSettings();
+    }
+  } catch (error) {
+    console.error(
+      "공개 공연 불러오기 실패:",
+      error
+    );
+  }
+}
+
+
+/* =========================================================
+   PUBLIC PERFORMANCE 실행
+========================================================= */
+
+if (
+  document.readyState ===
+  "loading"
+) {
+  document.addEventListener(
+    "DOMContentLoaded",
+    loadPublicPerformances
+  );
+} else {
+  loadPublicPerformances();
+}
 
 /* =========================
    공개 Music 불러오기
