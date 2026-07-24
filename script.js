@@ -1994,16 +1994,22 @@ function createMusicPlatformLink(
       platformItem.url || ""
     ).trim();
 
-  const label =
-    String(
-      platformItem.label ||
-      setting.label ||
-      "Music"
-    ).trim();
-
   if (!cleanUrl) {
     return "";
   }
+
+  const koreanLabels = {
+    youtube: "유튜브",
+    spotify: "스포티파이",
+    apple: "애플뮤직",
+    melon: "멜론",
+  };
+
+  const label =
+    koreanLabels[platformKey] ||
+    platformItem.label ||
+    setting.label ||
+    "음원";
 
   return `
     <a
@@ -2020,13 +2026,6 @@ function createMusicPlatformLink(
         setting.color
       };"
     >
-      <span
-        class="music-platform-icon"
-        aria-hidden="true"
-      >
-        ${setting.icon}
-      </span>
-
       <span class="music-platform-name">
         ${escapeAdminHtml(label)}
       </span>

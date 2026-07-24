@@ -1683,7 +1683,6 @@ main {
 
   .member-role {
     margin-bottom: 4px;
-    font-size: 6px;
   }
 
   .member-name-row h3 {
@@ -1692,9 +1691,6 @@ main {
 
   .member-description {
     min-height: auto;
-    margin-top: 12px;
-    font-size: 11px;
-    line-height: 1.65;
   }
 
   .member-links {
@@ -2299,45 +2295,7 @@ button:focus-visible {
   }
 
   .news-card {
-    min-height: 260px;
-    padding: 21px 19px;
     border-radius: 19px;
-  }
-
-  .news-card-featured {
-    min-height: 370px;
-  }
-
-  .news-card-number {
-    top: 17px;
-    right: 18px;
-    font-size: 36px;
-  }
-
-  .news-meta {
-    padding-right: 48px;
-    font-size: 8px;
-  }
-
-  .news-content {
-    grid-template-columns: 36px minmax(0, 1fr);
-    gap: 13px;
-    padding: 36px 0 28px;
-  }
-
-  .news-icon {
-    width: 36px;
-    height: 36px;
-    font-size: 11px;
-  }
-
-  .news-content h3 {
-    font-size: 23px;
-  }
-
-  .news-content p:not(.news-kicker) {
-    font-size: 11px;
-    line-height: 1.7;
   }
 }
 
@@ -2353,12 +2311,10 @@ button:focus-visible {
   }
 
   .news-list {
-    grid-template-columns: 1.15fr 0.85fr;
     grid-template-rows: repeat(2, minmax(250px, auto));
   }
 
   .news-card-featured {
-    grid-row: 1 / span 2;
     min-height: 100%;
     padding: 32px;
   }
@@ -2769,7 +2725,6 @@ button:focus-visible {
   }
 
   .music-card {
-    padding: 7px;
     border-radius: 16px;
   }
 
@@ -3707,18 +3662,7 @@ body.admin-modal-open {
 }
 
 .footer-admin-button{
-  background:none;
-  border:none;
-  padding:0;
-  margin:0;
-  color:#777;
-  font:inherit;
-  cursor:pointer;
   transition:color .2s;
-}
-
-.footer-admin-button:hover{
-  color:#fff;
 }
 
 /* =========================
@@ -5841,25 +5785,13 @@ body.admin-dashboard-open {
   min-height: 44px;
   margin: 28px auto 0;
   padding: 0 24px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 999px;
-  background: transparent;
-  color: rgba(255, 255, 255, 0.68);
   font-family: inherit;
   font-size: 12px;
   font-weight: 650;
-  cursor: pointer;
-  transition:
-    color 0.2s ease,
-    border-color 0.2s ease,
-    background-color 0.2s ease,
-    transform 0.2s ease;
 }
 
 .fan-message-more-button:hover {
-  transform: translateY(-2px);
   border-color: rgba(255, 255, 255, 0.26);
-  background: rgba(255, 255, 255, 0.05);
   color: #ffffff;
 }
 
@@ -6751,10 +6683,7 @@ body.admin-dashboard-open {
 }
 
 .hero-v2 .hero-actions {
-  display: flex;
   flex-wrap: wrap;
-  gap: 11px;
-  margin-top: 32px;
 }
 
 .hero-v2 .button {
@@ -6932,14 +6861,11 @@ body.admin-dashboard-open {
   }
 
   .hero-v2 .hero-description {
-    margin-top: 21px;
     font-size: 13px;
   }
 
   .hero-v2 .hero-actions {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    margin-top: 25px;
   }
 
   .hero-v2 .button {
@@ -7295,9 +7221,7 @@ body.admin-dashboard-open {
 
 @media (max-width: 767px) {
   .hero-v2 {
-    min-height: 100svh;
     height: auto;
-    overflow: hidden;
   }
 
   .hero-v2 .hero-media,
@@ -7322,9 +7246,6 @@ body.admin-dashboard-open {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    min-height: 100svh;
-    padding-top: 116px;
-    padding-bottom: 34px;
   }
 
   .hero-v2 .hero-copy {
@@ -7808,11 +7729,6 @@ body.admin-dashboard-open {
     font-size: 9px;
   }
 
-  /* 모바일 카드에는 대표 듣기 링크 한 개만 표시 */
-  #music .music-platform-link:not(.is-disabled) ~
-  .music-platform-link:not(.is-disabled) {
-    display: none !important;
-  }
 
   #music .music-platform-icon,
   #music .music-platform-icon svg {
@@ -8023,72 +7939,11 @@ body.admin-dashboard-open {
 }
 
 .fan-message-photo-preview {
-  display: grid;
   grid-template-columns: 140px minmax(0, 1fr);
-  align-items: center;
-  gap: 18px;
-  padding: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.035);
-}
-
-.fan-message-photo-preview[hidden] {
-  display: none;
 }
 
 .fan-message-photo-image-wrap {
-  position: relative;
-  width: 140px;
   aspect-ratio: 4 / 3;
-  overflow: hidden;
-  border-radius: 12px;
-  background: #08090d;
-}
-
-.fan-message-photo-image-wrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.fan-message-photo-remove {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  padding: 0;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 50%;
-  color: #ffffff;
-  background: rgba(4, 5, 8, 0.78);
-  backdrop-filter: blur(8px);
-  cursor: pointer;
-  font-size: 20px;
-  line-height: 1;
-}
-
-.fan-message-photo-info {
-  display: grid;
-  gap: 6px;
-  min-width: 0;
-}
-
-.fan-message-photo-info strong {
-  overflow: hidden;
-  color: #ffffff;
-  font-size: 13px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.fan-message-photo-info span {
-  color: rgba(255, 255, 255, 0.44);
-  font-size: 11px;
 }
 
 @media (max-width: 768px) {
@@ -8736,26 +8591,8 @@ html {
 }
 
 .music-platform-link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 40px;
-  height: 40px;
-
-  border: 1px solid rgba(255, 255, 255, 0.13);
-  border-radius: 50%;
 
   color: rgba(255, 255, 255, 0.78);
-  background: rgba(255, 255, 255, 0.045);
-
-  text-decoration: none;
-
-  transition:
-    transform 0.2s ease,
-    color 0.2s ease,
-    border-color 0.2s ease,
-    background 0.2s ease;
 }
 
 .music-platform-link svg {
@@ -8766,17 +8603,9 @@ html {
 }
 
 .music-platform-link:hover {
-  transform: translateY(-2px);
 
   color: #ffffff;
-
-  border-color: rgba(255, 255, 255, 0.3);
   background: rgba(255, 255, 255, 0.1);
-}
-
-.music-platform-link:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.75);
-  outline-offset: 3px;
 }
 
 .music-platform-empty {
@@ -8924,13 +8753,7 @@ html {
   height: 38px;
   min-width: 0;
   padding: 0;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 11px;
-  background:
-    rgba(255, 255, 255, 0.96);
-  box-shadow:
-    0 5px 14px rgba(0, 0, 0, 0.18);
   box-sizing: border-box;
   text-decoration: none;
   transition:
@@ -8941,7 +8764,6 @@ html {
 }
 
 .music-platform-link:hover {
-  transform: translateY(-2px);
   border-color:
     rgba(255, 255, 255, 0.38);
   box-shadow:
@@ -8959,25 +8781,13 @@ html {
 }
 
 .music-platform-icon-image {
-  display: block;
-  width: 100%;
-  height: 100%;
-  padding: 3px;
   border-radius: inherit;
-  object-fit: contain;
   object-position: center;
   box-sizing: border-box;
 }
 
 .music-platform-icon-fallback {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
   color: #111111;
-  font-size: 13px;
-  font-weight: 800;
   line-height: 1;
   text-transform: uppercase;
 }
@@ -9283,74 +9093,13 @@ html {
    플랫폼 별도 칸
 ========================= */
 
-#music .music-platform-links {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 7px;
-
-  width: 100%;
-  max-width: none;
-
-  margin: 22px 0 0;
-  padding: 10px;
-
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 14px;
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.055),
-      rgba(255, 255, 255, 0.018)
-    );
-
-  box-sizing: border-box;
-}
-
-#music .music-platform-links[hidden] {
-  display: none !important;
-}
-
 
 /* =========================
    플랫폼 버튼
 ========================= */
 
 #music .music-platform-link {
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-
-  width: 100% !important;
-  height: 42px !important;
-  min-width: 0;
-
-  padding: 0 !important;
-
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  border-radius: 10px !important;
-
-  background: rgba(255, 255, 255, 0.045) !important;
-  box-shadow: none !important;
-
-  opacity: 1 !important;
   overflow: visible !important;
-
-  transition:
-    transform 0.2s ease,
-    border-color 0.2s ease,
-    background 0.2s ease;
-}
-
-#music .music-platform-link:hover {
-  transform: translateY(-2px);
-
-  border-color: rgba(255, 255, 255, 0.24) !important;
-  background: rgba(255, 255, 255, 0.09) !important;
-}
-
-#music .music-platform-link.is-disabled {
-  display: none !important;
 }
 
 
@@ -9411,64 +9160,11 @@ html {
 ========================= */
 
 @media (max-width: 767px) {
-  #music .music-gallery {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-  }
-
-  #music .music-card {
-    padding: 8px;
-
-    border-radius: 18px;
-  }
-
-  #music .music-artwork {
-    border-radius: 13px;
-  }
-
-  #music .music-card-body {
-    padding: 14px 6px 5px;
-  }
 
   #music .music-profile-label {
     margin-bottom: 6px;
 
     font-size: 8px;
-  }
-
-  #music .music-profile-name {
-    font-size: 17px;
-    line-height: 1.2;
-  }
-
-  #music .music-release-block {
-    gap: 6px;
-
-    margin-top: 16px;
-  }
-
-  #music .music-release-type {
-    font-size: 9px;
-  }
-
-  #music .music-album-title {
-    font-size: 15px;
-    line-height: 1.28;
-  }
-
-  #music .music-platform-links {
-    gap: 5px;
-
-    margin-top: 16px;
-    padding: 7px;
-
-    border-radius: 11px;
-  }
-
-  #music .music-platform-link {
-    height: 34px !important;
-
-    border-radius: 8px !important;
   }
 
   #music .music-platform-link svg,
@@ -9489,22 +9185,6 @@ html {
   #music .music-card-body {
     padding-right: 4px;
     padding-left: 4px;
-  }
-
-  #music .music-profile-name {
-    font-size: 15px;
-  }
-
-  #music .music-album-title {
-    font-size: 13px;
-  }
-
-  #music .music-platform-links {
-    padding: 6px;
-  }
-
-  #music .music-platform-link {
-    height: 31px !important;
   }
 
   #music .music-platform-link svg,
@@ -9848,40 +9528,11 @@ html {
 @media (max-width: 767px) {
   #music .music-platform-links {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 6px;
-
-    margin-top: 16px;
-    padding: 7px;
-
-    border-radius: 11px;
-  }
-
-  #music .music-platform-link {
-    height: 36px !important;
-    min-height: 36px;
-    padding: 0 6px !important;
-
-    border-radius: 8px !important;
-
-    font-size: 9px;
-  }
-
-  #music .music-platform-icon,
-  #music .music-platform-icon svg {
-    width: 14px;
-    height: 14px;
-  }
-
-  #music .music-platform-icon i {
-    font-size: 14px;
   }
 
   #music .music-platform-coming-soon {
     grid-template-columns: 38px minmax(0, 1fr);
     gap: 11px;
-
-    min-height: 78px;
-    padding: 14px;
   }
 
   #music .music-platform-coming-soon > span {
@@ -9891,10 +9542,6 @@ html {
     border-radius: 10px;
 
     font-size: 15px;
-  }
-
-  #music .music-platform-coming-soon strong {
-    font-size: 11px;
   }
 
   #music .music-platform-coming-soon p {
@@ -10196,5 +9843,75 @@ html {
 
   #music .music-album-title {
     font-size: 9px;
+  }
+}
+
+/* =========================================================
+   MUSIC MOBILE FINAL
+   4개 플랫폼 한 줄 + 앨범 정보 표시
+========================================================= */
+
+@media (max-width: 767px) {
+  #music .music-platform-links {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 3px;
+    width: 100%;
+    min-height: 27px;
+    margin-top: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+  }
+
+  #music .music-platform-link {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 100% !important;
+    min-width: 0;
+    height: 27px !important;
+    min-height: 27px;
+    padding: 0 2px !important;
+    border-radius: 6px !important;
+    text-decoration: none;
+  }
+
+  #music .music-platform-icon,
+  #music .music-platform-icon svg,
+  #music .music-platform-icon i {
+    display: none !important;
+  }
+
+  #music .music-platform-name {
+    display: block !important;
+    overflow: hidden;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 7px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #music .music-release-type {
+    display: block;
+  }
+
+  #music .music-album-title {
+    display: -webkit-box;
+    overflow: hidden;
+    min-height: 24px;
+    font-size: 10px;
+    line-height: 1.2;
+    white-space: normal;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
   }
 }
