@@ -2145,29 +2145,23 @@ async function loadPublicMusic() {
 
     leehwigeun: {
       suffix: "Leehwigeun",
-      defaultArtist:
-        "이휘근(Kenneth)",
+      defaultArtist: "이휘근",
       defaultType: "SINGLE",
-      defaultTitle:
-        "Side by Side",
+      defaultTitle: "Side by Side",
     },
 
     eluni: {
       suffix: "Eluni",
       defaultArtist: "이루니",
-      defaultType:
-        "PARTICIPATION",
-      defaultTitle:
-        "참여 음원",
+      defaultType: "PARTICIPATION",
+      defaultTitle: "참여 음원",
     },
 
     leecherin: {
       suffix: "Leecherin",
       defaultArtist: "이체린",
-      defaultType:
-        "PARTICIPATION",
-      defaultTitle:
-        "참여 음원",
+      defaultType: "PARTICIPATION",
+      defaultTitle: "참여 음원",
     },
   };
 
@@ -2218,7 +2212,9 @@ async function loadPublicMusic() {
                 musicItem.id;
 
               return (
-                String(savedProfileKey) ===
+                String(
+                  savedProfileKey
+                ) ===
                 String(profileKey)
               );
             }
@@ -2282,12 +2278,18 @@ async function loadPublicMusic() {
             `musicPlatformLinks${suffix}`
           );
 
-        const artist =
+        const savedArtist =
           String(
             item.artist ||
             item.artist_name ||
             setting.defaultArtist
           ).trim();
+
+        const artist =
+          profileKey ===
+          "leehwigeun"
+            ? "이휘근"
+            : savedArtist;
 
         const albumType =
           String(
@@ -6242,19 +6244,46 @@ function getYoutubeEmbedUrl(url) {
 }
 
 function applyPublicFeaturedVideo(video) {
-  if (!video) {
+  if (
+    !video ||
+    typeof video !== "object"
+  ) {
     return;
   }
+
+  const defaultTitle =
+    "ONYOUR — Featured Live";
+
+  const defaultDescription =
+    "보컬과 랩, 라이브 기타가 한 무대에서 만나는 ONYOUR의 대표 라이브를 감상해 보세요.";
 
   const videoUrl = String(
     video.url ||
     video.videoUrl ||
     video.video_url ||
+    video.youtubeUrl ||
+    video.youtube_url ||
     ""
   ).trim();
 
   const embedUrl =
     getYoutubeEmbedUrl(videoUrl);
+
+  const title =
+    String(
+      video.title ||
+      video.name ||
+      ""
+    ).trim() ||
+    defaultTitle;
+
+  const description =
+    String(
+      video.description ||
+      video.content ||
+      ""
+    ).trim() ||
+    defaultDescription;
 
   const featuredVideo =
     document.getElementById(
@@ -6276,35 +6305,56 @@ function applyPublicFeaturedVideo(video) {
       "liveDescription"
     );
 
-  if (
-    featuredVideo &&
-    embedUrl
-  ) {
-    featuredVideo.src = embedUrl;
+  if (featuredVideo) {
+    if (embedUrl) {
+      featuredVideo.src = embedUrl;
+    }
+
+    featuredVideo.title =
+      `${title} 라이브 영상`;
   }
 
-  if (
-    youtubeVideoButton &&
-    videoUrl
-  ) {
-    youtubeVideoButton.href =
-      videoUrl;
+  if (liveTitle) {
+    liveTitle.textContent = title;
   }
 
-  if (
-    liveTitle &&
-    video.title
-  ) {
-    liveTitle.textContent =
-      video.title;
-  }
-
-  if (
-    liveDescription &&
-    video.description
-  ) {
+  if (liveDescription) {
     liveDescription.textContent =
-      video.description;
+      description;
+  }
+
+  if (youtubeVideoButton) {
+    if (
+      videoUrl &&
+      embedUrl
+    ) {
+      youtubeVideoButton.href =
+        videoUrl;
+
+      youtubeVideoButton.hidden =
+        false;
+
+      youtubeVideoButton.removeAttribute(
+        "aria-hidden"
+      );
+
+      youtubeVideoButton.setAttribute(
+        "aria-label",
+        `${title} YouTube에서 보기`
+      );
+    } else {
+      youtubeVideoButton.hidden =
+        true;
+
+      youtubeVideoButton.removeAttribute(
+        "href"
+      );
+
+      youtubeVideoButton.setAttribute(
+        "aria-hidden",
+        "true"
+      );
+    }
   }
 }
 
