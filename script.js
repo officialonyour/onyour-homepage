@@ -2,12 +2,30 @@
 
 /* =========================
    PAGE SCROLL RESET
-   새로고침 시 항상 최상단
+   홈페이지 진입 시 항상 최상단
 ========================= */
 
 if ("scrollRestoration" in window.history) {
-  window.history.scrollRestoration = "manual";
+  window.history.scrollRestoration =
+    "manual";
 }
+
+
+function removeInitialSectionHash() {
+  if (!window.location.hash) {
+    return;
+  }
+
+  const cleanUrl =
+    `${window.location.pathname}${window.location.search}`;
+
+  window.history.replaceState(
+    window.history.state,
+    "",
+    cleanUrl
+  );
+}
+
 
 function resetPageScrollPosition() {
   window.scrollTo({
@@ -15,24 +33,50 @@ function resetPageScrollPosition() {
     left: 0,
     behavior: "auto",
   });
+
+  document.documentElement.scrollTop = 0;
+
+  if (document.body) {
+    document.body.scrollTop = 0;
+  }
 }
 
+
+removeInitialSectionHash();
 resetPageScrollPosition();
 
-window.addEventListener("DOMContentLoaded", () => {
-  resetPageScrollPosition();
-});
 
-window.addEventListener("pageshow", () => {
-  window.requestAnimationFrame(() => {
+window.addEventListener(
+  "DOMContentLoaded",
+  () => {
+    removeInitialSectionHash();
     resetPageScrollPosition();
-  });
-});
+  }
+);
 
-window.addEventListener("beforeunload", () => {
-  resetPageScrollPosition();
-});
 
+window.addEventListener(
+  "load",
+  () => {
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        resetPageScrollPosition();
+      });
+    });
+  }
+);
+
+
+window.addEventListener(
+  "pageshow",
+  () => {
+    removeInitialSectionHash();
+
+    window.requestAnimationFrame(() => {
+      resetPageScrollPosition();
+    });
+  }
+);
 
 document.addEventListener("DOMContentLoaded", () => {
   const body = document.body;
