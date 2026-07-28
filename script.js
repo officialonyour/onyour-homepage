@@ -439,6 +439,56 @@ const adminHeroYoutubeUrl =
     "adminHeroYoutubeUrl"
   );
 
+const adminHeroMobileImageInput =
+  document.querySelector(
+    "#adminHeroMobileImageInput"
+  );
+
+const adminHeroMobileImagePreview =
+  document.querySelector(
+    "#adminHeroMobileImagePreview"
+  );
+
+const adminHeroMobilePreviewImage =
+  document.querySelector(
+    "#adminHeroMobilePreviewImage"
+  );
+
+const adminHeroMobileImageScale =
+  document.querySelector(
+    "#adminHeroMobileImageScale"
+  );
+
+const adminHeroMobileImageScaleValue =
+  document.querySelector(
+    "#adminHeroMobileImageScaleValue"
+  );
+
+const adminHeroMobileImagePosX =
+  document.querySelector(
+    "#adminHeroMobileImagePosX"
+  );
+
+const adminHeroMobileImagePosXValue =
+  document.querySelector(
+    "#adminHeroMobileImagePosXValue"
+  );
+
+const adminHeroMobileImagePosY =
+  document.querySelector(
+    "#adminHeroMobileImagePosY"
+  );
+
+const adminHeroMobileImagePosYValue =
+  document.querySelector(
+    "#adminHeroMobileImagePosYValue"
+  );
+
+const adminHeroMobileImageReset =
+  document.querySelector(
+    "#adminHeroMobileImageReset"
+  );
+
 /* =========================
    ADMIN LOGIN SESSION
    로그인 상태 30분 유지
@@ -777,55 +827,175 @@ function getHeroImageSettings() {
   };
 }
 
-function updateAdminHeroImagePreview() {
-  if (
-    !adminHeroPreviewImage
-  ) {
-    return;
-  }
-
+function updateAdminHeroMobileImagePreview() {
   const imageScale =
     Number(
-      adminHeroImageScale?.value
+      adminHeroMobileImageScale?.value
     ) || 100;
 
   const imagePositionX =
     Number(
-      adminHeroImagePosX?.value
+      adminHeroMobileImagePosX?.value
     ) || 50;
 
   const imagePositionY =
     Number(
-      adminHeroImagePosY?.value
+      adminHeroMobileImagePosY?.value
     ) || 50;
 
-  adminHeroPreviewImage.style.transform =
-    `scale(${imageScale / 100})`;
-
-  adminHeroPreviewImage.style.objectPosition =
-    `${imagePositionX}% ${imagePositionY}%`;
-
   if (
-    adminHeroImageScaleValue
+    adminHeroMobileImageScaleValue
   ) {
-    adminHeroImageScaleValue.textContent =
+    adminHeroMobileImageScaleValue.textContent =
       `${imageScale}%`;
   }
 
   if (
-    adminHeroImagePosXValue
+    adminHeroMobileImagePosXValue
   ) {
-    adminHeroImagePosXValue.textContent =
+    adminHeroMobileImagePosXValue.textContent =
       `${imagePositionX}%`;
   }
 
   if (
-    adminHeroImagePosYValue
+    adminHeroMobileImagePosYValue
   ) {
-    adminHeroImagePosYValue.textContent =
+    adminHeroMobileImagePosYValue.textContent =
       `${imagePositionY}%`;
   }
+
+  if (
+    !adminHeroMobilePreviewImage
+  ) {
+    return;
+  }
+
+  adminHeroMobilePreviewImage.style.objectPosition =
+    `${imagePositionX}% ${imagePositionY}%`;
+
+  adminHeroMobilePreviewImage.style.transform =
+    `scale(${imageScale / 100})`;
+
+  adminHeroMobilePreviewImage.style.transformOrigin =
+    `${imagePositionX}% ${imagePositionY}%`;
 }
+
+
+function bindAdminHeroMobileImageEditor() {
+  if (
+    adminHeroMobileImageInput
+  ) {
+    adminHeroMobileImageInput.addEventListener(
+      "change",
+      () => {
+        const selectedFile =
+          adminHeroMobileImageInput
+            .files?.[0];
+
+        if (!selectedFile) {
+          return;
+        }
+
+        if (
+          !selectedFile.type.startsWith(
+            "image/"
+          )
+        ) {
+          alert(
+            "이미지 파일만 선택할 수 있습니다."
+          );
+
+          adminHeroMobileImageInput.value =
+            "";
+
+          return;
+        }
+
+        const previewUrl =
+          URL.createObjectURL(
+            selectedFile
+          );
+
+        if (
+          adminHeroMobilePreviewImage
+        ) {
+          adminHeroMobilePreviewImage.onload =
+            () => {
+              URL.revokeObjectURL(
+                previewUrl
+              );
+            };
+
+          adminHeroMobilePreviewImage.src =
+            previewUrl;
+
+          adminHeroMobilePreviewImage.hidden =
+            false;
+        }
+
+        if (
+          adminHeroMobileImagePreview
+        ) {
+          adminHeroMobileImagePreview.classList.add(
+            "has-image"
+          );
+        }
+
+        updateAdminHeroMobileImagePreview();
+      }
+    );
+  }
+
+  [
+    adminHeroMobileImageScale,
+    adminHeroMobileImagePosX,
+    adminHeroMobileImagePosY,
+  ].forEach(
+    (control) => {
+      control?.addEventListener(
+        "input",
+        updateAdminHeroMobileImagePreview
+      );
+    }
+  );
+
+  if (
+    adminHeroMobileImageReset
+  ) {
+    adminHeroMobileImageReset.addEventListener(
+      "click",
+      () => {
+        if (
+          adminHeroMobileImageScale
+        ) {
+          adminHeroMobileImageScale.value =
+            "100";
+        }
+
+        if (
+          adminHeroMobileImagePosX
+        ) {
+          adminHeroMobileImagePosX.value =
+            "50";
+        }
+
+        if (
+          adminHeroMobileImagePosY
+        ) {
+          adminHeroMobileImagePosY.value =
+            "50";
+        }
+
+        updateAdminHeroMobileImagePreview();
+      }
+    );
+  }
+
+  updateAdminHeroMobileImagePreview();
+}
+
+
+bindAdminHeroMobileImageEditor();
 
 function fillAdminHeroForm() {
   if (!adminHeroForm) {
@@ -1188,6 +1358,7 @@ function applyAdminHeroSettings(
       adminHeroDescriptionLine2
         ?.value.trim() || "",
 
+    /* PC용 배경사진 */
     imageUrl:
       adminHeroPreviewImage?.src ||
       heroImage?.src ||
@@ -1206,6 +1377,29 @@ function applyAdminHeroSettings(
     imagePositionY:
       Number(
         adminHeroImagePosY?.value
+      ) || 50,
+
+    /* 모바일용 배경사진 */
+    mobileImageUrl:
+      adminHeroMobilePreviewImage
+        ?.src || "",
+
+    mobileImageScale:
+      Number(
+        adminHeroMobileImageScale
+          ?.value
+      ) || 100,
+
+    mobileImagePositionX:
+      Number(
+        adminHeroMobileImagePosX
+          ?.value
+      ) || 50,
+
+    mobileImagePositionY:
+      Number(
+        adminHeroMobileImagePosY
+          ?.value
       ) || 50,
 
     showMusicButton:
@@ -1248,33 +1442,55 @@ function applyAdminHeroSettings(
         }
       : formSettings;
 
+  const getSafeNumber = (
+    value,
+    fallback
+  ) => {
+    const numberValue =
+      Number(value);
+
+    return Number.isFinite(
+      numberValue
+    )
+      ? numberValue
+      : fallback;
+  };
+
   const imageScale =
-    Number(settings.imageScale) ||
-    100;
+    getSafeNumber(
+      settings.imageScale,
+      100
+    );
 
   const imagePositionX =
-    Number(
-      settings.imagePositionX
+    getSafeNumber(
+      settings.imagePositionX,
+      50
     );
 
   const imagePositionY =
-    Number(
-      settings.imagePositionY
+    getSafeNumber(
+      settings.imagePositionY,
+      50
     );
 
-  const safePositionX =
-    Number.isFinite(
-      imagePositionX
-    )
-      ? imagePositionX
-      : 50;
+  const mobileImageScale =
+    getSafeNumber(
+      settings.mobileImageScale,
+      100
+    );
 
-  const safePositionY =
-    Number.isFinite(
-      imagePositionY
-    )
-      ? imagePositionY
-      : 50;
+  const mobileImagePositionX =
+    getSafeNumber(
+      settings.mobileImagePositionX,
+      50
+    );
+
+  const mobileImagePositionY =
+    getSafeNumber(
+      settings.mobileImagePositionY,
+      50
+    );
 
   if (heroEyebrow) {
     heroEyebrow.textContent =
@@ -1332,33 +1548,111 @@ function applyAdminHeroSettings(
       ""
   );
 
+  const applyResponsiveHeroImage =
+    () => {
+      if (!heroImage) {
+        return;
+      }
+
+      const isMobile =
+        window.matchMedia(
+          "(max-width: 767px)"
+        ).matches;
+
+      const hasMobileImage =
+        Boolean(
+          settings.mobileImageUrl
+        );
+
+      const useMobileImage =
+        isMobile &&
+        hasMobileImage;
+
+      const selectedImageUrl =
+        useMobileImage
+          ? settings.mobileImageUrl
+          : settings.imageUrl;
+
+      const selectedScale =
+        useMobileImage
+          ? mobileImageScale
+          : imageScale;
+
+      const selectedPositionX =
+        useMobileImage
+          ? mobileImagePositionX
+          : imagePositionX;
+
+      const selectedPositionY =
+        useMobileImage
+          ? mobileImagePositionY
+          : imagePositionY;
+
+      if (selectedImageUrl) {
+        heroImage.src =
+          selectedImageUrl;
+      }
+
+      heroImage.style.objectPosition =
+        `${selectedPositionX}% ${selectedPositionY}%`;
+
+      heroImage.style.transform =
+        `scale(${selectedScale / 100})`;
+
+      heroImage.style.transformOrigin =
+        `${selectedPositionX}% ${selectedPositionY}%`;
+
+      if (heroSection) {
+        heroSection.dataset
+          .heroImageMode =
+          useMobileImage
+            ? "mobile"
+            : "desktop";
+
+        heroSection.dataset
+          .heroImageScale =
+          String(selectedScale);
+
+        heroSection.dataset
+          .heroImagePositionX =
+          String(
+            selectedPositionX
+          );
+
+        heroSection.dataset
+          .heroImagePositionY =
+          String(
+            selectedPositionY
+          );
+      }
+    };
+
+  applyResponsiveHeroImage();
+
+  /*
+   * 관리자 화면에서 브라우저 크기를 바꿨을 때도
+   * PC·모바일 사진이 즉시 전환되도록 합니다.
+   */
   if (
-    heroImage &&
-    settings.imageUrl
+    applyAdminHeroSettings
+      .responsiveImageHandler
   ) {
-    heroImage.src =
-      settings.imageUrl;
-
-    heroImage.style.objectPosition =
-      `${safePositionX}% ${safePositionY}%`;
-
-    heroImage.style.transform =
-      `scale(${imageScale / 100})`;
+    window.removeEventListener(
+      "resize",
+      applyAdminHeroSettings
+        .responsiveImageHandler
+    );
   }
 
-  if (heroSection) {
-    heroSection.dataset
-      .heroImageScale =
-      String(imageScale);
+  applyAdminHeroSettings
+    .responsiveImageHandler =
+    applyResponsiveHeroImage;
 
-    heroSection.dataset
-      .heroImagePositionX =
-      String(safePositionX);
-
-    heroSection.dataset
-      .heroImagePositionY =
-      String(safePositionY);
-  }
+  window.addEventListener(
+    "resize",
+    applyAdminHeroSettings
+      .responsiveImageHandler
+  );
 
   if (musicButton) {
     musicButton.hidden =
@@ -1402,11 +1696,14 @@ function applyAdminHeroSettings(
 
   return {
     ...settings,
+
     imageScale,
-    imagePositionX:
-      safePositionX,
-    imagePositionY:
-      safePositionY,
+    imagePositionX,
+    imagePositionY,
+
+    mobileImageScale,
+    mobileImagePositionX,
+    mobileImagePositionY,
   };
 }
 
@@ -1425,8 +1722,12 @@ function bindAdminHeroForm() {
           ".admin-form-submit"
         );
 
-      const selectedFile =
+      const selectedPcFile =
         adminHeroImageInput
+          ?.files?.[0];
+
+      const selectedMobileFile =
+        adminHeroMobileImageInput
           ?.files?.[0];
 
       try {
@@ -1442,31 +1743,66 @@ function bindAdminHeroForm() {
           adminHeroPreviewImage?.src ||
           "";
 
-        if (selectedFile) {
+        let heroMobileImageUrl =
+          adminHeroMobilePreviewImage
+            ?.src || "";
+
+        /* PC용 배경사진 업로드 */
+        if (selectedPcFile) {
           if (
-            !selectedFile.type.startsWith(
+            !selectedPcFile.type.startsWith(
               "image/"
             )
           ) {
             throw new Error(
-              "이미지 파일만 선택할 수 있습니다."
+              "PC용 배경사진은 이미지 파일만 선택할 수 있습니다."
             );
           }
 
           if (submitButton) {
             submitButton.textContent =
-              "배경사진 업로드 중...";
+              "PC 배경사진 업로드 중...";
           }
 
           heroImageUrl =
             await uploadAdminImage(
-              selectedFile,
+              selectedPcFile,
               "hero"
             );
 
           if (!heroImageUrl) {
             throw new Error(
-              "배경사진 주소를 받지 못했습니다."
+              "PC 배경사진 주소를 받지 못했습니다."
+            );
+          }
+        }
+
+        /* 모바일용 배경사진 업로드 */
+        if (selectedMobileFile) {
+          if (
+            !selectedMobileFile.type.startsWith(
+              "image/"
+            )
+          ) {
+            throw new Error(
+              "모바일용 배경사진은 이미지 파일만 선택할 수 있습니다."
+            );
+          }
+
+          if (submitButton) {
+            submitButton.textContent =
+              "모바일 배경사진 업로드 중...";
+          }
+
+          heroMobileImageUrl =
+            await uploadAdminImage(
+              selectedMobileFile,
+              "hero-mobile"
+            );
+
+          if (!heroMobileImageUrl) {
+            throw new Error(
+              "모바일 배경사진 주소를 받지 못했습니다."
             );
           }
         }
@@ -1493,6 +1829,7 @@ function bindAdminHeroForm() {
               adminHeroDescriptionLine2
                 ?.value.trim() || "",
 
+            /* PC용 배경사진 */
             imageUrl:
               heroImageUrl,
 
@@ -1509,6 +1846,28 @@ function bindAdminHeroForm() {
             imagePositionY:
               Number(
                 adminHeroImagePosY?.value
+              ) || 50,
+
+            /* 모바일용 배경사진 */
+            mobileImageUrl:
+              heroMobileImageUrl,
+
+            mobileImageScale:
+              Number(
+                adminHeroMobileImageScale
+                  ?.value
+              ) || 100,
+
+            mobileImagePositionX:
+              Number(
+                adminHeroMobileImagePosX
+                  ?.value
+              ) || 50,
+
+            mobileImagePositionY:
+              Number(
+                adminHeroMobileImagePosY
+                  ?.value
               ) || 50,
 
             showMusicButton:
@@ -1631,17 +1990,48 @@ function bindAdminHeroForm() {
           savedHeroSettings
         );
 
+        /* 파일 선택값 초기화 */
         if (adminHeroImageInput) {
           adminHeroImageInput.value =
             "";
         }
 
         if (
+          adminHeroMobileImageInput
+        ) {
+          adminHeroMobileImageInput.value =
+            "";
+        }
+
+        /* PC 미리보기 주소 갱신 */
+        if (
           adminHeroPreviewImage &&
           savedHeroSettings.imageUrl
         ) {
           adminHeroPreviewImage.src =
             savedHeroSettings.imageUrl;
+
+          adminHeroPreviewImage.hidden =
+            false;
+        }
+
+        /* 모바일 미리보기 주소 갱신 */
+        if (
+          adminHeroMobilePreviewImage &&
+          savedHeroSettings
+            .mobileImageUrl
+        ) {
+          adminHeroMobilePreviewImage.src =
+            savedHeroSettings
+              .mobileImageUrl;
+
+          adminHeroMobilePreviewImage.hidden =
+            false;
+
+          adminHeroMobileImagePreview
+            ?.classList.add(
+              "has-image"
+            );
         }
 
         alert(
@@ -8923,9 +9313,10 @@ function applyBookingContactEmail(value) {
 
 async function loadSiteSettings() {
   try {
-    const response = await fetch(
-      "/api/content?type=settings"
-    );
+    const response =
+      await fetch(
+        "/api/content?type=settings"
+      );
 
     if (!response.ok) {
       applyTeamInstagramUrl(
@@ -8962,36 +9353,268 @@ async function loadSiteSettings() {
       settings?.hero_settings_json ||
       "";
 
+    let heroSettings = null;
+
     if (
       typeof heroSettingsJson ===
         "string" &&
       heroSettingsJson.trim()
     ) {
       try {
-        const heroSettings =
+        heroSettings =
           JSON.parse(
             heroSettingsJson
           );
-
-        if (
-          heroSettings &&
-          typeof heroSettings ===
-            "object" &&
-          !Array.isArray(
-            heroSettings
-          )
-        ) {
-          applyAdminHeroSettings(
-            heroSettings
-          );
-        }
       } catch (parseError) {
         console.warn(
           "저장된 첫 화면 설정을 해석하지 못했습니다.",
           parseError
         );
       }
+    } else if (
+      heroSettingsJson &&
+      typeof heroSettingsJson ===
+        "object"
+    ) {
+      heroSettings =
+        heroSettingsJson;
     }
+
+    if (
+      !heroSettings ||
+      typeof heroSettings !==
+        "object" ||
+      Array.isArray(heroSettings)
+    ) {
+      return;
+    }
+
+    const getSafeNumber = (
+      value,
+      fallback
+    ) => {
+      const numberValue =
+        Number(value);
+
+      return Number.isFinite(
+        numberValue
+      )
+        ? numberValue
+        : fallback;
+    };
+
+    /* 첫 화면 문구 복원 */
+    if (adminHeroEyebrow) {
+      adminHeroEyebrow.value =
+        heroSettings.eyebrow || "";
+    }
+
+    if (adminHeroTitleLine1) {
+      adminHeroTitleLine1.value =
+        heroSettings.titleLine1 || "";
+    }
+
+    if (adminHeroTitleLine2) {
+      adminHeroTitleLine2.value =
+        heroSettings.titleLine2 || "";
+    }
+
+    if (
+      adminHeroDescriptionLine1
+    ) {
+      adminHeroDescriptionLine1.value =
+        heroSettings
+          .descriptionLine1 || "";
+    }
+
+    if (
+      adminHeroDescriptionLine2
+    ) {
+      adminHeroDescriptionLine2.value =
+        heroSettings
+          .descriptionLine2 || "";
+    }
+
+    /* 버튼과 SNS 설정 복원 */
+    if (
+      adminHeroShowMusicButton
+    ) {
+      adminHeroShowMusicButton.checked =
+        heroSettings
+          .showMusicButton !== false;
+    }
+
+    if (
+      adminHeroShowLiveButton
+    ) {
+      adminHeroShowLiveButton.checked =
+        heroSettings
+          .showLiveButton !== false;
+    }
+
+    if (
+      adminHeroShowMessageButton
+    ) {
+      adminHeroShowMessageButton.checked =
+        heroSettings
+          .showMessageButton !== false;
+    }
+
+    if (
+      adminHeroShowInstagram
+    ) {
+      adminHeroShowInstagram.checked =
+        heroSettings
+          .showInstagram !== false;
+    }
+
+    if (
+      adminHeroInstagramUrl
+    ) {
+      adminHeroInstagramUrl.value =
+        heroSettings.instagramUrl ||
+        DEFAULT_TEAM_INSTAGRAM_URL;
+    }
+
+    if (
+      adminHeroShowYoutube
+    ) {
+      adminHeroShowYoutube.checked =
+        heroSettings
+          .showYoutube !== false;
+    }
+
+    if (
+      adminHeroYoutubeUrl
+    ) {
+      adminHeroYoutubeUrl.value =
+        heroSettings.youtubeUrl ||
+        "https://youtube.com/@official.onyour";
+    }
+
+    /* PC 사진 조절값 복원 */
+    if (adminHeroImageScale) {
+      adminHeroImageScale.value =
+        String(
+          getSafeNumber(
+            heroSettings.imageScale,
+            100
+          )
+        );
+    }
+
+    if (adminHeroImagePosX) {
+      adminHeroImagePosX.value =
+        String(
+          getSafeNumber(
+            heroSettings.imagePositionX,
+            50
+          )
+        );
+    }
+
+    if (adminHeroImagePosY) {
+      adminHeroImagePosY.value =
+        String(
+          getSafeNumber(
+            heroSettings.imagePositionY,
+            50
+          )
+        );
+    }
+
+    if (
+      adminHeroPreviewImage &&
+      heroSettings.imageUrl
+    ) {
+      adminHeroPreviewImage.src =
+        heroSettings.imageUrl;
+
+      adminHeroPreviewImage.hidden =
+        false;
+
+      adminHeroImagePreview
+        ?.classList.add(
+          "has-image"
+        );
+    }
+
+    /* 모바일 사진 조절값 복원 */
+    if (
+      adminHeroMobileImageScale
+    ) {
+      adminHeroMobileImageScale.value =
+        String(
+          getSafeNumber(
+            heroSettings
+              .mobileImageScale,
+            100
+          )
+        );
+    }
+
+    if (
+      adminHeroMobileImagePosX
+    ) {
+      adminHeroMobileImagePosX.value =
+        String(
+          getSafeNumber(
+            heroSettings
+              .mobileImagePositionX,
+            50
+          )
+        );
+    }
+
+    if (
+      adminHeroMobileImagePosY
+    ) {
+      adminHeroMobileImagePosY.value =
+        String(
+          getSafeNumber(
+            heroSettings
+              .mobileImagePositionY,
+            50
+          )
+        );
+    }
+
+    if (
+      adminHeroMobilePreviewImage &&
+      heroSettings.mobileImageUrl
+    ) {
+      adminHeroMobilePreviewImage.src =
+        heroSettings.mobileImageUrl;
+
+      adminHeroMobilePreviewImage.hidden =
+        false;
+
+      adminHeroMobileImagePreview
+        ?.classList.add(
+          "has-image"
+        );
+    } else if (
+      adminHeroMobilePreviewImage
+    ) {
+      adminHeroMobilePreviewImage.removeAttribute(
+        "src"
+      );
+
+      adminHeroMobilePreviewImage.hidden =
+        true;
+
+      adminHeroMobileImagePreview
+        ?.classList.remove(
+          "has-image"
+        );
+    }
+
+    updateAdminHeroImagePreview();
+    updateAdminHeroMobileImagePreview();
+
+    applyAdminHeroSettings(
+      heroSettings
+    );
   } catch (error) {
     console.error(
       "홈페이지 설정 불러오기 실패:",

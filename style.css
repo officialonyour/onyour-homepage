@@ -12082,3 +12082,85 @@ body.performance-gallery-open {
     font-size: 8px !important;
   }
 }
+
+/* =========================
+   HERO MOBILE IMAGE EDITOR
+========================= */
+
+#adminDashboard
+  #adminHeroMobileImagePreview {
+  position: relative;
+
+  width: min(100%, 360px);
+  margin-inline: auto;
+  aspect-ratio: 4 / 5;
+
+  overflow: hidden;
+
+  border: 1px solid
+    rgba(255, 255, 255, 0.14);
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.06),
+      rgba(255, 255, 255, 0.015)
+    );
+}
+
+#adminDashboard
+  #adminHeroMobileImagePreview
+  img {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+  object-position: 50% 50%;
+
+  will-change:
+    transform,
+    object-position;
+}
+
+#adminDashboard
+  #adminHeroMobileImagePreview
+  img[hidden] {
+  display: none;
+}
+
+#adminDashboard
+  #adminHeroMobileImagePreview:not(
+    .has-image
+  )::after {
+  content: "모바일용 사진 미리보기";
+
+  position: absolute;
+  inset: 0;
+
+  display: grid;
+  place-items: center;
+
+  padding: 20px;
+
+  color: rgba(255, 255, 255, 0.42);
+
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+
+#adminDashboard
+  #adminHeroMobileImagePreview.has-image::after {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  #adminDashboard
+    #adminHeroMobileImagePreview {
+    width: min(100%, 320px);
+    border-radius: 16px;
+  }
+}
