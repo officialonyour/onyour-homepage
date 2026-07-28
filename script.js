@@ -76,7 +76,7 @@ window.addEventListener(
       resetPageScrollPosition();
     });
   }
-);
+);  
 
 document.addEventListener("DOMContentLoaded", () => {
   const body = document.body;
@@ -320,8 +320,125 @@ const adminViews =
     "#adminDashboard [data-admin-view]"
   );
 
+/* =========================
+   ADMIN LOGIN SESSION
+   로그인 상태 30분 유지
+========================= */
+
+const ADMIN_SESSION_STORAGE_KEY =
+  "onyourAdminSession";
+
+const ADMIN_SESSION_DURATION =
+  30 * 60 * 1000;
+
 let currentAdminPassword = "";
-  
+
+
+function clearAdminSession() {
+  currentAdminPassword = "";
+
+  try {
+    localStorage.removeItem(
+      ADMIN_SESSION_STORAGE_KEY
+    );
+  } catch (error) {
+    console.warn(
+      "관리자 로그인 정보 삭제 실패:",
+      error
+    );
+  }
+}
+
+
+function saveAdminSession(password) {
+  const expiresAt =
+    Date.now() + ADMIN_SESSION_DURATION;
+
+  currentAdminPassword = password;
+
+  try {
+    localStorage.setItem(
+      ADMIN_SESSION_STORAGE_KEY,
+      JSON.stringify({
+        password,
+        expiresAt,
+      })
+    );
+  } catch (error) {
+    console.warn(
+      "관리자 로그인 정보 저장 실패:",
+      error
+    );
+  }
+}
+
+
+function restoreAdminSession() {
+  try {
+    const savedValue =
+      localStorage.getItem(
+        ADMIN_SESSION_STORAGE_KEY
+      );
+
+    if (!savedValue) {
+      return false;
+    }
+
+    const savedSession =
+      JSON.parse(savedValue);
+
+    const password =
+      String(
+        savedSession?.password || ""
+      ).trim();
+
+    const expiresAt =
+      Number(
+        savedSession?.expiresAt || 0
+      );
+
+    if (
+      !password ||
+      !expiresAt ||
+      Date.now() >= expiresAt
+    ) {
+      clearAdminSession();
+      return false;
+    }
+
+    currentAdminPassword = password;
+    return true;
+  } catch (error) {
+    console.warn(
+      "관리자 로그인 정보 불러오기 실패:",
+      error
+    );
+
+    clearAdminSession();
+    return false;
+  }
+}
+
+
+function isAdminSessionActive() {
+  return restoreAdminSession();
+}
+
+
+restoreAdminSession();
+
+window.setInterval(() => {
+  if (
+    currentAdminPassword &&
+    !restoreAdminSession()
+  ) {
+    closeAdminDashboard();
+
+    alert(
+      "관리자 로그인 시간이 만료되었습니다. 다시 로그인해 주세요."
+    );
+  }
+}, 30 * 1000);
 
 /* =========================
    ADMIN VIEW INFORMATION
@@ -357,9 +474,32 @@ const ADMIN_VIEW_TITLES = {
 ========================= */
 
 function openAdminLogin() {
-  if (!adminLoginModal) return;
+  if (isAdminSessionActive()) {
+    openAdminDashboard();
+    return;
+  }
 
-  adminLoginModal.classList.add("is-open");
+  const adminLoginModal =
+    document.getElementById(
+      "adminLoginModal"
+    );
+
+  const adminLoginMessage =
+    document.getElementById(
+      "adminLoginMessage"
+    );
+
+  const adminPassword =
+    document.getElementById(
+      "adminPassword"
+    );
+
+  if (!adminLoginModal) {
+    return;
+  }
+
+  adminLoginModal.classList.add("open");
+
   adminLoginModal.setAttribute(
     "aria-hidden",
     "false"
@@ -381,7 +521,6 @@ function openAdminLogin() {
     }, 100);
   }
 }
-
 function closeAdminLogin() {
   if (!adminLoginModal) return;
 
@@ -620,7 +759,8 @@ adminLoginForm?.addEventListener(
   async (event) => {
     event.preventDefault();
 
-    const password = adminPassword?.value.trim();
+    const password =
+      adminPassword?.value.trim();
 
     if (!password) {
       if (adminLoginMessage) {
@@ -633,21 +773,25 @@ adminLoginForm?.addEventListener(
     }
 
     try {
-      // 임시로 비밀번호 저장
+      // 서버에서 비밀번호 먼저 확인
       currentAdminPassword = password;
 
-      // 서버 인증 확인
       await adminApiRequest(
         "/api/content?type=news&includePrivate=true"
       );
+
+      // 인증 성공 후 30분 로그인 상태 저장
+      saveAdminSession(password);
 
       if (adminLoginMessage) {
         adminLoginMessage.textContent = "";
       }
 
+      closeAdminLogin();
       openAdminDashboard();
     } catch (error) {
-      currentAdminPassword = "";
+      // 인증 실패 시 로그인 정보 완전히 삭제
+      clearAdminSession();
 
       if (adminLoginMessage) {
         adminLoginMessage.textContent =
@@ -671,7 +815,7 @@ adminDashboardClose?.addEventListener(
 adminLogoutButton?.addEventListener(
   "click",
   () => {
-    currentAdminPassword = "";
+    clearAdminSession();
     closeAdminDashboard();
   }
 );
