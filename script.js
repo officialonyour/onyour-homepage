@@ -479,26 +479,13 @@ function openAdminLogin() {
     return;
   }
 
-  const adminLoginModal =
-    document.getElementById(
-      "adminLoginModal"
-    );
-
-  const adminLoginMessage =
-    document.getElementById(
-      "adminLoginMessage"
-    );
-
-  const adminPassword =
-    document.getElementById(
-      "adminPassword"
-    );
-
   if (!adminLoginModal) {
     return;
   }
 
-  adminLoginModal.classList.add("open");
+  adminLoginModal.classList.add(
+    "is-open"
+  );
 
   adminLoginModal.setAttribute(
     "aria-hidden",
@@ -521,6 +508,7 @@ function openAdminLogin() {
     }, 100);
   }
 }
+
 function closeAdminLogin() {
   if (!adminLoginModal) return;
 
