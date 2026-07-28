@@ -6448,286 +6448,307 @@ document
   .getElementById(
     "adminPerformanceForm"
   )
-  ?.addEventListener(
-    "submit",
-    async (event) => {
-      event.preventDefault();
+/* =========================
+   PERFORMANCE FORM SUBMIT
+========================= */
 
-      const form =
-        event.currentTarget;
+async function handleAdminPerformanceSubmit(
+  event
+) {
+  event.preventDefault();
 
-      const submitButton =
-        form.querySelector(
-          ".admin-form-submit"
-        );
+  const form =
+    event.currentTarget;
 
-      const id =
-        getAdminFormValue(
-          "adminPerformanceId"
-        );
+  const submitButton =
+    form.querySelector(
+      ".admin-form-submit"
+    );
 
-      const existingItem =
-        adminStore.performance.find(
-          (item) =>
-            String(item.id) ===
-            String(id)
-        );
+  const id =
+    getAdminFormValue(
+      "adminPerformanceId"
+    );
 
-      const coverInput =
-        document.getElementById(
-          "adminPerformanceCoverImage"
-        );
+  const existingItem =
+    adminStore.performance.find(
+      (item) =>
+        String(item.id) ===
+        String(id)
+    );
 
-      const galleryInput =
-        document.getElementById(
-          "adminPerformanceGalleryImages"
-        );
+  const coverInput =
+    document.getElementById(
+      "adminPerformanceCoverImage"
+    );
 
-      const selectedCoverFile =
-        coverInput?.files?.[0] ||
-        null;
+  const galleryInput =
+    document.getElementById(
+      "adminPerformanceGalleryImages"
+    );
 
-      const selectedGalleryFiles =
-        Array.from(
-          galleryInput?.files || []
-        ).slice(0, 10);
+  const selectedCoverFile =
+    coverInput?.files?.[0] ||
+    null;
 
-      let coverUrl =
-        existingItem?.coverUrl ||
-        existingItem?.cover_url ||
-        "";
+  const selectedGalleryFiles =
+    Array.from(
+      galleryInput?.files || []
+    ).slice(0, 10);
 
-      let galleryImages =
-        existingItem?.galleryImages ||
-        existingItem?.gallery_images ||
-        [];
+  let coverUrl =
+    String(
+      existingItem?.coverUrl ||
+      existingItem?.cover_url ||
+      ""
+    ).trim();
 
-      if (
-        typeof galleryImages ===
-        "string"
-      ) {
-        try {
-          galleryImages =
-            JSON.parse(
-              galleryImages
-            );
-        } catch (error) {
-          galleryImages = [];
-        }
-      }
+  let galleryImages =
+    existingItem?.galleryImages ||
+    existingItem?.gallery_images ||
+    [];
 
-      if (
-        !Array.isArray(
+  if (
+    typeof galleryImages ===
+    "string"
+  ) {
+    try {
+      galleryImages =
+        JSON.parse(
           galleryImages
-        )
-      ) {
-        galleryImages = [];
+        );
+    } catch {
+      galleryImages = [];
+    }
+  }
+
+  if (
+    !Array.isArray(
+      galleryImages
+    )
+  ) {
+    galleryImages = [];
+  }
+
+  galleryImages =
+    galleryImages
+      .map(
+        (imageUrl) =>
+          String(
+            imageUrl || ""
+          ).trim()
+      )
+      .filter(Boolean)
+      .slice(0, 10);
+
+  try {
+    if (
+      galleryInput?.files?.length >
+      10
+    ) {
+      throw new Error(
+        "추가 공연 사진은 최대 10장까지 등록할 수 있습니다."
+      );
+    }
+
+    const filesToCheck = [
+      selectedCoverFile,
+      ...selectedGalleryFiles,
+    ].filter(Boolean);
+
+    const invalidFile =
+      filesToCheck.find(
+        (file) =>
+          !file.type.startsWith(
+            "image/"
+          )
+      );
+
+    if (invalidFile) {
+      throw new Error(
+        "공연 사진은 이미지 파일만 선택할 수 있습니다."
+      );
+    }
+
+    if (submitButton) {
+      submitButton.disabled =
+        true;
+
+      submitButton.textContent =
+        "저장 준비 중...";
+    }
+
+    if (selectedCoverFile) {
+      if (submitButton) {
+        submitButton.textContent =
+          "대표 사진 업로드 중...";
       }
 
-      try {
-        if (
-          galleryInput?.files?.length >
-          10
-        ) {
-          throw new Error(
-            "추가 공연 사진은 최대 10장까지 등록할 수 있습니다."
-          );
-        }
-
-        const filesToCheck = [
+      coverUrl =
+        await uploadAdminImage(
           selectedCoverFile,
-          ...selectedGalleryFiles,
-        ].filter(Boolean);
-
-        const invalidFile =
-          filesToCheck.find(
-            (file) =>
-              !file.type.startsWith(
-                "image/"
-              )
-          );
-
-        if (invalidFile) {
-          throw new Error(
-            "공연 사진은 이미지 파일만 선택할 수 있습니다."
-          );
-        }
-
-        if (submitButton) {
-          submitButton.disabled =
-            true;
-
-          submitButton.textContentContent =
-            "저장 준비 중...";
-        }
-
-        if (selectedCoverFile) {
-          if (submitButton) {
-            submitButton.textContent =
-              "대표 사진 업로드 중...";
-          }
-
-          coverUrl =
-            await uploadAdminImage(
-              selectedCoverFile,
-              "performance"
-            );
-
-          if (!coverUrl) {
-            throw new Error(
-              "대표 사진 주소를 받지 못했습니다."
-            );
-          }
-        }
-
-        if (
-          selectedGalleryFiles.length
-        ) {
-          if (submitButton) {
-            submitButton.textContent =
-              `공연 사진 업로드 중... (0/${selectedGalleryFiles.length})`;
-          }
-
-          const uploadedGalleryImages =
-            [];
-
-          for (
-            let index = 0;
-            index <
-            selectedGalleryFiles.length;
-            index += 1
-          ) {
-            if (submitButton) {
-              submitButton.textContent =
-                `공연 사진 업로드 중... (${index + 1}/${selectedGalleryFiles.length})`;
-            }
-
-            const imageUrl =
-              await uploadAdminImage(
-                selectedGalleryFiles[
-                  index
-                ],
-                "performance"
-              );
-
-            if (!imageUrl) {
-              throw new Error(
-                `${
-                  index + 1
-                }번째 공연 사진 주소를 받지 못했습니다.`
-              );
-            }
-
-            uploadedGalleryImages.push(
-              imageUrl
-            );
-          }
-
-          galleryImages =
-            uploadedGalleryImages;
-        }
-
-        if (submitButton) {
-          submitButton.textContent =
-            "공연 저장 중...";
-        }
-
-        const data = {
-          id:
-            id ||
-            createAdminId(
-              "performance"
-            ),
-
-          title:
-            getAdminFormValue(
-              "adminPerformanceTitle"
-            ),
-
-          date:
-            getAdminFormValue(
-              "adminPerformanceDate"
-            ),
-
-          time:
-            getAdminFormValue(
-              "adminPerformanceTime"
-            ),
-
-          location:
-            getAdminFormValue(
-              "adminPerformanceLocation"
-            ),
-
-          address:
-            getAdminFormValue(
-              "adminPerformanceAddress"
-            ),
-
-          description:
-            getAdminFormValue(
-              "adminPerformanceDescription"
-            ),
-
-          setlist:
-            getAdminFormValue(
-              "adminPerformanceSetlist"
-            ),
-
-          ticketUrl:
-            getAdminFormValue(
-              "adminPerformanceTicketUrl"
-            ),
-
-          videoUrl:
-            getAdminFormValue(
-              "adminPerformanceVideoUrl"
-            ),
-
-          coverUrl,
-
-          galleryImages,
-
-          published:
-            getAdminFormValue(
-              "adminPerformancePublished"
-            ),
-        };
-
-        await saveAdminItem(
-          "performance",
-          data
+          "performance"
         );
 
-        clearAdminPerformancePreviewUrls();
-
-        if (coverInput) {
-          coverInput.value = "";
-        }
-
-        if (galleryInput) {
-          galleryInput.value = "";
-        }
-      } catch (error) {
-        console.error(
-          "공연 저장 오류:",
-          error
+      if (!coverUrl) {
+        throw new Error(
+          "대표 사진 주소를 받지 못했습니다."
         );
-
-        alert(
-          error.message ||
-            "공연을 저장하지 못했습니다."
-        );
-      } finally {
-        if (submitButton) {
-          submitButton.disabled =
-            false;
-
-          submitButton.textContent =
-            "저장";
-        }
       }
     }
+
+    if (
+      selectedGalleryFiles.length >
+      0
+    ) {
+      const uploadedGalleryImages =
+        [];
+
+      for (
+        let index = 0;
+        index <
+        selectedGalleryFiles.length;
+        index += 1
+      ) {
+        if (submitButton) {
+          submitButton.textContent =
+            `공연 사진 업로드 중... (${index + 1}/${selectedGalleryFiles.length})`;
+        }
+
+        const imageUrl =
+          await uploadAdminImage(
+            selectedGalleryFiles[
+              index
+            ],
+            "performance"
+          );
+
+        if (!imageUrl) {
+          throw new Error(
+            `${index + 1}번째 공연 사진 주소를 받지 못했습니다.`
+          );
+        }
+
+        uploadedGalleryImages.push(
+          imageUrl
+        );
+      }
+
+      galleryImages =
+        uploadedGalleryImages;
+    }
+
+    if (submitButton) {
+      submitButton.textContent =
+        "공연 저장 중...";
+    }
+
+    const data = {
+      id:
+        id ||
+        createAdminId(
+          "performance"
+        ),
+
+      title:
+        getAdminFormValue(
+          "adminPerformanceTitle"
+        ),
+
+      date:
+        getAdminFormValue(
+          "adminPerformanceDate"
+        ),
+
+      time:
+        getAdminFormValue(
+          "adminPerformanceTime"
+        ),
+
+      location:
+        getAdminFormValue(
+          "adminPerformanceLocation"
+        ),
+
+      address:
+        getAdminFormValue(
+          "adminPerformanceAddress"
+        ),
+
+      description:
+        getAdminFormValue(
+          "adminPerformanceDescription"
+        ),
+
+      setlist:
+        getAdminFormValue(
+          "adminPerformanceSetlist"
+        ),
+
+      ticketUrl:
+        getAdminFormValue(
+          "adminPerformanceTicketUrl"
+        ),
+
+      videoUrl:
+        getAdminFormValue(
+          "adminPerformanceVideoUrl"
+        ),
+
+      coverUrl,
+
+      galleryImages,
+
+      published:
+        getAdminFormValue(
+          "adminPerformancePublished"
+        ),
+    };
+
+    await saveAdminItem(
+      "performance",
+      data
+    );
+
+    clearAdminPerformancePreviewUrls();
+
+    if (coverInput) {
+      coverInput.value = "";
+    }
+
+    if (galleryInput) {
+      galleryInput.value = "";
+    }
+  } catch (error) {
+    console.error(
+      "공연 저장 오류:",
+      error
+    );
+
+    alert(
+      error.message ||
+        "공연을 저장하지 못했습니다."
+    );
+  } finally {
+    if (submitButton) {
+      submitButton.disabled =
+        false;
+
+      submitButton.textContent =
+        "저장";
+    }
+  }
+}
+
+const adminPerformanceForm =
+  document.getElementById(
+    "adminPerformanceForm"
+  );
+
+adminPerformanceForm
+  ?.addEventListener(
+    "submit",
+    handleAdminPerformanceSubmit
   );
 
 document

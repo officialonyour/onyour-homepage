@@ -29,6 +29,11 @@ const CONTENT_CONFIG = {
       setlist: "setlist",
       ticketUrl: "ticket_url",
       posterUrl: "poster_url",
+
+      videoUrl: "video_url",
+      coverUrl: "cover_url",
+      galleryImages: "gallery_images",
+
       published: "published",
       publishAt: "publish_at",
     },
@@ -654,48 +659,136 @@ function normalizeContentData(
   type,
   body
 ) {
-  const config = CONTENT_CONFIG[type];
+  const config =
+    CONTENT_CONFIG[type];
+
   const result = {};
 
-  Object.entries(config.fields).forEach(
-    ([clientKey, databaseColumn]) => {
-      let value = body[clientKey];
+  Object.entries(
+    config.fields
+  ).forEach(
+    (
+      [
+        clientKey,
+        databaseColumn,
+      ]
+    ) => {
+      let value =
+        body[clientKey];
 
       if (
-        databaseColumn === "published" ||
-        databaseColumn === "featured"
-      ) {
-        value = value ? 1 : 0;
-      } else if (
-        databaseColumn === "sort_order" ||
-        databaseColumn === "track_count" ||
-        databaseColumn === "image_position_x" ||
-        databaseColumn === "image_position_y" ||
-        databaseColumn === "image_scale"
+        databaseColumn ===
+          "published" ||
+        databaseColumn ===
+          "featured"
       ) {
         value =
-          Number.parseInt(value, 10) || 0;
+          value
+            ? 1
+            : 0;
       } else if (
-        databaseColumn === "platforms_json" ||
-        databaseColumn === "social_links_json"
+        databaseColumn ===
+          "sort_order" ||
+        databaseColumn ===
+          "track_count" ||
+        databaseColumn ===
+          "image_position_x" ||
+        databaseColumn ===
+          "image_position_y" ||
+        databaseColumn ===
+          "image_scale"
       ) {
-        if (Array.isArray(value)) {
-          value = JSON.stringify(value);
+        value =
+          Number.parseInt(
+            value,
+            10
+          ) || 0;
+      } else if (
+        databaseColumn ===
+          "platforms_json" ||
+        databaseColumn ===
+          "social_links_json" ||
+        databaseColumn ===
+          "gallery_images"
+      ) {
+        if (
+          Array.isArray(value)
+        ) {
+          value =
+            JSON.stringify(
+              value
+                .map(
+                  (
+                    item
+                  ) =>
+                    String(
+                      item ||
+                        ""
+                    ).trim()
+                )
+                .filter(
+                  Boolean
+                )
+                .slice(
+                  0,
+                  10
+                )
+            );
         } else if (
-          typeof value === "string" &&
+          typeof value ===
+            "string" &&
           value.trim()
         ) {
-          value = value.trim();
+          try {
+            const parsedValue =
+              JSON.parse(
+                value
+              );
+
+            value =
+              JSON.stringify(
+                Array.isArray(
+                  parsedValue
+                )
+                  ? parsedValue
+                      .map(
+                        (
+                          item
+                        ) =>
+                          String(
+                            item ||
+                              ""
+                          ).trim()
+                      )
+                      .filter(
+                        Boolean
+                      )
+                      .slice(
+                        0,
+                        10
+                      )
+                  : []
+              );
+          } catch {
+            value = "[]";
+          }
         } else {
           value = "[]";
         }
-      } else if (value == null) {
+      } else if (
+        value == null
+      ) {
         value = "";
       } else {
-        value = String(value).trim();
+        value =
+          String(
+            value
+          ).trim();
       }
 
-      result[databaseColumn] = value;
+      result[
+        databaseColumn
+      ] = value;
     }
   );
 
@@ -703,10 +796,13 @@ function normalizeContentData(
     type === "video" &&
     !result.video_type
   ) {
-    result.video_type = "youtube";
+    result.video_type =
+      "youtube";
   }
 
-  if (type === "members") {
+  if (
+    type === "members"
+  ) {
     result.image_position_x =
       Number.parseInt(
         result.image_position_x,
@@ -728,8 +824,18 @@ function normalizeContentData(
     if (
       !result.social_links_json
     ) {
-      result.social_links_json = "[]";
+      result.social_links_json =
+        "[]";
     }
+  }
+
+  if (
+    type ===
+      "performance" &&
+    !result.gallery_images
+  ) {
+    result.gallery_images =
+      "[]";
   }
 
   return result;
@@ -744,67 +850,170 @@ function convertDatabaseRow(
   type,
   row
 ) {
-  const config = CONTENT_CONFIG[type];
+  const config =
+    CONTENT_CONFIG[type];
 
   const item = {
-    id: row.id,
-    createdAt: row.created_at || "",
-    updatedAt: row.updated_at || "",
+    id:
+      row.id,
+
+    createdAt:
+      row.created_at ||
+      "",
+
+    updatedAt:
+      row.updated_at ||
+      "",
   };
 
-  Object.entries(config.fields).forEach(
-    ([clientKey, databaseColumn]) => {
-      let value = row[databaseColumn];
+  Object.entries(
+    config.fields
+  ).forEach(
+    (
+      [
+        clientKey,
+        databaseColumn,
+      ]
+    ) => {
+      let value =
+        row[
+          databaseColumn
+        ];
 
       if (
-        databaseColumn === "published" ||
-        databaseColumn === "featured"
+        databaseColumn ===
+          "published" ||
+        databaseColumn ===
+          "featured"
       ) {
-        value = Number(value) === 1;
+        value =
+          Number(value) ===
+          1;
       } else if (
-        databaseColumn === "platforms_json"
+        databaseColumn ===
+          "platforms_json"
       ) {
         try {
           const parsed =
-            typeof value === "string"
-              ? JSON.parse(value || "[]")
+            typeof value ===
+            "string"
+              ? JSON.parse(
+                  value ||
+                    "[]"
+                )
               : value;
 
-          value = Array.isArray(parsed)
-            ? parsed
-                .map((platform) => ({
-                  key: String(
-                    platform?.key || ""
-                  ).trim(),
+          value =
+            Array.isArray(
+              parsed
+            )
+              ? parsed
+                  .map(
+                    (
+                      platform
+                    ) => ({
+                      key:
+                        String(
+                          platform
+                            ?.key ||
+                            ""
+                        ).trim(),
 
-                  label: String(
-                    platform?.label || ""
-                  ).trim(),
+                      label:
+                        String(
+                          platform
+                            ?.label ||
+                            ""
+                        ).trim(),
 
-                  url: String(
-                    platform?.url || ""
-                  ).trim(),
-                }))
-                .filter(
-                  (platform) =>
-                    platform.key &&
-                    platform.label &&
-                    platform.url
+                      url:
+                        String(
+                          platform
+                            ?.url ||
+                            ""
+                        ).trim(),
+                    })
+                  )
+                  .filter(
+                    (
+                      platform
+                    ) =>
+                      platform.key &&
+                      platform.label &&
+                      platform.url
+                  )
+              : [];
+        } catch {
+          value = [];
+        }
+      } else if (
+        databaseColumn ===
+          "gallery_images"
+      ) {
+        try {
+          const parsed =
+            typeof value ===
+            "string"
+              ? JSON.parse(
+                  value ||
+                    "[]"
                 )
-            : [];
+              : value;
+
+          value =
+            Array.isArray(
+              parsed
+            )
+              ? parsed
+                  .map(
+                    (
+                      imageUrl
+                    ) =>
+                      String(
+                        imageUrl ||
+                          ""
+                      ).trim()
+                  )
+                  .filter(
+                    Boolean
+                  )
+                  .slice(
+                    0,
+                    10
+                  )
+              : [];
         } catch {
           value = [];
         }
       }
 
-      item[clientKey] = value ?? "";
+      item[
+        clientKey
+      ] =
+        value ?? "";
     }
   );
 
-  if (type === "music") {
+  if (
+    type === "music"
+  ) {
     item.platforms =
-      Array.isArray(item.platformsJson)
+      Array.isArray(
+        item.platformsJson
+      )
         ? item.platformsJson
+        : [];
+  }
+
+  if (
+    type ===
+    "performance"
+  ) {
+    item.galleryImages =
+      Array.isArray(
+        item.galleryImages
+      )
+        ? item.galleryImages
         : [];
   }
 
