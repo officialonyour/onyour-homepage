@@ -12553,3 +12553,693 @@ document.addEventListener(
     }
   }
 );
+
+/* =========================================================
+   TEAM PROFILE IMAGE MANAGEMENT
+   - 단체사진 불러오기
+   - 사진 선택 미리보기
+   - 확대·좌우·상하 위치 조절
+   - 홈페이지 단체사진 즉시 반영
+   - settings 데이터로 저장
+========================================================= */
+
+const DEFAULT_TEAM_IMAGE_URL =
+  "images/team-main.jpg";
+
+
+const adminTeamImageForm =
+  document.getElementById(
+    "adminTeamImageForm"
+  );
+
+const adminTeamImageInput =
+  document.getElementById(
+    "adminTeamImage"
+  );
+
+const adminTeamImagePreview =
+  document.getElementById(
+    "adminTeamImagePreview"
+  );
+
+const adminTeamPreviewImage =
+  document.getElementById(
+    "adminTeamPreviewImage"
+  );
+
+const adminTeamImageScale =
+  document.getElementById(
+    "adminTeamImageScale"
+  );
+
+const adminTeamImagePosX =
+  document.getElementById(
+    "adminTeamImagePosX"
+  );
+
+const adminTeamImagePosY =
+  document.getElementById(
+    "adminTeamImagePosY"
+  );
+
+const adminTeamImageScaleValue =
+  document.getElementById(
+    "adminTeamImageScaleValue"
+  );
+
+const adminTeamImagePosXValue =
+  document.getElementById(
+    "adminTeamImagePosXValue"
+  );
+
+const adminTeamImagePosYValue =
+  document.getElementById(
+    "adminTeamImagePosYValue"
+  );
+
+const adminTeamImageReset =
+  document.getElementById(
+    "adminTeamImageReset"
+  );
+
+
+let currentTeamImageUrl =
+  DEFAULT_TEAM_IMAGE_URL;
+
+let adminTeamImagePreviewUrl =
+  "";
+
+
+/* =========================
+   단체사진 편집값 가져오기
+========================= */
+
+function getAdminTeamImageEditorValues() {
+  return {
+    imagePositionX:
+      clampAdminMemberImageValue(
+        adminTeamImagePosX?.value,
+        0,
+        100,
+        50
+      ),
+
+    imagePositionY:
+      clampAdminMemberImageValue(
+        adminTeamImagePosY?.value,
+        0,
+        100,
+        50
+      ),
+
+    imageScale:
+      clampAdminMemberImageValue(
+        adminTeamImageScale?.value,
+        100,
+        200,
+        100
+      ),
+  };
+}
+
+
+/* =========================
+   단체사진 미리보기 갱신
+========================= */
+
+function updateAdminTeamImagePreview() {
+  const {
+    imagePositionX,
+    imagePositionY,
+    imageScale,
+  } =
+    getAdminTeamImageEditorValues();
+
+  if (adminTeamImageScaleValue) {
+    adminTeamImageScaleValue.textContent =
+      `${imageScale}%`;
+  }
+
+  if (adminTeamImagePosXValue) {
+    adminTeamImagePosXValue.textContent =
+      `${imagePositionX}%`;
+  }
+
+  if (adminTeamImagePosYValue) {
+    adminTeamImagePosYValue.textContent =
+      `${imagePositionY}%`;
+  }
+
+  if (!adminTeamPreviewImage) {
+    return;
+  }
+
+  adminTeamPreviewImage.style.objectPosition =
+    `${imagePositionX}% ${imagePositionY}%`;
+
+  adminTeamPreviewImage.style.transform =
+    `scale(${imageScale / 100})`;
+
+  adminTeamPreviewImage.style.transformOrigin =
+    "center center";
+}
+
+
+/* =========================
+   단체사진 편집값 설정
+========================= */
+
+function setAdminTeamImageEditorValues({
+  imagePositionX = 50,
+  imagePositionY = 50,
+  imageScale = 100,
+} = {}) {
+  const cleanPositionX =
+    clampAdminMemberImageValue(
+      imagePositionX,
+      0,
+      100,
+      50
+    );
+
+  const cleanPositionY =
+    clampAdminMemberImageValue(
+      imagePositionY,
+      0,
+      100,
+      50
+    );
+
+  const cleanScale =
+    clampAdminMemberImageValue(
+      imageScale,
+      100,
+      200,
+      100
+    );
+
+  if (adminTeamImagePosX) {
+    adminTeamImagePosX.value =
+      String(cleanPositionX);
+  }
+
+  if (adminTeamImagePosY) {
+    adminTeamImagePosY.value =
+      String(cleanPositionY);
+  }
+
+  if (adminTeamImageScale) {
+    adminTeamImageScale.value =
+      String(cleanScale);
+  }
+
+  updateAdminTeamImagePreview();
+}
+
+
+/* =========================
+   공개 홈페이지 단체사진 반영
+========================= */
+
+function applyPublicTeamImage({
+  imageUrl =
+    DEFAULT_TEAM_IMAGE_URL,
+
+  imagePositionX = 50,
+  imagePositionY = 50,
+  imageScale = 100,
+} = {}) {
+  const publicTeamImage =
+    document.querySelector(
+      ".members-team-image"
+    );
+
+  if (!publicTeamImage) {
+    return;
+  }
+
+  const cleanImageUrl =
+    String(
+      imageUrl ||
+      DEFAULT_TEAM_IMAGE_URL
+    ).trim();
+
+  const cleanPositionX =
+    clampAdminMemberImageValue(
+      imagePositionX,
+      0,
+      100,
+      50
+    );
+
+  const cleanPositionY =
+    clampAdminMemberImageValue(
+      imagePositionY,
+      0,
+      100,
+      50
+    );
+
+  const cleanScale =
+    clampAdminMemberImageValue(
+      imageScale,
+      100,
+      200,
+      100
+    );
+
+  publicTeamImage.src =
+    cleanImageUrl;
+
+  publicTeamImage.style.objectPosition =
+    `${cleanPositionX}% ${cleanPositionY}%`;
+
+  publicTeamImage.style.transform =
+    `scale(${cleanScale / 100})`;
+
+  publicTeamImage.style.transformOrigin =
+    "center center";
+}
+
+
+/* =========================
+   저장된 단체사진 불러오기
+========================= */
+
+async function loadAdminTeamImageSettings() {
+  try {
+    const response =
+      await fetch(
+        "/api/content?type=settings"
+      );
+
+    if (!response.ok) {
+      throw new Error(
+        "단체사진 설정을 불러오지 못했습니다."
+      );
+    }
+
+    const result =
+      await response.json();
+
+    const settings =
+      Array.isArray(result.items)
+        ? result.items[0] || {}
+        : {};
+
+    const teamImageUrl =
+      settings.teamImageUrl ||
+      settings.team_image_url ||
+      DEFAULT_TEAM_IMAGE_URL;
+
+    const imagePositionX =
+      settings.teamImagePositionX ??
+      settings.team_image_position_x ??
+      50;
+
+    const imagePositionY =
+      settings.teamImagePositionY ??
+      settings.team_image_position_y ??
+      50;
+
+    const imageScale =
+      settings.teamImageScale ??
+      settings.team_image_scale ??
+      100;
+
+    currentTeamImageUrl =
+      teamImageUrl;
+
+    if (adminTeamPreviewImage) {
+      adminTeamPreviewImage.src =
+        teamImageUrl;
+    }
+
+    if (adminTeamImagePreview) {
+      adminTeamImagePreview.hidden =
+        false;
+    }
+
+    setAdminTeamImageEditorValues({
+      imagePositionX,
+      imagePositionY,
+      imageScale,
+    });
+
+    applyPublicTeamImage({
+      imageUrl:
+        teamImageUrl,
+
+      imagePositionX,
+      imagePositionY,
+      imageScale,
+    });
+  } catch (error) {
+    console.error(
+      "단체사진 설정 불러오기 실패:",
+      error
+    );
+
+    currentTeamImageUrl =
+      DEFAULT_TEAM_IMAGE_URL;
+
+    if (adminTeamPreviewImage) {
+      adminTeamPreviewImage.src =
+        DEFAULT_TEAM_IMAGE_URL;
+    }
+
+    setAdminTeamImageEditorValues({
+      imagePositionX: 50,
+      imagePositionY: 50,
+      imageScale: 100,
+    });
+
+    applyPublicTeamImage({
+      imageUrl:
+        DEFAULT_TEAM_IMAGE_URL,
+
+      imagePositionX: 50,
+      imagePositionY: 50,
+      imageScale: 100,
+    });
+  }
+}
+
+
+/* =========================
+   새 단체사진 선택
+========================= */
+
+adminTeamImageInput
+  ?.addEventListener(
+    "change",
+    () => {
+      const selectedFile =
+        adminTeamImageInput
+          .files?.[0];
+
+      if (!selectedFile) {
+        return;
+      }
+
+      if (
+        !selectedFile.type.startsWith(
+          "image/"
+        )
+      ) {
+        adminTeamImageInput.value =
+          "";
+
+        alert(
+          "이미지 파일만 선택할 수 있습니다."
+        );
+
+        return;
+      }
+
+      if (
+        adminTeamImagePreviewUrl
+      ) {
+        URL.revokeObjectURL(
+          adminTeamImagePreviewUrl
+        );
+      }
+
+      adminTeamImagePreviewUrl =
+        URL.createObjectURL(
+          selectedFile
+        );
+
+      if (adminTeamPreviewImage) {
+        adminTeamPreviewImage.src =
+          adminTeamImagePreviewUrl;
+      }
+
+      if (adminTeamImagePreview) {
+        adminTeamImagePreview.hidden =
+          false;
+      }
+
+      setAdminTeamImageEditorValues({
+        imagePositionX: 50,
+        imagePositionY: 50,
+        imageScale: 100,
+      });
+    }
+  );
+
+
+/* =========================
+   슬라이더 실시간 반영
+========================= */
+
+[
+  adminTeamImageScale,
+  adminTeamImagePosX,
+  adminTeamImagePosY,
+].forEach(
+  (rangeInput) => {
+    rangeInput?.addEventListener(
+      "input",
+      updateAdminTeamImagePreview
+    );
+  }
+);
+
+
+/* =========================
+   단체사진 위치 초기화
+========================= */
+
+adminTeamImageReset
+  ?.addEventListener(
+    "click",
+    () => {
+      setAdminTeamImageEditorValues({
+        imagePositionX: 50,
+        imagePositionY: 50,
+        imageScale: 100,
+      });
+    }
+  );
+
+
+/* =========================
+   단체사진 저장
+========================= */
+
+async function handleAdminTeamImageSubmit(
+  event
+) {
+  event.preventDefault();
+
+  const submitButton =
+    event.currentTarget.querySelector(
+      ".admin-form-submit"
+    );
+
+  const selectedFile =
+    adminTeamImageInput
+      ?.files?.[0];
+
+  const {
+    imagePositionX,
+    imagePositionY,
+    imageScale,
+  } =
+    getAdminTeamImageEditorValues();
+
+  let teamImageUrl =
+    currentTeamImageUrl ||
+    DEFAULT_TEAM_IMAGE_URL;
+
+  try {
+    if (submitButton) {
+      submitButton.disabled =
+        true;
+
+      submitButton.textContent =
+        "저장 준비 중...";
+    }
+
+    if (selectedFile) {
+      if (
+        !selectedFile.type.startsWith(
+          "image/"
+        )
+      ) {
+        throw new Error(
+          "이미지 파일만 선택할 수 있습니다."
+        );
+      }
+
+      if (submitButton) {
+        submitButton.textContent =
+          "단체사진 업로드 중...";
+      }
+
+      teamImageUrl =
+        await uploadAdminImage(
+          selectedFile,
+          "team"
+        );
+
+      if (!teamImageUrl) {
+        throw new Error(
+          "단체사진 주소를 받지 못했습니다."
+        );
+      }
+    }
+
+    if (submitButton) {
+      submitButton.textContent =
+        "단체사진 저장 중...";
+    }
+
+    const currentResult =
+      await adminApiRequest(
+        "/api/content?type=settings&includePrivate=true"
+      );
+
+    const currentSettings =
+      Array.isArray(
+        currentResult.items
+      )
+        ? currentResult.items[0] || {}
+        : {};
+
+    const settingsId =
+      currentSettings.id ||
+      "site";
+
+    const requestUrl =
+      currentSettings.id
+        ? `/api/content?type=settings&id=${encodeURIComponent(
+            settingsId
+          )}`
+        : "/api/content?type=settings";
+
+    const savedResult =
+      await adminApiRequest(
+        requestUrl,
+        {
+          method:
+            currentSettings.id
+              ? "PUT"
+              : "POST",
+
+          body:
+            JSON.stringify({
+              ...currentSettings,
+
+              id:
+                settingsId,
+
+              teamImageUrl,
+              teamImagePositionX:
+                imagePositionX,
+
+              teamImagePositionY:
+                imagePositionY,
+
+              teamImageScale:
+                imageScale,
+
+              published:
+                true,
+            }),
+        }
+      );
+
+    const savedSettings =
+      savedResult.item || {};
+
+    currentTeamImageUrl =
+      savedSettings.teamImageUrl ||
+      savedSettings.team_image_url ||
+      teamImageUrl;
+
+    applyPublicTeamImage({
+      imageUrl:
+        currentTeamImageUrl,
+
+      imagePositionX:
+        savedSettings
+          .teamImagePositionX ??
+        savedSettings
+          .team_image_position_x ??
+        imagePositionX,
+
+      imagePositionY:
+        savedSettings
+          .teamImagePositionY ??
+        savedSettings
+          .team_image_position_y ??
+        imagePositionY,
+
+      imageScale:
+        savedSettings
+          .teamImageScale ??
+        savedSettings
+          .team_image_scale ??
+        imageScale,
+    });
+
+    if (adminTeamPreviewImage) {
+      adminTeamPreviewImage.src =
+        currentTeamImageUrl;
+    }
+
+    if (adminTeamImageInput) {
+      adminTeamImageInput.value =
+        "";
+    }
+
+    if (
+      adminTeamImagePreviewUrl
+    ) {
+      URL.revokeObjectURL(
+        adminTeamImagePreviewUrl
+      );
+
+      adminTeamImagePreviewUrl =
+        "";
+    }
+
+    alert(
+      "팀 단체사진이 저장되었습니다."
+    );
+  } catch (error) {
+    console.error(
+      "팀 단체사진 저장 실패:",
+      error
+    );
+
+    alert(
+      error.message ||
+      "팀 단체사진을 저장하지 못했습니다."
+    );
+  } finally {
+    if (submitButton) {
+      submitButton.disabled =
+        false;
+
+      submitButton.textContent =
+        "단체사진 저장";
+    }
+  }
+}
+
+
+adminTeamImageForm
+  ?.addEventListener(
+    "submit",
+    handleAdminTeamImageSubmit
+  );
+
+
+/* =========================
+   단체사진 최초 적용
+========================= */
+
+loadAdminTeamImageSettings();

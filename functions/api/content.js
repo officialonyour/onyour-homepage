@@ -132,8 +132,23 @@ const CONTENT_CONFIG = {
     orderBy: "created_at ASC",
 
     fields: {
-      instagramUrl: "instagram_url",
-      published: "published",
+      instagramUrl:
+        "instagram_url",
+
+      teamImageUrl:
+        "team_image_url",
+
+      teamImagePositionX:
+        "team_image_position_x",
+
+      teamImagePositionY:
+        "team_image_position_y",
+
+      teamImageScale:
+        "team_image_scale",
+
+      published:
+        "published",
     },
   },
 };
@@ -1417,13 +1432,19 @@ function jsonResponse(
   );
 }
 
-async function ensureSiteSettingsTable(database) {
+async function ensureSiteSettingsTable(
+  database
+) {
   await database
     .prepare(
       `
         CREATE TABLE IF NOT EXISTS site_settings (
           id TEXT PRIMARY KEY,
           instagram_url TEXT NOT NULL DEFAULT '',
+          team_image_url TEXT NOT NULL DEFAULT '',
+          team_image_position_x INTEGER NOT NULL DEFAULT 50,
+          team_image_position_y INTEGER NOT NULL DEFAULT 50,
+          team_image_scale INTEGER NOT NULL DEFAULT 100,
           published INTEGER NOT NULL DEFAULT 1,
           created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
           updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -1431,4 +1452,79 @@ async function ensureSiteSettingsTable(database) {
       `
     )
     .run();
+
+  const tableInfo =
+    await database
+      .prepare(
+        `
+          PRAGMA table_info(
+            site_settings
+          )
+        `
+      )
+      .all();
+
+  const existingColumns =
+    new Set(
+      (
+        tableInfo.results || []
+      ).map(
+        (column) =>
+          column.name
+      )
+    );
+
+  const missingColumns = [
+    {
+      name:
+        "team_image_url",
+
+      definition:
+        "TEXT NOT NULL DEFAULT ''",
+    },
+    {
+      name:
+        "team_image_position_x",
+
+      definition:
+        "INTEGER NOT NULL DEFAULT 50",
+    },
+    {
+      name:
+        "team_image_position_y",
+
+      definition:
+        "INTEGER NOT NULL DEFAULT 50",
+    },
+    {
+      name:
+        "team_image_scale",
+
+      definition:
+        "INTEGER NOT NULL DEFAULT 100",
+    },
+  ];
+
+  for (
+    const column of
+      missingColumns
+  ) {
+    if (
+      existingColumns.has(
+        column.name
+      )
+    ) {
+      continue;
+    }
+
+    await database
+      .prepare(
+        `
+          ALTER TABLE site_settings
+          ADD COLUMN ${column.name}
+          ${column.definition}
+        `
+      )
+      .run();
+  }
 }

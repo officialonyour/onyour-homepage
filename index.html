@@ -3322,149 +3322,186 @@
     </section>
 
 
-    <!-- =========================
-         멤버 목록
-    ========================== -->
-    <section
-      class="admin-section-view admin-view"
-      id="adminMembersView"
-      data-admin-view="members"
-      aria-hidden="true"
+<!-- =========================
+     멤버 목록
+========================== -->
+<section
+  class="admin-section-view admin-view"
+  id="adminMembersView"
+  data-admin-view="members"
+  aria-hidden="true"
+>
+  <div class="admin-section-header">
+    <button
+      class="admin-section-back"
+      type="button"
+      data-admin-back="home"
     >
-      <div class="admin-section-header">
-        <button
-          class="admin-section-back"
-          type="button"
-          data-admin-back="home"
-        >
-          ←
-        </button>
+      ←
+    </button>
 
-        <div>
-          <p>CONTENT MANAGEMENT</p>
-          <h3>멤버 관리</h3>
-        </div>
+    <div>
+      <p>CONTENT MANAGEMENT</p>
+      <h3>멤버 관리</h3>
+    </div>
 
-        <button
-          class="admin-add-button"
-          type="button"
-          data-open-form="members"
-        >
-          + 멤버 추가
-        </button>
+    <button
+      class="admin-add-button"
+      type="button"
+      data-open-form="members"
+    >
+      + 멤버 추가
+    </button>
+  </div>
+
+  <!-- =========================
+       팀 단체사진 관리
+  ========================== -->
+  <form
+    class="admin-content-form"
+    id="adminTeamImageForm"
+  >
+    <div class="admin-section-header">
+      <div>
+        <p>TEAM PROFILE</p>
+        <h3>팀 단체사진</h3>
       </div>
+    </div>
+
+    <p class="admin-field-help">
+      MEMBERS 화면 맨 위에 표시되는
+      오뉴월 단체사진을 변경합니다.
+    </p>
+
+    <section
+      class="admin-member-image-editor"
+    >
+      <label
+        class="admin-member-image-upload"
+      >
+        단체사진 선택
+
+        <input
+          id="adminTeamImage"
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/gif"
+        />
+
+        <small class="admin-field-help">
+          새 사진을 선택하지 않으면
+          현재 단체사진이 유지됩니다.
+        </small>
+      </label>
 
       <div
-        class="admin-content-list"
-        id="adminMembersList"
+        class="admin-member-image-preview"
+        id="adminTeamImagePreview"
       >
-        <article
-          class="admin-content-item"
-          data-content-id="member-1"
+        <div
+          class="admin-member-image-frame"
         >
-          <div class="admin-content-item-main">
-            <span class="admin-content-category">
-              Producer · Rap
+          <img
+            id="adminTeamPreviewImage"
+            src="images/team-main.jpg"
+            alt="오뉴월 팀 단체사진 미리보기"
+          />
+        </div>
+
+        <div
+          class="admin-member-image-controls"
+        >
+          <label>
+            <span>
+              확대
+
+              <output
+                id="adminTeamImageScaleValue"
+              >
+                100%
+              </output>
             </span>
 
-            <strong>이휘근</strong>
+            <input
+              id="adminTeamImageScale"
+              type="range"
+              min="100"
+              max="200"
+              step="1"
+              value="100"
+            />
+          </label>
 
-            <small>@knth_whee</small>
-          </div>
+          <label>
+            <span>
+              좌우 위치
 
-          <div class="admin-content-actions">
-            <button
-              type="button"
-              data-action="edit"
-              data-content-type="members"
-              data-content-id="member-1"
-            >
-              수정
-            </button>
-
-            <button
-              type="button"
-              data-action="delete"
-              data-content-type="members"
-              data-content-id="member-1"
-            >
-              삭제
-            </button>
-          </div>
-        </article>
-
-        <article
-          class="admin-content-item"
-          data-content-id="member-2"
-        >
-          <div class="admin-content-item-main">
-            <span class="admin-content-category">
-              Vocal · Rap
+              <output
+                id="adminTeamImagePosXValue"
+              >
+                50%
+              </output>
             </span>
 
-            <strong>이루니</strong>
+            <input
+              id="adminTeamImagePosX"
+              type="range"
+              min="0"
+              max="100"
+              step="1"
+              value="50"
+            />
+          </label>
 
-            <small>@e.luni</small>
-          </div>
+          <label>
+            <span>
+              상하 위치
 
-          <div class="admin-content-actions">
-            <button
-              type="button"
-              data-action="edit"
-              data-content-type="members"
-              data-content-id="member-2"
-            >
-              수정
-            </button>
-
-            <button
-              type="button"
-              data-action="delete"
-              data-content-type="members"
-              data-content-id="member-2"
-            >
-              삭제
-            </button>
-          </div>
-        </article>
-
-        <article
-          class="admin-content-item"
-          data-content-id="member-3"
-        >
-          <div class="admin-content-item-main">
-            <span class="admin-content-category">
-              Guitar
+              <output
+                id="adminTeamImagePosYValue"
+              >
+                50%
+              </output>
             </span>
 
-            <strong>이체린</strong>
+            <input
+              id="adminTeamImagePosY"
+              type="range"
+              min="0"
+              max="100"
+              step="1"
+              value="50"
+            />
+          </label>
 
-            <small>@chelini_</small>
-          </div>
-
-          <div class="admin-content-actions">
-            <button
-              type="button"
-              data-action="edit"
-              data-content-type="members"
-              data-content-id="member-3"
-            >
-              수정
-            </button>
-
-            <button
-              type="button"
-              data-action="delete"
-              data-content-type="members"
-              data-content-id="member-3"
-            >
-              삭제
-            </button>
-          </div>
-        </article>
+          <button
+            id="adminTeamImageReset"
+            class="admin-member-image-reset"
+            type="button"
+          >
+            위치 초기화
+          </button>
+        </div>
       </div>
     </section>
 
+    <div class="admin-form-actions">
+      <button
+        class="admin-form-submit"
+        type="submit"
+      >
+        단체사진 저장
+      </button>
+    </div>
+  </form>
+
+  <!-- =========================
+       멤버 목록
+  ========================== -->
+  <div
+    class="admin-content-list"
+    id="adminMembersList"
+  ></div>
+</section>
 
 <!-- 멤버 작성/수정 -->
 <section
