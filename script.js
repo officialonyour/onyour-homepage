@@ -424,9 +424,19 @@ const adminHeroShowInstagram =
     "adminHeroShowInstagram"
   );
 
+const adminHeroInstagramUrl =
+  document.getElementById(
+    "adminHeroInstagramUrl"
+  );
+
 const adminHeroShowYoutube =
   document.getElementById(
     "adminHeroShowYoutube"
+  );
+
+const adminHeroYoutubeUrl =
+  document.getElementById(
+    "adminHeroYoutubeUrl"
   );
 
 /* =========================
@@ -837,6 +847,31 @@ function fillAdminHeroForm() {
       "heroDescription"
     );
 
+  const musicButton =
+    document.querySelector(
+      '.hero-actions a[href="#music"]'
+    );
+
+  const liveButton =
+    document.querySelector(
+      '.hero-actions a[href="#live"], .hero-actions a[data-open-live]'
+    );
+
+  const messageButton =
+    document.querySelector(
+      '.hero-actions a[href="#messages"], .hero-actions a[href="#message"]'
+    );
+
+  const instagramLink =
+    document.querySelector(
+      '.hero-socials a[href*="instagram.com"]'
+    );
+
+  const youtubeLink =
+    document.querySelector(
+      '.hero-socials a[href*="youtube.com"], .hero-socials a[href*="youtu.be"]'
+    );
+
   const titleLines =
     getHeroTextLines(
       heroTitle
@@ -880,38 +915,28 @@ function fillAdminHeroForm() {
       descriptionLines[1] || "";
   }
 
-  if (
-    adminHeroImageScale
-  ) {
+  if (adminHeroImageScale) {
     adminHeroImageScale.value =
       String(
         imageSettings.imageScale
       );
   }
 
-  if (
-    adminHeroImagePosX
-  ) {
+  if (adminHeroImagePosX) {
     adminHeroImagePosX.value =
       String(
-        imageSettings
-          .imagePositionX
+        imageSettings.imagePositionX
       );
   }
 
-  if (
-    adminHeroImagePosY
-  ) {
+  if (adminHeroImagePosY) {
     adminHeroImagePosY.value =
       String(
-        imageSettings
-          .imagePositionY
+        imageSettings.imagePositionY
       );
   }
 
-  if (
-    adminHeroPreviewImage
-  ) {
+  if (adminHeroPreviewImage) {
     adminHeroPreviewImage.src =
       imageSettings.imageSource;
 
@@ -919,16 +944,732 @@ function fillAdminHeroForm() {
       !imageSettings.imageSource;
   }
 
-  if (
-    adminHeroImagePreview
-  ) {
+  if (adminHeroImagePreview) {
     adminHeroImagePreview.classList.toggle(
       "is-empty",
       !imageSettings.imageSource
     );
   }
 
+  if (
+    adminHeroShowMusicButton
+  ) {
+    adminHeroShowMusicButton.checked =
+      musicButton
+        ? !musicButton.hidden
+        : true;
+  }
+
+  if (
+    adminHeroShowLiveButton
+  ) {
+    adminHeroShowLiveButton.checked =
+      liveButton
+        ? !liveButton.hidden
+        : true;
+  }
+
+  if (
+    adminHeroShowMessageButton
+  ) {
+    adminHeroShowMessageButton.checked =
+      messageButton
+        ? !messageButton.hidden
+        : true;
+  }
+
+  if (
+    adminHeroShowInstagram
+  ) {
+    adminHeroShowInstagram.checked =
+      instagramLink
+        ? !instagramLink.hidden
+        : true;
+  }
+
+  if (
+    adminHeroInstagramUrl
+  ) {
+    adminHeroInstagramUrl.value =
+      instagramLink?.href ||
+      "https://www.instagram.com/official_onyour";
+  }
+
+  if (
+    adminHeroShowYoutube
+  ) {
+    adminHeroShowYoutube.checked =
+      youtubeLink
+        ? !youtubeLink.hidden
+        : true;
+  }
+
+  if (
+    adminHeroYoutubeUrl
+  ) {
+    adminHeroYoutubeUrl.value =
+      youtubeLink?.href ||
+      "https://youtube.com/@official.onyour";
+  }
+
   updateAdminHeroImagePreview();
+}
+
+function bindAdminHeroImageEditor() {
+  if (!adminHeroForm) {
+    return;
+  }
+
+  const updatePreview =
+    () => {
+      updateAdminHeroImagePreview();
+    };
+
+  [
+    adminHeroImageScale,
+    adminHeroImagePosX,
+    adminHeroImagePosY,
+  ].forEach((input) => {
+    input?.addEventListener(
+      "input",
+      updatePreview
+    );
+  });
+
+  adminHeroImageInput?.addEventListener(
+    "change",
+    () => {
+      const selectedFile =
+        adminHeroImageInput.files?.[0];
+
+      if (!selectedFile) {
+        return;
+      }
+
+      if (
+        !selectedFile.type.startsWith(
+          "image/"
+        )
+      ) {
+        alert(
+          "이미지 파일만 선택할 수 있습니다."
+        );
+
+        adminHeroImageInput.value = "";
+        return;
+      }
+
+      const reader =
+        new FileReader();
+
+      reader.addEventListener(
+        "load",
+        () => {
+          if (
+            !adminHeroPreviewImage
+          ) {
+            return;
+          }
+
+          adminHeroPreviewImage.src =
+            String(reader.result || "");
+
+          adminHeroPreviewImage.hidden =
+            false;
+
+          adminHeroImagePreview?.classList.remove(
+            "is-empty"
+          );
+
+          updateAdminHeroImagePreview();
+        }
+      );
+
+      reader.readAsDataURL(
+        selectedFile
+      );
+    }
+  );
+
+  adminHeroImageReset?.addEventListener(
+    "click",
+    () => {
+      if (adminHeroImageScale) {
+        adminHeroImageScale.value =
+          "100";
+      }
+
+      if (adminHeroImagePosX) {
+        adminHeroImagePosX.value =
+          "50";
+      }
+
+      if (adminHeroImagePosY) {
+        adminHeroImagePosY.value =
+          "50";
+      }
+
+      updateAdminHeroImagePreview();
+    }
+  );
+}
+
+function applyAdminHeroSettings(
+  savedSettings = null
+) {
+  const heroSection =
+    document.querySelector(
+      ".hero"
+    );
+
+  const heroImage =
+    document.querySelector(
+      ".hero-background img, .hero-media img, .hero img"
+    );
+
+  const heroEyebrow =
+    document.querySelector(
+      ".hero-eyebrow"
+    );
+
+  const heroTitle =
+    document.getElementById(
+      "heroTitle"
+    );
+
+  const heroDescription =
+    document.getElementById(
+      "heroDescription"
+    );
+
+  const musicButton =
+    document.querySelector(
+      '.hero-actions a[href="#music"]'
+    );
+
+  const liveButton =
+    document.querySelector(
+      '.hero-actions a[href="#live"], .hero-actions a[data-open-live]'
+    );
+
+  const messageButton =
+    document.querySelector(
+      '.hero-actions a[href="#messages"], .hero-actions a[href="#message"]'
+    );
+
+  const instagramLink =
+    document.querySelector(
+      '.hero-socials a[href*="instagram.com"]'
+    );
+
+  const youtubeLink =
+    document.querySelector(
+      '.hero-socials a[href*="youtube.com"], .hero-socials a[href*="youtu.be"]'
+    );
+
+  const formSettings = {
+    eyebrow:
+      adminHeroEyebrow?.value
+        .trim() || "",
+
+    titleLine1:
+      adminHeroTitleLine1?.value
+        .trim() || "",
+
+    titleLine2:
+      adminHeroTitleLine2?.value
+        .trim() || "",
+
+    descriptionLine1:
+      adminHeroDescriptionLine1
+        ?.value.trim() || "",
+
+    descriptionLine2:
+      adminHeroDescriptionLine2
+        ?.value.trim() || "",
+
+    imageUrl:
+      adminHeroPreviewImage?.src ||
+      heroImage?.src ||
+      "",
+
+    imageScale:
+      Number(
+        adminHeroImageScale?.value
+      ) || 100,
+
+    imagePositionX:
+      Number(
+        adminHeroImagePosX?.value
+      ) || 50,
+
+    imagePositionY:
+      Number(
+        adminHeroImagePosY?.value
+      ) || 50,
+
+    showMusicButton:
+      adminHeroShowMusicButton
+        ?.checked ?? true,
+
+    showLiveButton:
+      adminHeroShowLiveButton
+        ?.checked ?? true,
+
+    showMessageButton:
+      adminHeroShowMessageButton
+        ?.checked ?? true,
+
+    showInstagram:
+      adminHeroShowInstagram
+        ?.checked ?? true,
+
+    instagramUrl:
+      adminHeroInstagramUrl?.value
+        .trim() ||
+      "https://www.instagram.com/official_onyour",
+
+    showYoutube:
+      adminHeroShowYoutube
+        ?.checked ?? true,
+
+    youtubeUrl:
+      adminHeroYoutubeUrl?.value
+        .trim() ||
+      "https://youtube.com/@official.onyour",
+  };
+
+  const settings =
+    savedSettings &&
+    typeof savedSettings === "object"
+      ? {
+          ...formSettings,
+          ...savedSettings,
+        }
+      : formSettings;
+
+  const imageScale =
+    Number(settings.imageScale) ||
+    100;
+
+  const imagePositionX =
+    Number(
+      settings.imagePositionX
+    );
+
+  const imagePositionY =
+    Number(
+      settings.imagePositionY
+    );
+
+  const safePositionX =
+    Number.isFinite(
+      imagePositionX
+    )
+      ? imagePositionX
+      : 50;
+
+  const safePositionY =
+    Number.isFinite(
+      imagePositionY
+    )
+      ? imagePositionY
+      : 50;
+
+  if (heroEyebrow) {
+    heroEyebrow.textContent =
+      settings.eyebrow || "";
+  }
+
+  const replaceTextLines = (
+    element,
+    firstLine,
+    secondLine
+  ) => {
+    if (!element) {
+      return;
+    }
+
+    element.replaceChildren();
+
+    if (firstLine) {
+      element.append(
+        document.createTextNode(
+          firstLine
+        )
+      );
+    }
+
+    if (
+      firstLine &&
+      secondLine
+    ) {
+      element.append(
+        document.createElement("br")
+      );
+    }
+
+    if (secondLine) {
+      element.append(
+        document.createTextNode(
+          secondLine
+        )
+      );
+    }
+  };
+
+  replaceTextLines(
+    heroTitle,
+    settings.titleLine1 || "",
+    settings.titleLine2 || ""
+  );
+
+  replaceTextLines(
+    heroDescription,
+    settings.descriptionLine1 ||
+      "",
+    settings.descriptionLine2 ||
+      ""
+  );
+
+  if (
+    heroImage &&
+    settings.imageUrl
+  ) {
+    heroImage.src =
+      settings.imageUrl;
+
+    heroImage.style.objectPosition =
+      `${safePositionX}% ${safePositionY}%`;
+
+    heroImage.style.transform =
+      `scale(${imageScale / 100})`;
+  }
+
+  if (heroSection) {
+    heroSection.dataset
+      .heroImageScale =
+      String(imageScale);
+
+    heroSection.dataset
+      .heroImagePositionX =
+      String(safePositionX);
+
+    heroSection.dataset
+      .heroImagePositionY =
+      String(safePositionY);
+  }
+
+  if (musicButton) {
+    musicButton.hidden =
+      settings.showMusicButton ===
+      false;
+  }
+
+  if (liveButton) {
+    liveButton.hidden =
+      settings.showLiveButton ===
+      false;
+  }
+
+  if (messageButton) {
+    messageButton.hidden =
+      settings.showMessageButton ===
+      false;
+  }
+
+  if (instagramLink) {
+    instagramLink.hidden =
+      settings.showInstagram ===
+      false;
+
+    if (settings.instagramUrl) {
+      instagramLink.href =
+        settings.instagramUrl;
+    }
+  }
+
+  if (youtubeLink) {
+    youtubeLink.hidden =
+      settings.showYoutube ===
+      false;
+
+    if (settings.youtubeUrl) {
+      youtubeLink.href =
+        settings.youtubeUrl;
+    }
+  }
+
+  return {
+    ...settings,
+    imageScale,
+    imagePositionX:
+      safePositionX,
+    imagePositionY:
+      safePositionY,
+  };
+}
+
+function bindAdminHeroForm() {
+  if (!adminHeroForm) {
+    return;
+  }
+
+  adminHeroForm.addEventListener(
+    "submit",
+    async (event) => {
+      event.preventDefault();
+
+      const submitButton =
+        event.currentTarget.querySelector(
+          ".admin-form-submit"
+        );
+
+      const selectedFile =
+        adminHeroImageInput
+          ?.files?.[0];
+
+      try {
+        if (submitButton) {
+          submitButton.disabled =
+            true;
+
+          submitButton.textContent =
+            "저장 준비 중...";
+        }
+
+        let heroImageUrl =
+          adminHeroPreviewImage?.src ||
+          "";
+
+        if (selectedFile) {
+          if (
+            !selectedFile.type.startsWith(
+              "image/"
+            )
+          ) {
+            throw new Error(
+              "이미지 파일만 선택할 수 있습니다."
+            );
+          }
+
+          if (submitButton) {
+            submitButton.textContent =
+              "배경사진 업로드 중...";
+          }
+
+          heroImageUrl =
+            await uploadAdminImage(
+              selectedFile,
+              "hero"
+            );
+
+          if (!heroImageUrl) {
+            throw new Error(
+              "배경사진 주소를 받지 못했습니다."
+            );
+          }
+        }
+
+        const heroSettings =
+          applyAdminHeroSettings({
+            eyebrow:
+              adminHeroEyebrow?.value
+                .trim() || "",
+
+            titleLine1:
+              adminHeroTitleLine1?.value
+                .trim() || "",
+
+            titleLine2:
+              adminHeroTitleLine2?.value
+                .trim() || "",
+
+            descriptionLine1:
+              adminHeroDescriptionLine1
+                ?.value.trim() || "",
+
+            descriptionLine2:
+              adminHeroDescriptionLine2
+                ?.value.trim() || "",
+
+            imageUrl:
+              heroImageUrl,
+
+            imageScale:
+              Number(
+                adminHeroImageScale?.value
+              ) || 100,
+
+            imagePositionX:
+              Number(
+                adminHeroImagePosX?.value
+              ) || 50,
+
+            imagePositionY:
+              Number(
+                adminHeroImagePosY?.value
+              ) || 50,
+
+            showMusicButton:
+              adminHeroShowMusicButton
+                ?.checked ?? true,
+
+            showLiveButton:
+              adminHeroShowLiveButton
+                ?.checked ?? true,
+
+            showMessageButton:
+              adminHeroShowMessageButton
+                ?.checked ?? true,
+
+            showInstagram:
+              adminHeroShowInstagram
+                ?.checked ?? true,
+
+            instagramUrl:
+              adminHeroInstagramUrl?.value
+                .trim() ||
+              "https://www.instagram.com/official_onyour",
+
+            showYoutube:
+              adminHeroShowYoutube
+                ?.checked ?? true,
+
+            youtubeUrl:
+              adminHeroYoutubeUrl?.value
+                .trim() ||
+              "https://youtube.com/@official.onyour",
+          });
+
+        if (submitButton) {
+          submitButton.textContent =
+            "첫 화면 저장 중...";
+        }
+
+        const currentResult =
+          await adminApiRequest(
+            "/api/content?type=settings&includePrivate=true"
+          );
+
+        const currentSettings =
+          Array.isArray(
+            currentResult.items
+          )
+            ? currentResult.items[0] ||
+              {}
+            : {};
+
+        const settingsId =
+          currentSettings.id ||
+          "site";
+
+        const requestUrl =
+          currentSettings.id
+            ? `/api/content?type=settings&id=${encodeURIComponent(
+                settingsId
+              )}`
+            : "/api/content?type=settings";
+
+        const savedResult =
+          await adminApiRequest(
+            requestUrl,
+            {
+              method:
+                currentSettings.id
+                  ? "PUT"
+                  : "POST",
+
+              body: JSON.stringify({
+                ...currentSettings,
+
+                id:
+                  settingsId,
+
+                heroSettingsJson:
+                  JSON.stringify(
+                    heroSettings
+                  ),
+
+                published:
+                  true,
+              }),
+            }
+          );
+
+        const savedSettings =
+          savedResult.item || {};
+
+        let savedHeroSettings =
+          heroSettings;
+
+        const savedHeroJson =
+          savedSettings
+            .heroSettingsJson ||
+          savedSettings
+            .hero_settings_json;
+
+        if (
+          typeof savedHeroJson ===
+            "string" &&
+          savedHeroJson.trim()
+        ) {
+          try {
+            savedHeroSettings =
+              JSON.parse(
+                savedHeroJson
+              );
+          } catch (error) {
+            console.warn(
+              "저장된 첫 화면 설정을 해석하지 못했습니다.",
+              error
+            );
+          }
+        }
+
+        applyAdminHeroSettings(
+          savedHeroSettings
+        );
+
+        if (adminHeroImageInput) {
+          adminHeroImageInput.value =
+            "";
+        }
+
+        if (
+          adminHeroPreviewImage &&
+          savedHeroSettings.imageUrl
+        ) {
+          adminHeroPreviewImage.src =
+            savedHeroSettings.imageUrl;
+        }
+
+        alert(
+          "첫 화면 설정이 저장되었습니다."
+        );
+
+        openAdminView("home");
+      } catch (error) {
+        console.error(
+          "첫 화면 설정 저장 실패:",
+          error
+        );
+
+        alert(
+          error.message ||
+          "첫 화면 설정을 저장하지 못했습니다."
+        );
+      } finally {
+        if (submitButton) {
+          submitButton.disabled =
+            false;
+
+          submitButton.textContent =
+            "첫 화면 저장";
+        }
+      }
+    }
+  );
 }
 
 function openAdminView(viewName) {
@@ -8180,7 +8921,6 @@ function applyBookingContactEmail(value) {
   }
 }
 
-
 async function loadSiteSettings() {
   try {
     const response = await fetch(
@@ -8204,16 +8944,54 @@ async function loadSiteSettings() {
 
     const settings =
       Array.isArray(result.items)
-        ? result.items[0]
+        ? result.items[0] || null
         : null;
 
     applyTeamInstagramUrl(
-      settings?.instagramUrl
+      settings?.instagramUrl ||
+      settings?.instagram_url ||
+      DEFAULT_TEAM_INSTAGRAM_URL
     );
 
     applyBookingContactEmail(
       getStoredBookingEmail(settings)
     );
+
+    const heroSettingsJson =
+      settings?.heroSettingsJson ||
+      settings?.hero_settings_json ||
+      "";
+
+    if (
+      typeof heroSettingsJson ===
+        "string" &&
+      heroSettingsJson.trim()
+    ) {
+      try {
+        const heroSettings =
+          JSON.parse(
+            heroSettingsJson
+          );
+
+        if (
+          heroSettings &&
+          typeof heroSettings ===
+            "object" &&
+          !Array.isArray(
+            heroSettings
+          )
+        ) {
+          applyAdminHeroSettings(
+            heroSettings
+          );
+        }
+      } catch (parseError) {
+        console.warn(
+          "저장된 첫 화면 설정을 해석하지 못했습니다.",
+          parseError
+        );
+      }
+    }
   } catch (error) {
     console.error(
       "홈페이지 설정 불러오기 실패:",
@@ -8229,7 +9007,6 @@ async function loadSiteSettings() {
     );
   }
 }
-
 
 document
   .getElementById("adminSettingsForm")
@@ -13618,3 +14395,6 @@ adminTeamImageForm
 ========================= */
 
 loadAdminTeamImageSettings();
+
+bindAdminHeroImageEditor();
+bindAdminHeroForm();

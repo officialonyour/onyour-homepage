@@ -127,30 +127,33 @@ const CONTENT_CONFIG = {
   },
 },
 
-  settings: {
-    table: "site_settings",
-    orderBy: "created_at ASC",
+settings: {
+  table: "site_settings",
+  orderBy: "created_at ASC",
 
-    fields: {
-      instagramUrl:
-        "instagram_url",
+  fields: {
+    instagramUrl:
+      "instagram_url",
 
-      teamImageUrl:
-        "team_image_url",
+    teamImageUrl:
+      "team_image_url",
 
-      teamImagePositionX:
-        "team_image_position_x",
+    teamImagePositionX:
+      "team_image_position_x",
 
-      teamImagePositionY:
-        "team_image_position_y",
+    teamImagePositionY:
+      "team_image_position_y",
 
-      teamImageScale:
-        "team_image_scale",
+    teamImageScale:
+      "team_image_scale",
 
-      published:
-        "published",
-    },
+    heroSettingsJson:
+      "hero_settings_json",
+
+    published:
+      "published",
   },
+},
 };
 
 
@@ -1442,9 +1445,10 @@ async function ensureSiteSettingsTable(
           id TEXT PRIMARY KEY,
           instagram_url TEXT NOT NULL DEFAULT '',
           team_image_url TEXT NOT NULL DEFAULT '',
-          team_image_position_x INTEGER NOT NULL DEFAULT 50,
-          team_image_position_y INTEGER NOT NULL DEFAULT 50,
-          team_image_scale INTEGER NOT NULL DEFAULT 100,
+          team_image_position_x REAL NOT NULL DEFAULT 50,
+          team_image_position_y REAL NOT NULL DEFAULT 50,
+          team_image_scale REAL NOT NULL DEFAULT 100,
+          hero_settings_json TEXT NOT NULL DEFAULT '',
           published INTEGER NOT NULL DEFAULT 1,
           created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
           updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -1457,9 +1461,7 @@ async function ensureSiteSettingsTable(
     await database
       .prepare(
         `
-          PRAGMA table_info(
-            site_settings
-          )
+          PRAGMA table_info(site_settings)
         `
       )
       .all();
@@ -1470,44 +1472,60 @@ async function ensureSiteSettingsTable(
         tableInfo.results || []
       ).map(
         (column) =>
-          column.name
+          String(column.name)
       )
     );
 
   const missingColumns = [
     {
-      name:
-        "team_image_url",
-
+      name: "instagram_url",
       definition:
         "TEXT NOT NULL DEFAULT ''",
     },
     {
-      name:
-        "team_image_position_x",
-
+      name: "team_image_url",
       definition:
-        "INTEGER NOT NULL DEFAULT 50",
+        "TEXT NOT NULL DEFAULT ''",
     },
     {
-      name:
-        "team_image_position_y",
-
+      name: "team_image_position_x",
       definition:
-        "INTEGER NOT NULL DEFAULT 50",
+        "REAL NOT NULL DEFAULT 50",
     },
     {
-      name:
-        "team_image_scale",
-
+      name: "team_image_position_y",
       definition:
-        "INTEGER NOT NULL DEFAULT 100",
+        "REAL NOT NULL DEFAULT 50",
+    },
+    {
+      name: "team_image_scale",
+      definition:
+        "REAL NOT NULL DEFAULT 100",
+    },
+    {
+      name: "hero_settings_json",
+      definition:
+        "TEXT NOT NULL DEFAULT ''",
+    },
+    {
+      name: "published",
+      definition:
+        "INTEGER NOT NULL DEFAULT 1",
+    },
+    {
+      name: "created_at",
+      definition:
+        "TEXT NOT NULL DEFAULT ''",
+    },
+    {
+      name: "updated_at",
+      definition:
+        "TEXT NOT NULL DEFAULT ''",
     },
   ];
 
   for (
-    const column of
-      missingColumns
+    const column of missingColumns
   ) {
     if (
       existingColumns.has(

@@ -2539,115 +2539,148 @@
       </label>
     </section>
 
-    <section class="admin-form-card">
-      <div class="admin-form-card-heading">
-        <div>
-          <span>
-            03
-          </span>
+<section class="admin-form-card">
+  <div class="admin-form-card-heading">
+    <div>
+      <span>
+        03
+      </span>
 
-          <h3>
-            버튼 표시
-          </h3>
-        </div>
+      <h3>
+        버튼과 SNS
+      </h3>
+    </div>
 
-        <p>
-          첫 화면에 표시할 버튼을 선택합니다.
-        </p>
-      </div>
+    <p>
+      첫 화면에 표시할 버튼과 SNS 링크를 설정합니다.
+    </p>
+  </div>
 
-      <div class="admin-toggle-list">
-        <label class="admin-toggle-item">
-          <span>
-            <strong>
-              Listen to Music
-            </strong>
+  <div class="admin-toggle-list">
+    <label class="admin-toggle-item">
+      <span>
+        <strong>
+          Listen to Music
+        </strong>
 
-            <small>
-              음악 섹션 이동 버튼
-            </small>
-          </span>
+        <small>
+          음악 섹션 이동 버튼
+        </small>
+      </span>
 
-          <input
-            id="adminHeroShowMusicButton"
-            type="checkbox"
-            checked
-          />
-        </label>
+      <input
+        class="admin-toggle-checkbox"
+        id="adminHeroShowMusicButton"
+        type="checkbox"
+        checked
+      />
+    </label>
 
-        <label class="admin-toggle-item">
-          <span>
-            <strong>
-              Watch Live
-            </strong>
+    <label class="admin-toggle-item">
+      <span>
+        <strong>
+          Watch Live
+        </strong>
 
-            <small>
-              라이브 영상 버튼
-            </small>
-          </span>
+        <small>
+          라이브 영상 이동 버튼
+        </small>
+      </span>
 
-          <input
-            id="adminHeroShowLiveButton"
-            type="checkbox"
-            checked
-          />
-        </label>
+      <input
+        class="admin-toggle-checkbox"
+        id="adminHeroShowLiveButton"
+        type="checkbox"
+        checked
+      />
+    </label>
 
-        <label class="admin-toggle-item">
-          <span>
-            <strong>
-              Message
-            </strong>
+    <label class="admin-toggle-item">
+      <span>
+        <strong>
+          Message
+        </strong>
 
-            <small>
-              메시지 작성 버튼
-            </small>
-          </span>
+        <small>
+          메시지 작성 이동 버튼
+        </small>
+      </span>
 
-          <input
-            id="adminHeroShowMessageButton"
-            type="checkbox"
-            checked
-          />
-        </label>
+      <input
+        class="admin-toggle-checkbox"
+        id="adminHeroShowMessageButton"
+        type="checkbox"
+        checked
+      />
+    </label>
 
-        <label class="admin-toggle-item">
-          <span>
-            <strong>
-              Instagram
-            </strong>
+    <label class="admin-toggle-item">
+      <span>
+        <strong>
+          Instagram
+        </strong>
 
-            <small>
-              첫 화면 인스타그램 링크
-            </small>
-          </span>
+        <small>
+          첫 화면 인스타그램 링크
+        </small>
+      </span>
 
-          <input
-            id="adminHeroShowInstagram"
-            type="checkbox"
-            checked
-          />
-        </label>
+      <input
+        class="admin-toggle-checkbox"
+        id="adminHeroShowInstagram"
+        type="checkbox"
+        checked
+      />
+    </label>
 
-        <label class="admin-toggle-item">
-          <span>
-            <strong>
-              YouTube
-            </strong>
+    <label>
+      Instagram 주소
 
-            <small>
-              첫 화면 유튜브 링크
-            </small>
-          </span>
+      <input
+        id="adminHeroInstagramUrl"
+        type="url"
+        placeholder="https://www.instagram.com/official_onyour"
+      />
 
-          <input
-            id="adminHeroShowYoutube"
-            type="checkbox"
-            checked
-          />
-        </label>
-      </div>
-    </section>
+      <small class="admin-field-help">
+        첫 화면의 Instagram 버튼에 연결됩니다.
+      </small>
+    </label>
+
+    <label class="admin-toggle-item">
+      <span>
+        <strong>
+          YouTube
+        </strong>
+
+        <small>
+          첫 화면 유튜브 링크
+        </small>
+      </span>
+
+      <input
+        class="admin-toggle-checkbox"
+        id="adminHeroShowYoutube"
+        type="checkbox"
+        checked
+      />
+    </label>
+
+    <label>
+      YouTube 주소
+
+      <input
+        id="adminHeroYoutubeUrl"
+        type="url"
+        placeholder="https://youtube.com/@official.onyour"
+      />
+
+      <small class="admin-field-help">
+        첫 화면의 YouTube 버튼에 연결됩니다.
+      </small>
+    </label>
+  </div>
+</section>
 
     <div class="admin-form-actions">
       <button
