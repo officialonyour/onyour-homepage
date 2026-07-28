@@ -2901,176 +2901,335 @@ async function loadPublicPerformances() {
       .join("");
   }
 
-  function createMainPerformanceCard(
-    item
+function createMainPerformanceCard(
+  item
+) {
+  const dateParts =
+    getPerformanceDateParts(
+      item.date
+    );
+
+  const performanceDate =
+    parsePerformanceDate(
+      item.date
+    );
+
+  const isPastPerformance =
+    performanceDate &&
+    performanceDate <
+      getTodayDate();
+
+  const title =
+    String(
+      item.title ||
+        "ONYOUR LIVE"
+    ).trim();
+
+  const time =
+    String(
+      item.time || ""
+    ).trim();
+
+  const location =
+    String(
+      item.location || ""
+    ).trim();
+
+  const address =
+    String(
+      item.address || ""
+    ).trim();
+
+  const description =
+    String(
+      item.description ||
+        "ONYOUR의 새로운 무대를 함께해 주세요."
+    ).trim();
+
+  const ticketUrl =
+    normalizePerformanceUrl(
+      item.ticketUrl
+    );
+
+  const videoUrl =
+    normalizePerformanceUrl(
+      item.videoUrl ||
+        item.video_url
+    );
+
+  const coverUrl =
+    normalizePerformanceUrl(
+      item.coverUrl ||
+        item.cover_url
+    );
+
+  let galleryImages =
+    item.galleryImages ||
+    item.gallery_images ||
+    [];
+
+  if (
+    typeof galleryImages ===
+    "string"
   ) {
-    const dateParts =
-      getPerformanceDateParts(
-        item.date
-      );
+    try {
+      galleryImages =
+        JSON.parse(
+          galleryImages
+        );
+    } catch (error) {
+      galleryImages = [];
+    }
+  }
 
-    const title =
-      String(
-        item.title ||
-          "ONYOUR LIVE"
-      ).trim();
+  if (
+    !Array.isArray(
+      galleryImages
+    )
+  ) {
+    galleryImages = [];
+  }
 
-    const time =
-      String(
-        item.time || ""
-      ).trim();
-
-    const location =
-      String(
-        item.location || ""
-      ).trim();
-
-    const address =
-      String(
-        item.address || ""
-      ).trim();
-
-    const description =
-      String(
-        item.description ||
-          "ONYOUR의 새로운 무대를 함께해 주세요."
-      ).trim();
-
-    const ticketUrl =
-      normalizePerformanceUrl(
-        item.ticketUrl
-      );
-
-    const locationText = [
-      location,
-      address,
-    ]
+  galleryImages =
+    galleryImages
+      .map((imageUrl) =>
+        normalizePerformanceUrl(
+          imageUrl
+        )
+      )
       .filter(Boolean)
-      .join(" · ");
+      .slice(0, 10);
 
-    const kickerText = [
-      location,
-      time
-        ? `${time} START`
-        : "Live Stage",
-    ]
-      .filter(Boolean)
-      .join(" · ");
+  const hasArchiveContent =
+    isPastPerformance &&
+    (
+      Boolean(coverUrl) ||
+      Boolean(videoUrl) ||
+      galleryImages.length > 0
+    );
 
-    const setlist =
-      getPerformanceSetlist(
-        item.setlist
-      );
+  const locationText = [
+    location,
+    address,
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
-    return `
-      <article
-        class="performance-card performance-main-card reveal visible"
-      >
-        <div class="performance-main-header">
-          <div class="performance-status-group">
-            <span class="performance-status">
-              ${escapeAdminHtml(
-                getPerformanceStatus(
-                  item.date
-                )
-              )}
-            </span>
+  const kickerText = [
+    location,
+    time
+      ? `${time} START`
+      : "Live Stage",
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
-            <span class="performance-dday">
-              ${escapeAdminHtml(
-                dateParts.shortDate
-              )}
-            </span>
-          </div>
+  const setlist =
+    getPerformanceSetlist(
+      item.setlist
+    );
 
-          <span
-            class="performance-card-number"
-            aria-hidden="true"
-          >
-            01
+  const galleryData =
+    escapeAdminHtml(
+      JSON.stringify(
+        galleryImages
+      )
+    );
+
+  return `
+    <article
+      class="performance-card performance-main-card ${
+        hasArchiveContent
+          ? "performance-archive-card"
+          : ""
+      } reveal visible"
+    >
+      <div class="performance-main-header">
+        <div class="performance-status-group">
+          <span class="performance-status">
+            ${
+              hasArchiveContent
+                ? "Live Archive"
+                : escapeAdminHtml(
+                    getPerformanceStatus(
+                      item.date
+                    )
+                  )
+            }
+          </span>
+
+          <span class="performance-dday">
+            ${escapeAdminHtml(
+              dateParts.shortDate
+            )}
           </span>
         </div>
 
-        <div class="performance-main-content">
-          <div class="performance-date">
-            <span class="performance-month">
-              ${escapeAdminHtml(
-                dateParts.month
-              )}
-            </span>
+        <span
+          class="performance-card-number"
+          aria-hidden="true"
+        >
+          01
+        </span>
+      </div>
 
-            <strong>
-              ${escapeAdminHtml(
-                dateParts.day
-              )}
-            </strong>
+      ${
+        hasArchiveContent &&
+        coverUrl
+          ? `
+            <div class="performance-archive-cover">
+              <img
+                src="${escapeAdminHtml(
+                  coverUrl
+                )}"
+                alt="${escapeAdminHtml(
+                  `${title} 공연 사진`
+                )}"
+                loading="lazy"
+              />
 
-            <span class="performance-year">
-              ${escapeAdminHtml(
-                dateParts.year
-              )}
-            </span>
-          </div>
+              <span class="performance-archive-cover-label">
+                PERFORMANCE ARCHIVE
+              </span>
+            </div>
+          `
+          : ""
+      }
 
-          <div class="performance-info">
-            <p class="performance-kicker">
-              ${escapeAdminHtml(
-                kickerText
-              )}
-            </p>
+      <div class="performance-main-content">
+        <div class="performance-date">
+          <span class="performance-month">
+            ${escapeAdminHtml(
+              dateParts.month
+            )}
+          </span>
 
-            <h3>
-              ${escapeAdminHtml(
-                title
-              )}
-            </h3>
+          <strong>
+            ${escapeAdminHtml(
+              dateParts.day
+            )}
+          </strong>
 
-            <p class="performance-location">
-              ${escapeAdminHtml(
-                locationText ||
-                  "공연 장소 안내 예정"
-              )}
-            </p>
-
-            <p class="performance-description">
-              ${escapeAdminHtml(
-                description
-              )}
-            </p>
-          </div>
+          <span class="performance-year">
+            ${escapeAdminHtml(
+              dateParts.year
+            )}
+          </span>
         </div>
 
-        <div class="performance-bottom">
-          <div class="performance-setlist">
-            <p class="performance-setlist-label">
-              Set List
-            </p>
+        <div class="performance-info">
+          <p class="performance-kicker">
+            ${escapeAdminHtml(
+              kickerText
+            )}
+          </p>
 
-            <ol>
-              ${createSetlistHtml(
-                setlist
-              )}
-            </ol>
-          </div>
+          <h3>
+            ${escapeAdminHtml(
+              title
+            )}
+          </h3>
 
-          <div class="performance-live-note">
-            <span>
-              ${escapeAdminHtml(
-                time
-                  ? `${time} START`
-                  : "ONYOUR LIVE"
-              )}
-            </span>
+          <p class="performance-location">
+            ${escapeAdminHtml(
+              locationText ||
+                "공연 장소 안내 예정"
+            )}
+          </p>
 
-            <p>
-              ${escapeAdminHtml(
-                address ||
-                  "상세 공연 정보는 공식 SNS에서 안내됩니다."
-              )}
-            </p>
+          <p class="performance-description">
+            ${escapeAdminHtml(
+              description
+            )}
+          </p>
+        </div>
+      </div>
 
+      <div class="performance-bottom">
+        <div class="performance-setlist">
+          <p class="performance-setlist-label">
+            Set List
+          </p>
+
+          <ol>
+            ${createSetlistHtml(
+              setlist
+            )}
+          </ol>
+        </div>
+
+        <div class="performance-live-note">
+          <span>
             ${
-              ticketUrl
+              hasArchiveContent
+                ? "ONYOUR LIVE ARCHIVE"
+                : escapeAdminHtml(
+                    time
+                      ? `${time} START`
+                      : "ONYOUR LIVE"
+                  )
+            }
+          </span>
+
+          <p>
+            ${escapeAdminHtml(
+              address ||
+                (
+                  hasArchiveContent
+                    ? "공연 현장의 영상과 사진을 확인해 보세요."
+                    : "상세 공연 정보는 공식 SNS에서 안내됩니다."
+                )
+            )}
+          </p>
+
+          ${
+            hasArchiveContent
+              ? `
+                <div class="performance-archive-actions">
+                  ${
+                    videoUrl
+                      ? `
+                        <a
+                          class="performance-archive-button performance-video-button"
+                          href="${escapeAdminHtml(
+                            videoUrl
+                          )}"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          라이브 영상 보기
+
+                          <span aria-hidden="true">
+                            ▶
+                          </span>
+                        </a>
+                      `
+                      : ""
+                  }
+
+                  ${
+                    galleryImages.length
+                      ? `
+                        <button
+                          class="performance-archive-button performance-gallery-button"
+                          type="button"
+                          data-performance-gallery="${galleryData}"
+                          data-performance-title="${escapeAdminHtml(
+                            title
+                          )}"
+                        >
+                          사진 ${galleryImages.length}장 보기
+
+                          <span aria-hidden="true">
+                            ＋
+                          </span>
+                        </button>
+                      `
+                      : ""
+                  }
+                </div>
+              `
+              : ticketUrl
                 ? `
                   <a
                     class="performance-instagram-link"
@@ -3088,12 +3247,12 @@ async function loadPublicPerformances() {
                   </a>
                 `
                 : ""
-            }
-          </div>
+          }
         </div>
-      </article>
-    `;
-  }
+      </div>
+    </article>
+  `;
+}
 
   function createSidePerformanceCard(
     item
@@ -6285,55 +6444,289 @@ document
   .getElementById(
     "adminPerformanceForm"
   )
+document
+  .getElementById(
+    "adminPerformanceForm"
+  )
   ?.addEventListener(
     "submit",
-    (event) => {
+    async (event) => {
       event.preventDefault();
 
-      const id = getAdminFormValue(
-        "adminPerformanceId"
-      );
+      const form =
+        event.currentTarget;
 
-      const data = {
-        id:
-          id ||
-          createAdminId(
-            "performance"
-          ),
-        title: getAdminFormValue(
-          "adminPerformanceTitle"
-        ),
-        date: getAdminFormValue(
-          "adminPerformanceDate"
-        ),
-        time: getAdminFormValue(
-          "adminPerformanceTime"
-        ),
-        location: getAdminFormValue(
-          "adminPerformanceLocation"
-        ),
-        address: getAdminFormValue(
-          "adminPerformanceAddress"
-        ),
-        description:
-          getAdminFormValue(
-            "adminPerformanceDescription"
-          ),
-        setlist: getAdminFormValue(
-          "adminPerformanceSetlist"
-        ),
-        ticketUrl: getAdminFormValue(
-          "adminPerformanceTicketUrl"
-        ),
-        published: getAdminFormValue(
-          "adminPerformancePublished"
-        ),
-      };
+      const submitButton =
+        form.querySelector(
+          ".admin-form-submit"
+        );
 
-      saveAdminItem(
-        "performance",
-        data
-      );
+      const id =
+        getAdminFormValue(
+          "adminPerformanceId"
+        );
+
+      const existingItem =
+        adminStore.performance.find(
+          (item) =>
+            String(item.id) ===
+            String(id)
+        );
+
+      const coverInput =
+        document.getElementById(
+          "adminPerformanceCoverImage"
+        );
+
+      const galleryInput =
+        document.getElementById(
+          "adminPerformanceGalleryImages"
+        );
+
+      const selectedCoverFile =
+        coverInput?.files?.[0] ||
+        null;
+
+      const selectedGalleryFiles =
+        Array.from(
+          galleryInput?.files || []
+        ).slice(0, 10);
+
+      let coverUrl =
+        existingItem?.coverUrl ||
+        existingItem?.cover_url ||
+        "";
+
+      let galleryImages =
+        existingItem?.galleryImages ||
+        existingItem?.gallery_images ||
+        [];
+
+      if (
+        typeof galleryImages ===
+        "string"
+      ) {
+        try {
+          galleryImages =
+            JSON.parse(
+              galleryImages
+            );
+        } catch (error) {
+          galleryImages = [];
+        }
+      }
+
+      if (
+        !Array.isArray(
+          galleryImages
+        )
+      ) {
+        galleryImages = [];
+      }
+
+      try {
+        if (
+          galleryInput?.files?.length >
+          10
+        ) {
+          throw new Error(
+            "추가 공연 사진은 최대 10장까지 등록할 수 있습니다."
+          );
+        }
+
+        const filesToCheck = [
+          selectedCoverFile,
+          ...selectedGalleryFiles,
+        ].filter(Boolean);
+
+        const invalidFile =
+          filesToCheck.find(
+            (file) =>
+              !file.type.startsWith(
+                "image/"
+              )
+          );
+
+        if (invalidFile) {
+          throw new Error(
+            "공연 사진은 이미지 파일만 선택할 수 있습니다."
+          );
+        }
+
+        if (submitButton) {
+          submitButton.disabled =
+            true;
+
+          submitButton.textContentContent =
+            "저장 준비 중...";
+        }
+
+        if (selectedCoverFile) {
+          if (submitButton) {
+            submitButton.textContent =
+              "대표 사진 업로드 중...";
+          }
+
+          coverUrl =
+            await uploadAdminImage(
+              selectedCoverFile,
+              "performance"
+            );
+
+          if (!coverUrl) {
+            throw new Error(
+              "대표 사진 주소를 받지 못했습니다."
+            );
+          }
+        }
+
+        if (
+          selectedGalleryFiles.length
+        ) {
+          if (submitButton) {
+            submitButton.textContent =
+              `공연 사진 업로드 중... (0/${selectedGalleryFiles.length})`;
+          }
+
+          const uploadedGalleryImages =
+            [];
+
+          for (
+            let index = 0;
+            index <
+            selectedGalleryFiles.length;
+            index += 1
+          ) {
+            if (submitButton) {
+              submitButton.textContent =
+                `공연 사진 업로드 중... (${index + 1}/${selectedGalleryFiles.length})`;
+            }
+
+            const imageUrl =
+              await uploadAdminImage(
+                selectedGalleryFiles[
+                  index
+                ],
+                "performance"
+              );
+
+            if (!imageUrl) {
+              throw new Error(
+                `${
+                  index + 1
+                }번째 공연 사진 주소를 받지 못했습니다.`
+              );
+            }
+
+            uploadedGalleryImages.push(
+              imageUrl
+            );
+          }
+
+          galleryImages =
+            uploadedGalleryImages;
+        }
+
+        if (submitButton) {
+          submitButton.textContent =
+            "공연 저장 중...";
+        }
+
+        const data = {
+          id:
+            id ||
+            createAdminId(
+              "performance"
+            ),
+
+          title:
+            getAdminFormValue(
+              "adminPerformanceTitle"
+            ),
+
+          date:
+            getAdminFormValue(
+              "adminPerformanceDate"
+            ),
+
+          time:
+            getAdminFormValue(
+              "adminPerformanceTime"
+            ),
+
+          location:
+            getAdminFormValue(
+              "adminPerformanceLocation"
+            ),
+
+          address:
+            getAdminFormValue(
+              "adminPerformanceAddress"
+            ),
+
+          description:
+            getAdminFormValue(
+              "adminPerformanceDescription"
+            ),
+
+          setlist:
+            getAdminFormValue(
+              "adminPerformanceSetlist"
+            ),
+
+          ticketUrl:
+            getAdminFormValue(
+              "adminPerformanceTicketUrl"
+            ),
+
+          videoUrl:
+            getAdminFormValue(
+              "adminPerformanceVideoUrl"
+            ),
+
+          coverUrl,
+
+          galleryImages,
+
+          published:
+            getAdminFormValue(
+              "adminPerformancePublished"
+            ),
+        };
+
+        await saveAdminItem(
+          "performance",
+          data
+        );
+
+        clearAdminPerformancePreviewUrls();
+
+        if (coverInput) {
+          coverInput.value = "";
+        }
+
+        if (galleryInput) {
+          galleryInput.value = "";
+        }
+      } catch (error) {
+        console.error(
+          "공연 저장 오류:",
+          error
+        );
+
+        alert(
+          error.message ||
+            "공연을 저장하지 못했습니다."
+        );
+      } finally {
+        if (submitButton) {
+          submitButton.disabled =
+            false;
+
+          submitButton.textContent =
+            "저장";
+        }
+      }
     }
   );
 
@@ -11722,3 +12115,417 @@ if (
 } else {
   initializePublicDynamicContent();
 }
+
+function getPerformanceGalleryElements() {
+  return {
+    modal:
+      document.getElementById(
+        "performanceGalleryModal"
+      ),
+
+    title:
+      document.getElementById(
+        "performanceGalleryTitle"
+      ),
+
+    grid:
+      document.getElementById(
+        "performanceGalleryGrid"
+      ),
+
+    empty:
+      document.getElementById(
+        "performanceGalleryEmpty"
+      ),
+  };
+}
+
+function parsePerformanceGalleryImages(
+  galleryValue
+) {
+  if (Array.isArray(galleryValue)) {
+    return galleryValue
+      .map((imageUrl) =>
+        String(imageUrl || "").trim()
+      )
+      .filter(Boolean)
+      .slice(0, 10);
+  }
+
+  try {
+    const parsedValue =
+      JSON.parse(
+        String(galleryValue || "[]")
+      );
+
+    if (!Array.isArray(parsedValue)) {
+      return [];
+    }
+
+    return parsedValue
+      .map((imageUrl) =>
+        String(imageUrl || "").trim()
+      )
+      .filter(Boolean)
+      .slice(0, 10);
+  } catch (error) {
+    console.warn(
+      "공연 갤러리 데이터를 읽지 못했습니다.",
+      error
+    );
+
+    return [];
+  }
+}
+
+function removePerformanceGalleryViewer() {
+  document
+    .querySelector(
+      ".performance-gallery-viewer"
+    )
+    ?.remove();
+}
+
+function closePerformanceGallery() {
+  const {
+    modal,
+    grid,
+  } =
+    getPerformanceGalleryElements();
+
+  if (!modal) {
+    return;
+  }
+
+  removePerformanceGalleryViewer();
+
+  modal.classList.remove(
+    "is-open"
+  );
+
+  modal.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+  document.body.classList.remove(
+    "performance-gallery-open"
+  );
+
+  if (grid) {
+    grid.innerHTML = "";
+  }
+}
+
+function openPerformanceGalleryViewer(
+  imageUrl,
+  imageAlt
+) {
+  const {
+    modal,
+  } =
+    getPerformanceGalleryElements();
+
+  if (
+    !modal ||
+    !imageUrl
+  ) {
+    return;
+  }
+
+  removePerformanceGalleryViewer();
+
+  const viewer =
+    document.createElement(
+      "div"
+    );
+
+  viewer.className =
+    "performance-gallery-viewer";
+
+  viewer.setAttribute(
+    "role",
+    "dialog"
+  );
+
+  viewer.setAttribute(
+    "aria-modal",
+    "true"
+  );
+
+  const backdrop =
+    document.createElement(
+      "button"
+    );
+
+  backdrop.className =
+    "performance-gallery-viewer-backdrop";
+
+  backdrop.type =
+    "button";
+
+  backdrop.setAttribute(
+    "aria-label",
+    "확대 사진 닫기"
+  );
+
+  const content =
+    document.createElement(
+      "div"
+    );
+
+  content.className =
+    "performance-gallery-viewer-content";
+
+  const image =
+    document.createElement(
+      "img"
+    );
+
+  image.src = imageUrl;
+
+  image.alt =
+    imageAlt ||
+    "확대된 공연 사진";
+
+  const closeButton =
+    document.createElement(
+      "button"
+    );
+
+  closeButton.className =
+    "performance-gallery-viewer-close";
+
+  closeButton.type =
+    "button";
+
+  closeButton.setAttribute(
+    "aria-label",
+    "확대 사진 닫기"
+  );
+
+  closeButton.innerHTML =
+    '<span aria-hidden="true">×</span>';
+
+  backdrop.addEventListener(
+    "click",
+    removePerformanceGalleryViewer
+  );
+
+  closeButton.addEventListener(
+    "click",
+    removePerformanceGalleryViewer
+  );
+
+  content.append(
+    image,
+    closeButton
+  );
+
+  viewer.append(
+    backdrop,
+    content
+  );
+
+  modal.appendChild(
+    viewer
+  );
+
+  closeButton.focus();
+}
+
+function createPerformanceGalleryImage(
+  imageUrl,
+  title,
+  index
+) {
+  const button =
+    document.createElement(
+      "button"
+    );
+
+  button.className =
+    "performance-gallery-item";
+
+  button.type =
+    "button";
+
+  button.setAttribute(
+    "aria-label",
+    `${title} 공연 사진 ${
+      index + 1
+    } 크게 보기`
+  );
+
+  const image =
+    document.createElement(
+      "img"
+    );
+
+  image.src = imageUrl;
+
+  image.alt =
+    `${title} 공연 사진 ${
+      index + 1
+    }`;
+
+  image.loading =
+    "lazy";
+
+  button.appendChild(
+    image
+  );
+
+  button.addEventListener(
+    "click",
+    () => {
+      openPerformanceGalleryViewer(
+        imageUrl,
+        image.alt
+      );
+    }
+  );
+
+  return button;
+}
+
+function openPerformanceGallery(
+  galleryValue,
+  performanceTitle
+) {
+  const {
+    modal,
+    title,
+    grid,
+    empty,
+  } =
+    getPerformanceGalleryElements();
+
+  if (
+    !modal ||
+    !grid
+  ) {
+    return;
+  }
+
+  const galleryImages =
+    parsePerformanceGalleryImages(
+      galleryValue
+    );
+
+  const titleText =
+    String(
+      performanceTitle ||
+        "공연 사진"
+    ).trim();
+
+  grid.innerHTML = "";
+
+  if (title) {
+    title.textContent =
+      titleText;
+  }
+
+  galleryImages.forEach(
+    (
+      imageUrl,
+      index
+    ) => {
+      grid.appendChild(
+        createPerformanceGalleryImage(
+          imageUrl,
+          titleText,
+          index
+        )
+      );
+    }
+  );
+
+  if (empty) {
+    empty.hidden =
+      galleryImages.length > 0;
+  }
+
+  modal.classList.add(
+    "is-open"
+  );
+
+  modal.setAttribute(
+    "aria-hidden",
+    "false"
+  );
+
+  document.body.classList.add(
+    "performance-gallery-open"
+  );
+
+  modal
+    .querySelector(
+      ".performance-gallery-close"
+    )
+    ?.focus();
+}
+
+document.addEventListener(
+  "click",
+  (event) => {
+    const galleryButton =
+      event.target.closest(
+        ".performance-gallery-button"
+      );
+
+    if (galleryButton) {
+      openPerformanceGallery(
+        galleryButton.dataset
+          .performanceGallery,
+        galleryButton.dataset
+          .performanceTitle
+      );
+
+      return;
+    }
+
+    if (
+      event.target.closest(
+        "[data-performance-gallery-close]"
+      )
+    ) {
+      closePerformanceGallery();
+    }
+  }
+);
+
+document.addEventListener(
+  "keydown",
+  (event) => {
+    if (
+      event.key !==
+      "Escape"
+    ) {
+      return;
+    }
+
+    const viewer =
+      document.querySelector(
+        ".performance-gallery-viewer"
+      );
+
+    if (viewer) {
+      removePerformanceGalleryViewer();
+      return;
+    }
+
+    const {
+      modal,
+    } =
+      getPerformanceGalleryElements();
+
+    if (
+      modal?.classList.contains(
+        "is-open"
+      )
+    ) {
+      closePerformanceGallery();
+    }
+  }
+);
