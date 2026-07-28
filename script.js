@@ -1629,10 +1629,6 @@ function applyAdminHeroSettings(
 
   applyResponsiveHeroImage();
 
-  /*
-   * 관리자 화면에서 브라우저 크기를 바꿨을 때도
-   * PC·모바일 사진이 즉시 전환되도록 합니다.
-   */
   if (
     applyAdminHeroSettings
       .responsiveImageHandler
@@ -1722,7 +1718,7 @@ function bindAdminHeroForm() {
           ".admin-form-submit"
         );
 
-      const selectedPcFile =
+      const selectedFile =
         adminHeroImageInput
           ?.files?.[0];
 
@@ -1748,31 +1744,31 @@ function bindAdminHeroForm() {
             ?.src || "";
 
         /* PC용 배경사진 업로드 */
-        if (selectedPcFile) {
+        if (selectedFile) {
           if (
-            !selectedPcFile.type.startsWith(
+            !selectedFile.type.startsWith(
               "image/"
             )
           ) {
             throw new Error(
-              "PC용 배경사진은 이미지 파일만 선택할 수 있습니다."
+              "이미지 파일만 선택할 수 있습니다."
             );
           }
 
           if (submitButton) {
             submitButton.textContent =
-              "PC 배경사진 업로드 중...";
+              "배경사진 업로드 중...";
           }
 
           heroImageUrl =
             await uploadAdminImage(
-              selectedPcFile,
+              selectedFile,
               "hero"
             );
 
           if (!heroImageUrl) {
             throw new Error(
-              "PC 배경사진 주소를 받지 못했습니다."
+              "배경사진 주소를 받지 못했습니다."
             );
           }
         }
@@ -1802,7 +1798,7 @@ function bindAdminHeroForm() {
 
           if (!heroMobileImageUrl) {
             throw new Error(
-              "모바일 배경사진 주소를 받지 못했습니다."
+              "모바일용 배경사진 주소를 받지 못했습니다."
             );
           }
         }
@@ -1984,13 +1980,20 @@ function bindAdminHeroForm() {
               error
             );
           }
+        } else if (
+          savedHeroJson &&
+          typeof savedHeroJson ===
+            "object"
+        ) {
+          savedHeroSettings =
+            savedHeroJson;
         }
 
         applyAdminHeroSettings(
           savedHeroSettings
         );
 
-        /* 파일 선택값 초기화 */
+        /* 선택했던 파일 입력 초기화 */
         if (adminHeroImageInput) {
           adminHeroImageInput.value =
             "";
@@ -2003,7 +2006,7 @@ function bindAdminHeroForm() {
             "";
         }
 
-        /* PC 미리보기 주소 갱신 */
+        /* PC용 미리보기에 저장된 주소 반영 */
         if (
           adminHeroPreviewImage &&
           savedHeroSettings.imageUrl
@@ -2013,13 +2016,17 @@ function bindAdminHeroForm() {
 
           adminHeroPreviewImage.hidden =
             false;
+
+          adminHeroImagePreview
+            ?.classList.add(
+              "has-image"
+            );
         }
 
-        /* 모바일 미리보기 주소 갱신 */
+        /* 모바일용 미리보기에 저장된 주소 반영 */
         if (
           adminHeroMobilePreviewImage &&
-          savedHeroSettings
-            .mobileImageUrl
+          savedHeroSettings.mobileImageUrl
         ) {
           adminHeroMobilePreviewImage.src =
             savedHeroSettings
@@ -2032,7 +2039,24 @@ function bindAdminHeroForm() {
             ?.classList.add(
               "has-image"
             );
+        } else if (
+          adminHeroMobilePreviewImage
+        ) {
+          adminHeroMobilePreviewImage.removeAttribute(
+            "src"
+          );
+
+          adminHeroMobilePreviewImage.hidden =
+            true;
+
+          adminHeroMobileImagePreview
+            ?.classList.remove(
+              "has-image"
+            );
         }
+
+        updateAdminHeroImagePreview();
+        updateAdminHeroMobileImagePreview();
 
         alert(
           "첫 화면 설정이 저장되었습니다."
@@ -9338,6 +9362,7 @@ async function loadSiteSettings() {
         ? result.items[0] || null
         : null;
 
+    /* 기존 홈페이지 설정 유지 */
     applyTeamInstagramUrl(
       settings?.instagramUrl ||
       settings?.instagram_url ||
@@ -9355,6 +9380,7 @@ async function loadSiteSettings() {
 
     let heroSettings = null;
 
+    /* 첫 화면 설정 해석 */
     if (
       typeof heroSettingsJson ===
         "string" &&
@@ -9435,7 +9461,7 @@ async function loadSiteSettings() {
           .descriptionLine2 || "";
     }
 
-    /* 버튼과 SNS 설정 복원 */
+    /* 버튼 표시 설정 복원 */
     if (
       adminHeroShowMusicButton
     ) {
@@ -9460,6 +9486,7 @@ async function loadSiteSettings() {
           .showMessageButton !== false;
     }
 
+    /* SNS 설정 복원 */
     if (
       adminHeroShowInstagram
     ) {
@@ -9492,7 +9519,7 @@ async function loadSiteSettings() {
         "https://youtube.com/@official.onyour";
     }
 
-    /* PC 사진 조절값 복원 */
+    /* PC용 사진 조절값 복원 */
     if (adminHeroImageScale) {
       adminHeroImageScale.value =
         String(
@@ -9507,7 +9534,8 @@ async function loadSiteSettings() {
       adminHeroImagePosX.value =
         String(
           getSafeNumber(
-            heroSettings.imagePositionX,
+            heroSettings
+              .imagePositionX,
             50
           )
         );
@@ -9517,12 +9545,14 @@ async function loadSiteSettings() {
       adminHeroImagePosY.value =
         String(
           getSafeNumber(
-            heroSettings.imagePositionY,
+            heroSettings
+              .imagePositionY,
             50
           )
         );
     }
 
+    /* PC용 사진 미리보기 복원 */
     if (
       adminHeroPreviewImage &&
       heroSettings.imageUrl
@@ -9537,9 +9567,23 @@ async function loadSiteSettings() {
         ?.classList.add(
           "has-image"
         );
+    } else if (
+      adminHeroPreviewImage
+    ) {
+      adminHeroPreviewImage.removeAttribute(
+        "src"
+      );
+
+      adminHeroPreviewImage.hidden =
+        true;
+
+      adminHeroImagePreview
+        ?.classList.remove(
+          "has-image"
+        );
     }
 
-    /* 모바일 사진 조절값 복원 */
+    /* 모바일용 사진 조절값 복원 */
     if (
       adminHeroMobileImageScale
     ) {
@@ -9579,6 +9623,7 @@ async function loadSiteSettings() {
         );
     }
 
+    /* 모바일용 사진 미리보기 복원 */
     if (
       adminHeroMobilePreviewImage &&
       heroSettings.mobileImageUrl
@@ -9609,6 +9654,7 @@ async function loadSiteSettings() {
         );
     }
 
+    /* 미리보기와 실제 첫 화면 갱신 */
     updateAdminHeroImagePreview();
     updateAdminHeroMobileImagePreview();
 
