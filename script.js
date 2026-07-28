@@ -2826,34 +2826,37 @@ async function loadPublicPerformances() {
     return "Past Live";
   }
 
-  function normalizePerformanceUrl(
-    value
-  ) {
-    const rawValue =
-      String(value || "").trim();
+function normalizePerformanceUrl(
+  value
+) {
+  const rawValue =
+    String(value || "").trim();
 
-    if (!rawValue) {
-      return "";
-    }
-
-    try {
-      const parsedUrl =
-        new URL(rawValue);
-
-      if (
-        parsedUrl.protocol !==
-          "https:" &&
-        parsedUrl.protocol !==
-          "http:"
-      ) {
-        return "";
-      }
-
-      return parsedUrl.href;
-    } catch {
-      return "";
-    }
+  if (!rawValue) {
+    return "";
   }
+
+  try {
+    const parsedUrl =
+      new URL(
+        rawValue,
+        window.location.origin
+      );
+
+    if (
+      parsedUrl.protocol !==
+        "https:" &&
+      parsedUrl.protocol !==
+        "http:"
+    ) {
+      return "";
+    }
+
+    return parsedUrl.href;
+  } catch {
+    return "";
+  }
+}
 
   function getPerformanceSetlist(
     value
