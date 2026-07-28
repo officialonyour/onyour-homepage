@@ -11767,3 +11767,43 @@ body.performance-gallery-open {
     font-size: 9px;
   }
 }
+
+/* =========================================================
+   MOBILE · ABOUT / MEMBERS FINAL POLISH
+========================================================= */
+
+@media (max-width: 767px) {
+  /* ABOUT 카드 높이 축소 */
+  .about-main-card {
+    min-height: auto;
+    padding: 14px 15px 15px;
+  }
+
+  .about-main-top {
+    margin-bottom: 0;
+  }
+
+  .about-text {
+    margin-top: 22px;
+    font-size: 11px;
+    line-height: 1.6;
+  }
+
+  .about-signature {
+    margin-top: 18px;
+    padding-top: 11px;
+  }
+
+  /* MEMBERS 새 제목 정리 */
+  .members-section-heading h2 {
+    max-width: 330px;
+    font-size: clamp(31px, 9vw, 38px);
+    line-height: 1.04;
+    letter-spacing: -0.055em;
+  }
+
+  /* 단체사진과 개인 멤버 카드 사이 간격 */
+  .members-team-visual {
+    margin-bottom: 22px;
+  }
+}
