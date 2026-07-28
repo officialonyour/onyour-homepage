@@ -827,6 +827,71 @@ function getHeroImageSettings() {
   };
 }
 
+function updateAdminHeroImagePreview() {
+  const imageScale =
+    Number(
+      adminHeroImageScale?.value
+    ) || 100;
+
+  const imagePositionX =
+    Number(
+      adminHeroImagePosX?.value
+    ) || 50;
+
+  const imagePositionY =
+    Number(
+      adminHeroImagePosY?.value
+    ) || 50;
+
+  if (adminHeroImageScaleValue) {
+    adminHeroImageScaleValue.textContent =
+      `${imageScale}%`;
+  }
+
+  if (adminHeroImagePosXValue) {
+    adminHeroImagePosXValue.textContent =
+      `${imagePositionX}%`;
+  }
+
+  if (adminHeroImagePosYValue) {
+    adminHeroImagePosYValue.textContent =
+      `${imagePositionY}%`;
+  }
+
+  if (!adminHeroPreviewImage) {
+    return;
+  }
+
+  adminHeroPreviewImage.style.objectPosition =
+    `${imagePositionX}% ${imagePositionY}%`;
+
+  adminHeroPreviewImage.style.transform =
+    `scale(${imageScale / 100})`;
+
+  adminHeroPreviewImage.style.transformOrigin =
+    `${imagePositionX}% ${imagePositionY}%`;
+
+  const hasImage =
+    Boolean(
+      adminHeroPreviewImage.getAttribute(
+        "src"
+      )
+    );
+
+  adminHeroPreviewImage.hidden =
+    !hasImage;
+
+  adminHeroImagePreview?.classList.toggle(
+    "is-empty",
+    !hasImage
+  );
+
+  adminHeroImagePreview?.classList.toggle(
+    "has-image",
+    hasImage
+  );
+}
+
 function updateAdminHeroMobileImagePreview() {
   const imageScale =
     Number(
