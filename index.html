@@ -1832,16 +1832,35 @@
       data-admin-view="home"
       aria-hidden="false"
     >
-      <section class="admin-dashboard-summary">
-        <p>현재 관리 항목</p>
-        <strong>7</strong>
+<section class="admin-dashboard-summary">
+  <p>현재 관리 항목</p>
+  <strong>8</strong>
 
-        <span>
-          홈페이지 콘텐츠를 휴대폰과 PC에서 관리할 수 있습니다.
-        </span>
-      </section>
+  <span>
+    홈페이지 콘텐츠를 휴대폰과 PC에서 관리할 수 있습니다.
+  </span>
+</section>
 
       <div class="admin-menu-list">
+        <button
+  class="admin-menu-item"
+  type="button"
+  data-admin-section="header"
+>
+  <span>
+    <small>00</small>
+
+    <strong>
+      헤더 관리
+    </strong>
+
+    <em>
+      상단 로고와 메뉴 표시 설정
+    </em>
+  </span>
+
+  <b>→</b>
+</button>
 
         <button
           class="admin-menu-item"
@@ -2261,6 +2280,208 @@
         type="submit"
       >
         저장
+      </button>
+    </div>
+  </form>
+</section>
+
+<!-- =========================
+     헤더 관리
+========================== -->
+<section
+  class="admin-section-view admin-view"
+  id="adminHeaderView"
+  data-admin-view="header"
+  aria-hidden="true"
+>
+  <div class="admin-section-header">
+    <button
+      class="admin-section-back"
+      type="button"
+      data-admin-back="home"
+      aria-label="관리자 홈으로 돌아가기"
+    >
+      ←
+    </button>
+
+    <div>
+      <p>HEADER MANAGEMENT</p>
+
+      <h3>
+        헤더 관리
+      </h3>
+    </div>
+  </div>
+
+  <form
+    class="admin-content-form"
+    id="adminHeaderForm"
+  >
+    <label>
+      상단 로고 문구
+
+      <input
+        id="adminHeaderLogoText"
+        type="text"
+        maxlength="30"
+        value="ONYOUR"
+        placeholder="예: ONYOUR"
+        required
+      />
+
+      <small class="admin-field-help">
+        홈페이지 왼쪽 위에 표시되는 로고 문구입니다.
+      </small>
+    </label>
+
+    <label class="admin-checkbox-label">
+      <input
+        id="adminHeaderUseLogoImage"
+        type="checkbox"
+      />
+
+      <span>
+        글자 대신 로고 이미지 사용
+      </span>
+    </label>
+
+    <label>
+      로고 이미지
+
+      <input
+        id="adminHeaderLogoImage"
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/svg+xml"
+      />
+
+      <small class="admin-field-help">
+        이미지 사용을 선택했을 때 헤더에 표시됩니다.
+      </small>
+    </label>
+
+    <div
+      class="admin-image-preview"
+      id="adminHeaderLogoPreview"
+      hidden
+    >
+      <img
+        id="adminHeaderLogoPreviewImage"
+        src=""
+        alt="헤더 로고 미리보기"
+      />
+    </div>
+
+    <label>
+      헤더 배경
+
+      <select id="adminHeaderBackground">
+        <option value="transparent">
+          투명
+        </option>
+
+        <option value="black">
+          검정
+        </option>
+      </select>
+    </label>
+
+    <fieldset class="admin-form-fieldset">
+      <legend>
+        메뉴 표시
+      </legend>
+
+      <label class="admin-checkbox-label">
+        <input
+          class="admin-header-menu-toggle"
+          type="checkbox"
+          value="news"
+          checked
+        />
+
+        <span>News</span>
+      </label>
+
+      <label class="admin-checkbox-label">
+        <input
+          class="admin-header-menu-toggle"
+          type="checkbox"
+          value="live"
+          checked
+        />
+
+        <span>Video</span>
+      </label>
+
+      <label class="admin-checkbox-label">
+        <input
+          class="admin-header-menu-toggle"
+          type="checkbox"
+          value="music"
+          checked
+        />
+
+        <span>Music</span>
+      </label>
+
+      <label class="admin-checkbox-label">
+        <input
+          class="admin-header-menu-toggle"
+          type="checkbox"
+          value="performances"
+          checked
+        />
+
+        <span>Live</span>
+      </label>
+
+      <label class="admin-checkbox-label">
+        <input
+          class="admin-header-menu-toggle"
+          type="checkbox"
+          value="members"
+          checked
+        />
+
+        <span>Members</span>
+      </label>
+
+      <label class="admin-checkbox-label">
+        <input
+          class="admin-header-menu-toggle"
+          type="checkbox"
+          value="messages"
+          checked
+        />
+
+        <span>Messages</span>
+      </label>
+
+      <label class="admin-checkbox-label">
+        <input
+          class="admin-header-menu-toggle"
+          type="checkbox"
+          value="follow"
+          checked
+        />
+
+        <span>Follow</span>
+      </label>
+    </fieldset>
+
+    <div class="admin-form-actions">
+      <button
+        class="admin-form-cancel"
+        type="button"
+        data-admin-back="home"
+      >
+        취소
+      </button>
+
+      <button
+        class="admin-form-submit"
+        type="submit"
+      >
+        헤더 설정 저장
       </button>
     </div>
   </form>
