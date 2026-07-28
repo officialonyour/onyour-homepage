@@ -1256,96 +1256,126 @@ main {
   }
 }
 
-/* 모바일 */
+/* =========================================================
+   HOMEPAGE V2 · ABOUT · MOBILE
+========================================================= */
+
 @media (max-width: 767px) {
   .about-section-v2 {
-    padding-top: 90px;
+    padding-top: 62px;
   }
 
   .about-background-word {
-    top: 95px;
-    right: -22px;
-    font-size: 110px;
+    top: 68px;
+    right: -16px;
+    font-size: 82px;
   }
 
   .about-section-heading {
-    margin-bottom: 25px;
+    gap: 8px;
+    margin-bottom: 16px;
   }
 
   .about-section-heading h2 {
-    font-size: clamp(38px, 12vw, 56px);
-    line-height: 0.98;
+    max-width: 330px;
+    font-size: clamp(29px, 8.8vw, 40px);
+    line-height: 1.02;
+    letter-spacing: -0.055em;
   }
 
   .about-heading-caption {
-    font-size: 8px;
+    margin: 0;
+    font-size: 7px;
+    line-height: 1.45;
     white-space: normal;
   }
 
   .about-layout {
-    gap: 10px;
+    gap: 8px;
   }
 
   .about-main-card {
     min-height: auto;
-    padding: 23px 20px;
-    border-radius: 19px;
+    padding: 18px 16px;
+    border-radius: 16px;
+  }
+
+  .about-main-top {
+    margin-bottom: 0;
+  }
+
+  .about-card-number {
+    font-size: 8px;
   }
 
   .about-card-label {
-    min-height: 25px;
-    padding: 0 9px;
+    min-height: 22px;
+    padding: 0 8px;
     font-size: 6px;
   }
 
   .about-lead {
-    margin-top: 72px;
-    font-size: clamp(24px, 7.8vw, 34px);
-    line-height: 1.28;
+    margin-top: 38px;
+    font-size: clamp(21px, 6.4vw, 28px);
+    line-height: 1.24;
+    letter-spacing: -0.04em;
   }
 
   .about-text {
-    margin-top: 20px;
-    font-size: 13px;
-    line-height: 1.78;
+    margin-top: 14px;
+    font-size: 11px;
+    line-height: 1.65;
   }
 
   .about-signature {
-    margin-top: 42px;
-    padding-top: 18px;
+    gap: 16px;
+    margin-top: 26px;
+    padding-top: 13px;
   }
 
   .about-signature span {
-    font-size: 9px;
+    font-size: 8px;
   }
 
   .about-signature strong {
-    font-size: 11px;
+    font-size: 10px;
+    letter-spacing: 0.14em;
   }
 
   .about-side-grid {
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 8px;
   }
 
   .about-value-card,
   .about-value-card-wide {
     grid-column: auto;
-    grid-template-columns: 31px minmax(0, 1fr);
-    gap: 12px;
+    grid-template-columns: 26px minmax(0, 1fr);
+    gap: 10px;
     min-height: auto;
-    padding: 21px 18px;
-    border-radius: 17px;
+    padding: 15px 14px;
+    border-radius: 14px;
+  }
+
+  .about-value-icon {
+    padding-top: 2px;
+    font-size: 8px;
+  }
+
+  .about-value-label {
+    margin-bottom: 6px;
+    font-size: 7px;
   }
 
   .about-value-card h3 {
-    font-size: 19px;
+    font-size: 17px;
+    line-height: 1.18;
   }
 
   .about-value-card p:last-child {
-    margin-top: 10px;
-    font-size: 11px;
-    line-height: 1.65;
+    margin-top: 7px;
+    font-size: 10px;
+    line-height: 1.55;
   }
 }
 
@@ -1567,19 +1597,21 @@ main {
   }
 }
 
-/* 모바일 */
+/* =========================================================
+   HOMEPAGE V2 · MEMBERS TEAM VISUAL · MOBILE
+========================================================= */
 
 @media (max-width: 767px) {
   .members-team-visual {
     grid-template-columns: 1fr;
     min-height: 0;
-    margin-bottom: 16px;
-    border-radius: 22px;
+    margin-bottom: 10px;
+    border-radius: 16px;
   }
 
   .members-team-image-wrap {
     min-height: 0;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 16 / 11;
   }
 
   .members-team-image {
@@ -1592,19 +1624,23 @@ main {
   }
 
   .members-team-caption {
-    min-height: 210px;
-    padding: 25px 21px 22px;
+    min-height: auto;
+    padding: 15px 16px 16px;
+  }
+
+  .members-team-caption span {
+    font-size: 7px;
   }
 
   .members-team-caption strong {
-    margin-top: 54px;
-    font-size: 29px;
-    line-height: 1.1;
+    margin-top: 18px;
+    font-size: 21px;
+    line-height: 1.12;
   }
 
   .members-team-caption::after {
-    width: 36px;
-    margin-top: 25px;
+    width: 28px;
+    margin-top: 14px;
   }
 }
 
@@ -2017,42 +2053,50 @@ main {
   }
 }
 
-/* 모바일 */
+/* =========================================================
+   HOMEPAGE V2 · MEMBERS · MOBILE
+========================================================= */
+
 @media (max-width: 767px) {
   .members-section-v2 {
-    padding-top: 90px;
+    padding-top: 58px;
   }
 
   .members-background-word {
-    top: 100px;
-    left: -18px;
-    font-size: 95px;
+    top: 64px;
+    left: -12px;
+    font-size: 72px;
   }
 
   .members-section-heading {
-    margin-bottom: 24px;
+    gap: 9px;
+    margin-bottom: 15px;
   }
 
   .members-section-heading h2 {
-    font-size: clamp(38px, 12vw, 56px);
-    line-height: 0.98;
+    max-width: 340px;
+    font-size: clamp(30px, 9.2vw, 40px);
+    line-height: 1.02;
+    letter-spacing: -0.055em;
   }
 
   .members-heading-description {
-    font-size: 13px;
-    line-height: 1.7;
+    max-width: 330px;
+    margin: 0;
+    font-size: 10px;
+    line-height: 1.55;
   }
 
   .members-grid {
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 8px;
   }
 
   .member-card,
   .member-card-featured {
     grid-column: auto;
-    padding: 8px;
-    border-radius: 18px;
+    padding: 6px;
+    border-radius: 15px;
   }
 
   .member-card:hover {
@@ -2060,62 +2104,69 @@ main {
   }
 
   .member-portrait,
-  .member-card-featured .member-portrait {
-    aspect-ratio: 1.12 / 1;
-    border-radius: 12px;
+  .member-card-featured
+    .member-portrait {
+    aspect-ratio: 16 / 10;
+    border-radius: 11px;
   }
 
   .member-card-number {
-    top: 15px;
-    right: 15px;
-    font-size: 7px;
-  }
-
-  .member-image-fallback {
-    padding: 15px;
-  }
-
-  .member-image-fallback span {
-    font-size: 40px;
-  }
-
-  .member-role-badge {
-    top: 10px;
-    left: 10px;
-    min-height: 22px;
-    padding: 0 8px;
+    top: 12px;
+    right: 12px;
     font-size: 6px;
   }
 
+  .member-image-fallback {
+    padding: 12px;
+  }
+
+  .member-image-fallback span {
+    font-size: 32px;
+  }
+
+  .member-role-badge {
+    top: 8px;
+    left: 8px;
+    min-height: 19px;
+    padding: 0 7px;
+    font-size: 5px;
+  }
+
   .member-card-body {
-    padding: 14px 5px 5px;
+    padding: 10px 4px 4px;
   }
 
   .member-role {
-    margin-bottom: 4px;
+    margin-bottom: 3px;
+    font-size: 7px;
   }
 
   .member-name-row h3 {
-    font-size: 21px;
+    font-size: 18px;
+    line-height: 1.1;
   }
 
   .member-description {
     min-height: auto;
+    margin-top: 7px;
+    font-size: 9px;
+    line-height: 1.5;
   }
 
   .member-links {
-    margin-top: 14px;
+    gap: 6px;
+    margin-top: 10px;
   }
 
   .member-link {
-    min-height: 39px;
-    padding: 0 12px;
-    border-radius: 9px;
-    font-size: 9px;
+    min-height: 34px;
+    padding: 0 10px;
+    border-radius: 8px;
+    font-size: 8px;
   }
 
   .member-link::after {
-    font-size: 11px;
+    font-size: 10px;
   }
 }
 
