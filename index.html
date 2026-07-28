@@ -2552,149 +2552,230 @@
     </section>
 
 
-    <!-- 공연 작성/수정 -->
-    <section
-      class="admin-section-view admin-view"
-      id="adminPerformanceFormView"
-      data-admin-view="performance-form"
-      aria-hidden="true"
+<!-- 공연 작성/수정 -->
+<section
+  class="admin-section-view admin-view"
+  id="adminPerformanceFormView"
+  data-admin-view="performance-form"
+  aria-hidden="true"
+>
+  <div class="admin-section-header">
+    <button
+      class="admin-section-back"
+      type="button"
+      data-admin-back="performance"
     >
-      <div class="admin-section-header">
-        <button
-          class="admin-section-back"
-          type="button"
-          data-admin-back="performance"
-        >
-          ←
-        </button>
+      ←
+    </button>
 
-        <div>
-          <p>CONTENT EDITOR</p>
-          <h3 id="adminPerformanceFormTitle">
-            새 공연
-          </h3>
-        </div>
+    <div>
+      <p>CONTENT EDITOR</p>
+
+      <h3 id="adminPerformanceFormTitle">
+        새 공연
+      </h3>
+    </div>
+  </div>
+
+  <form
+    class="admin-content-form"
+    id="adminPerformanceForm"
+  >
+    <input
+      id="adminPerformanceId"
+      type="hidden"
+    />
+
+    <label>
+      공연명
+
+      <input
+        id="adminPerformanceTitle"
+        type="text"
+        placeholder="공연 이름"
+        required
+      />
+    </label>
+
+    <label>
+      공연 날짜
+
+      <input
+        id="adminPerformanceDate"
+        type="date"
+        required
+      />
+    </label>
+
+    <label>
+      공연 시간
+
+      <input
+        id="adminPerformanceTime"
+        type="time"
+      />
+    </label>
+
+    <label>
+      장소
+
+      <input
+        id="adminPerformanceLocation"
+        type="text"
+        placeholder="공연 장소"
+        required
+      />
+    </label>
+
+    <label>
+      장소 상세
+
+      <input
+        id="adminPerformanceAddress"
+        type="text"
+        placeholder="주소 또는 상세 위치"
+      />
+    </label>
+
+    <label>
+      공연 설명
+
+      <textarea
+        id="adminPerformanceDescription"
+        rows="5"
+        placeholder="공연 소개"
+      ></textarea>
+    </label>
+
+    <label>
+      셋리스트
+
+      <textarea
+        id="adminPerformanceSetlist"
+        rows="5"
+        placeholder="한 줄에 한 곡씩 입력하세요."
+      ></textarea>
+    </label>
+
+    <label>
+      티켓 또는 안내 링크
+
+      <input
+        id="adminPerformanceTicketUrl"
+        type="url"
+        placeholder="https://"
+      />
+    </label>
+
+    <div class="admin-performance-archive-fields">
+      <div class="admin-performance-archive-heading">
+        <strong>
+          공연 기록
+        </strong>
+
+        <small>
+          공연이 끝난 뒤 사진과 라이브 영상을 등록할 수 있습니다.
+        </small>
       </div>
 
-      <form
-        class="admin-content-form"
-        id="adminPerformanceForm"
-      >
+      <label>
+        라이브 영상 링크
+
         <input
-          id="adminPerformanceId"
-          type="hidden"
+          id="adminPerformanceVideoUrl"
+          type="url"
+          placeholder="YouTube 영상 주소"
         />
 
-        <label>
-          공연명
+        <small class="admin-field-help">
+          유튜브 일반 영상이나 Shorts 주소를 입력해 주세요.
+        </small>
+      </label>
 
-          <input
-            id="adminPerformanceTitle"
-            type="text"
-            placeholder="공연 이름"
-            required
-          />
-        </label>
+      <label>
+        대표 사진
 
-        <label>
-          공연 날짜
+        <input
+          id="adminPerformanceCoverImage"
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+        />
 
-          <input
-            id="adminPerformanceDate"
-            type="date"
-            required
-          />
-        </label>
+        <small class="admin-field-help">
+          공연 카드에 표시할 대표 사진 1장을 선택해 주세요.
+          새 사진을 선택하지 않으면 기존 사진이 유지됩니다.
+        </small>
+      </label>
 
-        <label>
-          공연 시간
+      <div
+        class="admin-performance-cover-preview"
+        id="adminPerformanceCoverPreview"
+        hidden
+      >
+        <img
+          id="adminPerformanceCoverPreviewImage"
+          src=""
+          alt="공연 대표 사진 미리보기"
+        />
 
-          <input
-            id="adminPerformanceTime"
-            type="time"
-          />
-        </label>
+        <button
+          id="adminPerformanceCoverRemove"
+          type="button"
+        >
+          선택 취소
+        </button>
+      </div>
 
-        <label>
-          장소
+      <label>
+        추가 공연 사진
 
-          <input
-            id="adminPerformanceLocation"
-            type="text"
-            placeholder="공연 장소"
-            required
-          />
-        </label>
+        <input
+          id="adminPerformanceGalleryImages"
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          multiple
+        />
 
-        <label>
-          장소 상세
+        <small class="admin-field-help">
+          갤러리에 표시할 사진을 최대 10장까지 선택해 주세요.
+          새 사진을 선택하지 않으면 기존 사진이 유지됩니다.
+        </small>
+      </label>
 
-          <input
-            id="adminPerformanceAddress"
-            type="text"
-            placeholder="주소 또는 상세 위치"
-          />
-        </label>
+      <div
+        class="admin-performance-gallery-preview"
+        id="adminPerformanceGalleryPreview"
+      ></div>
+    </div>
 
-        <label>
-          공연 설명
+    <label class="admin-checkbox-label">
+      <input
+        id="adminPerformancePublished"
+        type="checkbox"
+        checked
+      />
 
-          <textarea
-            id="adminPerformanceDescription"
-            rows="5"
-            placeholder="공연 소개"
-          ></textarea>
-        </label>
+      <span>홈페이지에 공개</span>
+    </label>
 
-        <label>
-          셋리스트
+    <div class="admin-form-actions">
+      <button
+        class="admin-form-cancel"
+        type="button"
+        data-admin-back="performance"
+      >
+        취소
+      </button>
 
-          <textarea
-            id="adminPerformanceSetlist"
-            rows="5"
-            placeholder="한 줄에 한 곡씩 입력하세요."
-          ></textarea>
-        </label>
-
-        <label>
-          티켓 또는 안내 링크
-
-          <input
-            id="adminPerformanceTicketUrl"
-            type="url"
-            placeholder="https://"
-          />
-        </label>
-
-        <label class="admin-checkbox-label">
-          <input
-            id="adminPerformancePublished"
-            type="checkbox"
-            checked
-          />
-
-          <span>홈페이지에 공개</span>
-        </label>
-
-        <div class="admin-form-actions">
-          <button
-            class="admin-form-cancel"
-            type="button"
-            data-admin-back="performance"
-          >
-            취소
-          </button>
-
-          <button
-            class="admin-form-submit"
-            type="submit"
-          >
-            저장
-          </button>
-        </div>
-      </form>
-    </section>
-
+      <button
+        class="admin-form-submit"
+        type="submit"
+      >
+        저장
+      </button>
+    </div>
+  </form>
+</section>
 
     <!-- =========================
          영상 목록

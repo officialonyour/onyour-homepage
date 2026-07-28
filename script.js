@@ -5115,43 +5115,407 @@ function fillAdminPerformanceForm(item) {
     "adminPerformanceId",
     item.id
   );
+
   setAdminFormValue(
     "adminPerformanceTitle",
     item.title
   );
+
   setAdminFormValue(
     "adminPerformanceDate",
     item.date
   );
+
   setAdminFormValue(
     "adminPerformanceTime",
     item.time
   );
+
   setAdminFormValue(
     "adminPerformanceLocation",
     item.location
   );
+
   setAdminFormValue(
     "adminPerformanceAddress",
     item.address
   );
+
   setAdminFormValue(
     "adminPerformanceDescription",
     item.description
   );
+
   setAdminFormValue(
     "adminPerformanceSetlist",
     item.setlist
   );
+
   setAdminFormValue(
     "adminPerformanceTicketUrl",
     item.ticketUrl
   );
+
+  setAdminFormValue(
+    "adminPerformanceVideoUrl",
+    item.videoUrl
+  );
+
   setAdminFormValue(
     "adminPerformancePublished",
     item.published
   );
+
+  const coverInput =
+    document.getElementById(
+      "adminPerformanceCoverImage"
+    );
+
+  const galleryInput =
+    document.getElementById(
+      "adminPerformanceGalleryImages"
+    );
+
+  const coverPreview =
+    document.getElementById(
+      "adminPerformanceCoverPreview"
+    );
+
+  const coverPreviewImage =
+    document.getElementById(
+      "adminPerformanceCoverPreviewImage"
+    );
+
+  const galleryPreview =
+    document.getElementById(
+      "adminPerformanceGalleryPreview"
+    );
+
+  if (coverInput) {
+    coverInput.value = "";
+  }
+
+  if (galleryInput) {
+    galleryInput.value = "";
+  }
+
+  if (
+    coverPreview &&
+    coverPreviewImage
+  ) {
+    const coverUrl =
+      String(
+        item.coverUrl || ""
+      ).trim();
+
+    coverPreviewImage.src =
+      coverUrl;
+
+    coverPreview.hidden =
+      !coverUrl;
+  }
+
+  if (galleryPreview) {
+    galleryPreview.innerHTML = "";
+
+    let galleryImages =
+      item.galleryImages || [];
+
+    if (
+      typeof galleryImages ===
+      "string"
+    ) {
+      try {
+        galleryImages =
+          JSON.parse(
+            galleryImages
+          );
+      } catch (error) {
+        galleryImages = [];
+      }
+    }
+
+    if (
+      !Array.isArray(
+        galleryImages
+      )
+    ) {
+      galleryImages = [];
+    }
+
+    galleryImages
+      .slice(0, 10)
+      .forEach(
+        (
+          imageUrl,
+          index
+        ) => {
+          const image =
+            document.createElement(
+              "img"
+            );
+
+          image.src =
+            String(
+              imageUrl || ""
+            ).trim();
+
+          image.alt =
+            `공연 사진 ${index + 1}`;
+
+          image.loading =
+            "lazy";
+
+          if (image.src) {
+            galleryPreview.appendChild(
+              image
+            );
+          }
+        }
+      );
+  }
 }
+
+let adminPerformanceCoverPreviewUrl = "";
+
+let adminPerformanceGalleryPreviewUrls = [];
+
+function clearAdminPerformancePreviewUrls() {
+  if (
+    adminPerformanceCoverPreviewUrl
+  ) {
+    URL.revokeObjectURL(
+      adminPerformanceCoverPreviewUrl
+    );
+
+    adminPerformanceCoverPreviewUrl = "";
+  }
+
+  adminPerformanceGalleryPreviewUrls.forEach(
+    (url) => {
+      URL.revokeObjectURL(url);
+    }
+  );
+
+  adminPerformanceGalleryPreviewUrls = [];
+}
+
+function showAdminPerformanceCoverPreview(
+  file
+) {
+  const preview =
+    document.getElementById(
+      "adminPerformanceCoverPreview"
+    );
+
+  const previewImage =
+    document.getElementById(
+      "adminPerformanceCoverPreviewImage"
+    );
+
+  if (
+    !preview ||
+    !previewImage ||
+    !file
+  ) {
+    return;
+  }
+
+  if (
+    adminPerformanceCoverPreviewUrl
+  ) {
+    URL.revokeObjectURL(
+      adminPerformanceCoverPreviewUrl
+    );
+  }
+
+  adminPerformanceCoverPreviewUrl =
+    URL.createObjectURL(file);
+
+  previewImage.src =
+    adminPerformanceCoverPreviewUrl;
+
+  preview.hidden = false;
+}
+
+function showAdminPerformanceGalleryPreview(
+  files
+) {
+  const preview =
+    document.getElementById(
+      "adminPerformanceGalleryPreview"
+    );
+
+  if (!preview) {
+    return;
+  }
+
+  adminPerformanceGalleryPreviewUrls.forEach(
+    (url) => {
+      URL.revokeObjectURL(url);
+    }
+  );
+
+  adminPerformanceGalleryPreviewUrls = [];
+
+  preview.innerHTML = "";
+
+  files
+    .slice(0, 10)
+    .forEach(
+      (
+        file,
+        index
+      ) => {
+        const imageUrl =
+          URL.createObjectURL(file);
+
+        adminPerformanceGalleryPreviewUrls.push(
+          imageUrl
+        );
+
+        const image =
+          document.createElement(
+            "img"
+          );
+
+        image.src = imageUrl;
+        image.alt =
+          `새 공연 사진 ${index + 1}`;
+
+        preview.appendChild(
+          image
+        );
+      }
+    );
+}
+
+document
+  .getElementById(
+    "adminPerformanceCoverImage"
+  )
+  ?.addEventListener(
+    "change",
+    (event) => {
+      const file =
+        event.target.files?.[0];
+
+      if (!file) {
+        return;
+      }
+
+      const previewImage =
+        document.getElementById(
+          "adminPerformanceCoverPreviewImage"
+        );
+
+      if (
+        previewImage &&
+        !previewImage.dataset.savedUrl
+      ) {
+        const currentUrl =
+          String(
+            previewImage.getAttribute(
+              "src"
+            ) || ""
+          ).trim();
+
+        if (
+          currentUrl &&
+          !currentUrl.startsWith(
+            "blob:"
+          )
+        ) {
+          previewImage.dataset.savedUrl =
+            currentUrl;
+        }
+      }
+
+      showAdminPerformanceCoverPreview(
+        file
+      );
+    }
+  );
+
+document
+  .getElementById(
+    "adminPerformanceGalleryImages"
+  )
+  ?.addEventListener(
+    "change",
+    (event) => {
+      const files =
+        Array.from(
+          event.target.files || []
+        );
+
+      if (files.length > 10) {
+        alert(
+          "추가 공연 사진은 최대 10장까지 등록할 수 있습니다."
+        );
+      }
+
+      showAdminPerformanceGalleryPreview(
+        files
+      );
+    }
+  );
+
+document
+  .getElementById(
+    "adminPerformanceCoverRemove"
+  )
+  ?.addEventListener(
+    "click",
+    () => {
+      const input =
+        document.getElementById(
+          "adminPerformanceCoverImage"
+        );
+
+      const preview =
+        document.getElementById(
+          "adminPerformanceCoverPreview"
+        );
+
+      const previewImage =
+        document.getElementById(
+          "adminPerformanceCoverPreviewImage"
+        );
+
+      if (input) {
+        input.value = "";
+      }
+
+      if (
+        adminPerformanceCoverPreviewUrl
+      ) {
+        URL.revokeObjectURL(
+          adminPerformanceCoverPreviewUrl
+        );
+
+        adminPerformanceCoverPreviewUrl =
+          "";
+      }
+
+      const savedUrl =
+        String(
+          previewImage?.dataset
+            .savedUrl || ""
+        ).trim();
+
+      if (
+        preview &&
+        previewImage
+      ) {
+        previewImage.src =
+          savedUrl;
+
+        preview.hidden =
+          !savedUrl;
+      }
+    }
+  );
 
 function fillAdminVideoForm(item) {
   setAdminFormValue(
