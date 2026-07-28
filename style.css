@@ -11807,3 +11807,176 @@ body.performance-gallery-open {
     margin-bottom: 22px;
   }
 }
+
+/* =========================================================
+   MOBILE PERFORMANCE COMPACT
+========================================================= */
+
+@media (max-width: 720px) {
+  .performance-section {
+    padding-top: 54px;
+    padding-bottom: 58px;
+  }
+
+  .performance-section-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+
+  .performance-section-heading .section-label {
+    margin-bottom: 7px;
+  }
+
+  .performance-section-heading h2 {
+    margin: 0;
+    font-size: clamp(30px, 9vw, 40px);
+    line-height: 1;
+    letter-spacing: -0.055em;
+  }
+
+  .performance-heading-description {
+    max-width: 145px;
+    margin: 0;
+    font-size: 8px;
+    line-height: 1.45;
+    text-align: right;
+  }
+
+  .performance-layout {
+    gap: 10px;
+  }
+
+  .performance-main-card {
+    min-height: 0;
+    padding: 14px;
+    border-radius: 17px;
+  }
+
+  .performance-main-header {
+    margin-bottom: 0;
+  }
+
+  .performance-status,
+  .performance-dday {
+    min-height: 25px;
+    padding: 0 9px;
+    font-size: 6px;
+  }
+
+  .performance-card-number {
+    display: none;
+  }
+
+  .performance-archive-cover {
+    aspect-ratio: 16 / 10;
+    margin-top: 12px;
+    border-radius: 12px;
+  }
+
+  .performance-archive-cover-label {
+    left: 11px;
+    bottom: 10px;
+    font-size: 6px;
+  }
+
+  .performance-main-content {
+    grid-template-columns: 56px minmax(0, 1fr);
+    align-items: center;
+    gap: 13px;
+    padding-top: 16px;
+  }
+
+  .performance-date {
+    gap: 1px;
+  }
+
+  .performance-month,
+  .performance-year {
+    font-size: 6px;
+  }
+
+  .performance-date strong {
+    font-size: 47px;
+    line-height: 0.88;
+  }
+
+  .performance-kicker {
+    margin-bottom: 5px;
+    font-size: 7px;
+  }
+
+  .performance-info h3 {
+    font-size: 20px;
+    line-height: 1.08;
+  }
+
+  .performance-location {
+    margin-top: 5px;
+    font-size: 8px;
+  }
+
+  .performance-description {
+    display: -webkit-box;
+    margin-top: 6px;
+    overflow: hidden;
+    font-size: 8px;
+    line-height: 1.45;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+
+  .performance-bottom {
+    display: block;
+    margin-top: 15px;
+    padding-top: 13px;
+  }
+
+  .performance-setlist-label {
+    margin-bottom: 7px;
+    font-size: 6px;
+  }
+
+  .performance-setlist ol {
+    display: flex;
+    gap: 7px;
+  }
+
+  .performance-setlist li {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 34px;
+    padding: 0 10px;
+    border-radius: 8px;
+  }
+
+  .performance-setlist li span {
+    font-size: 6px;
+  }
+
+  .performance-setlist li strong {
+    overflow: hidden;
+    font-size: 9px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .performance-live-note {
+    display: none;
+  }
+
+  .performance-archive-actions {
+    margin-top: 10px;
+  }
+
+  .performance-archive-button {
+    min-height: 36px;
+    font-size: 8px;
+  }
+
+  .performance-side {
+    display: none;
+  }
+}
