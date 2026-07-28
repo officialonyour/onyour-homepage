@@ -11980,3 +11980,105 @@ body.performance-gallery-open {
     display: none;
   }
 }
+
+/* =========================================================
+   MOBILE FOLLOW + FOOTER COMPACT
+========================================================= */
+
+@media (max-width: 720px) {
+  /* SNS 연결 영역 */
+  .follow-section {
+    padding-top: 54px;
+    padding-bottom: 54px;
+  }
+
+  .follow-card {
+    padding: 22px 18px 18px;
+    border-radius: 24px;
+  }
+
+  .follow-card .section-label {
+    margin-bottom: 12px;
+    font-size: 7px;
+  }
+
+  .follow-card h2 {
+    font-size: clamp(27px, 7.8vw, 34px);
+    line-height: 1.08;
+    letter-spacing: -0.045em;
+  }
+
+  .follow-links {
+    gap: 8px;
+    margin-top: 26px;
+  }
+
+  .social-button {
+    min-height: 64px;
+    padding: 0 16px;
+    border-radius: 14px;
+    font-size: 15px;
+  }
+
+  .social-button small {
+    margin-bottom: 3px;
+    font-size: 8px;
+  }
+
+  .social-arrow {
+    font-size: 16px;
+  }
+
+  /* 홈페이지 최하단 */
+  .site-footer {
+    padding:
+      42px 20px
+      calc(20px + env(safe-area-inset-bottom));
+  }
+
+  .footer-main {
+    gap: 24px;
+    padding-bottom: 28px;
+  }
+
+  .footer-logo {
+    font-size: clamp(36px, 13vw, 52px);
+    line-height: 0.92;
+  }
+
+  .footer-copy {
+    margin-top: 9px;
+    font-size: 9px;
+    line-height: 1.5;
+  }
+
+  .footer-contact-button {
+    min-height: 76px;
+    padding: 16px 18px;
+  }
+
+  .footer-contact-button small {
+    margin-bottom: 6px;
+    font-size: 8px;
+  }
+
+  .footer-contact-button > span:first-child {
+    font-size: 13px;
+  }
+
+  .footer-contact-arrow {
+    width: 34px;
+    height: 34px;
+    font-size: 15px;
+  }
+
+  .footer-bottom {
+    gap: 12px;
+    padding-top: 16px;
+  }
+
+  .footer-bottom p,
+  .footer-admin-button {
+    font-size: 8px !important;
+  }
+}
