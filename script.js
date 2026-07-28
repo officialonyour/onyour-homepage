@@ -321,6 +321,115 @@ const adminViews =
   );
 
 /* =========================
+   HERO ADMIN ELEMENTS
+========================= */
+
+const adminHeroForm =
+  document.getElementById(
+    "adminHeroForm"
+  );
+
+const adminHeroImageInput =
+  document.getElementById(
+    "adminHeroImageInput"
+  );
+
+const adminHeroImagePreview =
+  document.getElementById(
+    "adminHeroImagePreview"
+  );
+
+const adminHeroPreviewImage =
+  document.getElementById(
+    "adminHeroPreviewImage"
+  );
+
+const adminHeroImageScale =
+  document.getElementById(
+    "adminHeroImageScale"
+  );
+
+const adminHeroImagePosX =
+  document.getElementById(
+    "adminHeroImagePosX"
+  );
+
+const adminHeroImagePosY =
+  document.getElementById(
+    "adminHeroImagePosY"
+  );
+
+const adminHeroImageScaleValue =
+  document.getElementById(
+    "adminHeroImageScaleValue"
+  );
+
+const adminHeroImagePosXValue =
+  document.getElementById(
+    "adminHeroImagePosXValue"
+  );
+
+const adminHeroImagePosYValue =
+  document.getElementById(
+    "adminHeroImagePosYValue"
+  );
+
+const adminHeroImageReset =
+  document.getElementById(
+    "adminHeroImageReset"
+  );
+
+const adminHeroEyebrow =
+  document.getElementById(
+    "adminHeroEyebrow"
+  );
+
+const adminHeroTitleLine1 =
+  document.getElementById(
+    "adminHeroTitleLine1"
+  );
+
+const adminHeroTitleLine2 =
+  document.getElementById(
+    "adminHeroTitleLine2"
+  );
+
+const adminHeroDescriptionLine1 =
+  document.getElementById(
+    "adminHeroDescriptionLine1"
+  );
+
+const adminHeroDescriptionLine2 =
+  document.getElementById(
+    "adminHeroDescriptionLine2"
+  );
+
+const adminHeroShowMusicButton =
+  document.getElementById(
+    "adminHeroShowMusicButton"
+  );
+
+const adminHeroShowLiveButton =
+  document.getElementById(
+    "adminHeroShowLiveButton"
+  );
+
+const adminHeroShowMessageButton =
+  document.getElementById(
+    "adminHeroShowMessageButton"
+  );
+
+const adminHeroShowInstagram =
+  document.getElementById(
+    "adminHeroShowInstagram"
+  );
+
+const adminHeroShowYoutube =
+  document.getElementById(
+    "adminHeroShowYoutube"
+  );
+
+/* =========================
    ADMIN LOGIN SESSION
    로그인 상태 30분 유지
 ========================= */
@@ -447,6 +556,9 @@ window.setInterval(() => {
 const ADMIN_VIEW_TITLES = {
   home: "홈페이지 관리",
 
+  hero: "첫 화면 관리",
+  header: "헤더 관리",
+
   news: "News 관리",
   "news-form": "News 작성",
 
@@ -564,8 +676,264 @@ function getAdminView(viewName) {
   );
 }
 
+/* =========================
+   HERO ADMIN FORM
+========================= */
+
+function getHeroTextLines(
+  element
+) {
+  if (!element) {
+    return [];
+  }
+
+  const clone =
+    element.cloneNode(true);
+
+  clone
+    .querySelectorAll("br")
+    .forEach((br) => {
+      br.replaceWith("\n");
+    });
+
+  return clone.textContent
+    .split("\n")
+    .map((line) =>
+      line.trim()
+    )
+    .filter(Boolean);
+}
+
+function getHeroImageSettings() {
+  const heroSection =
+    document.querySelector(
+      ".hero"
+    );
+
+  const heroImage =
+    document.querySelector(
+      ".hero-background img, .hero-media img, .hero img"
+    );
+
+  const imageSource =
+    heroImage?.getAttribute("src") ||
+    "";
+
+  const computedStyle =
+    heroImage
+      ? window.getComputedStyle(
+          heroImage
+        )
+      : null;
+
+  const objectPosition =
+    computedStyle?.objectPosition ||
+    "50% 50%";
+
+  const positionValues =
+    objectPosition.split(/\s+/);
+
+  const positionX =
+    Number.parseFloat(
+      positionValues[0]
+    );
+
+  const positionY =
+    Number.parseFloat(
+      positionValues[1] ||
+      positionValues[0]
+    );
+
+  const savedScale =
+    Number.parseFloat(
+      heroSection?.dataset
+        .heroImageScale
+    );
+
+  return {
+    imageSource,
+    imageScale:
+      Number.isFinite(savedScale)
+        ? savedScale
+        : 100,
+    imagePositionX:
+      Number.isFinite(positionX)
+        ? positionX
+        : 50,
+    imagePositionY:
+      Number.isFinite(positionY)
+        ? positionY
+        : 50,
+  };
+}
+
+function updateAdminHeroImagePreview() {
+  if (
+    !adminHeroPreviewImage
+  ) {
+    return;
+  }
+
+  const imageScale =
+    Number(
+      adminHeroImageScale?.value
+    ) || 100;
+
+  const imagePositionX =
+    Number(
+      adminHeroImagePosX?.value
+    ) || 50;
+
+  const imagePositionY =
+    Number(
+      adminHeroImagePosY?.value
+    ) || 50;
+
+  adminHeroPreviewImage.style.transform =
+    `scale(${imageScale / 100})`;
+
+  adminHeroPreviewImage.style.objectPosition =
+    `${imagePositionX}% ${imagePositionY}%`;
+
+  if (
+    adminHeroImageScaleValue
+  ) {
+    adminHeroImageScaleValue.textContent =
+      `${imageScale}%`;
+  }
+
+  if (
+    adminHeroImagePosXValue
+  ) {
+    adminHeroImagePosXValue.textContent =
+      `${imagePositionX}%`;
+  }
+
+  if (
+    adminHeroImagePosYValue
+  ) {
+    adminHeroImagePosYValue.textContent =
+      `${imagePositionY}%`;
+  }
+}
+
+function fillAdminHeroForm() {
+  if (!adminHeroForm) {
+    return;
+  }
+
+  const heroEyebrow =
+    document.querySelector(
+      ".hero-eyebrow"
+    );
+
+  const heroTitle =
+    document.getElementById(
+      "heroTitle"
+    );
+
+  const heroDescription =
+    document.getElementById(
+      "heroDescription"
+    );
+
+  const titleLines =
+    getHeroTextLines(
+      heroTitle
+    );
+
+  const descriptionLines =
+    getHeroTextLines(
+      heroDescription
+    );
+
+  const imageSettings =
+    getHeroImageSettings();
+
+  if (adminHeroEyebrow) {
+    adminHeroEyebrow.value =
+      heroEyebrow?.textContent
+        ?.trim() || "";
+  }
+
+  if (adminHeroTitleLine1) {
+    adminHeroTitleLine1.value =
+      titleLines[0] || "";
+  }
+
+  if (adminHeroTitleLine2) {
+    adminHeroTitleLine2.value =
+      titleLines[1] || "";
+  }
+
+  if (
+    adminHeroDescriptionLine1
+  ) {
+    adminHeroDescriptionLine1.value =
+      descriptionLines[0] || "";
+  }
+
+  if (
+    adminHeroDescriptionLine2
+  ) {
+    adminHeroDescriptionLine2.value =
+      descriptionLines[1] || "";
+  }
+
+  if (
+    adminHeroImageScale
+  ) {
+    adminHeroImageScale.value =
+      String(
+        imageSettings.imageScale
+      );
+  }
+
+  if (
+    adminHeroImagePosX
+  ) {
+    adminHeroImagePosX.value =
+      String(
+        imageSettings
+          .imagePositionX
+      );
+  }
+
+  if (
+    adminHeroImagePosY
+  ) {
+    adminHeroImagePosY.value =
+      String(
+        imageSettings
+          .imagePositionY
+      );
+  }
+
+  if (
+    adminHeroPreviewImage
+  ) {
+    adminHeroPreviewImage.src =
+      imageSettings.imageSource;
+
+    adminHeroPreviewImage.hidden =
+      !imageSettings.imageSource;
+  }
+
+  if (
+    adminHeroImagePreview
+  ) {
+    adminHeroImagePreview.classList.toggle(
+      "is-empty",
+      !imageSettings.imageSource
+    );
+  }
+
+  updateAdminHeroImagePreview();
+}
+
 function openAdminView(viewName) {
-  const targetView = getAdminView(viewName);
+  const targetView =
+    getAdminView(viewName);
 
   if (!targetView) {
     console.warn(
@@ -576,7 +944,8 @@ function openAdminView(viewName) {
   }
 
   adminViews.forEach((view) => {
-    const isTarget = view === targetView;
+    const isTarget =
+      view === targetView;
 
     view.classList.toggle(
       "is-open",
@@ -585,7 +954,9 @@ function openAdminView(viewName) {
 
     view.setAttribute(
       "aria-hidden",
-      isTarget ? "false" : "true"
+      isTarget
+        ? "false"
+        : "true"
     );
   });
 
@@ -593,6 +964,10 @@ function openAdminView(viewName) {
     adminDashboardTitle.textContent =
       ADMIN_VIEW_TITLES[viewName] ||
       "홈페이지 관리";
+  }
+
+  if (viewName === "hero") {
+    fillAdminHeroForm();
   }
 
   if (adminDashboardContent) {

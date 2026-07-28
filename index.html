@@ -1841,26 +1841,55 @@
   </span>
 </section>
 
-      <div class="admin-menu-list">
-        <button
-  class="admin-menu-item"
-  type="button"
-  data-admin-section="header"
->
+<section class="admin-dashboard-summary">
+  <p>현재 관리 항목</p>
+  <strong>9</strong>
+
   <span>
-    <small>00</small>
-
-    <strong>
-      헤더 관리
-    </strong>
-
-    <em>
-      상단 로고와 메뉴 표시 설정
-    </em>
+    홈페이지 콘텐츠를 휴대폰과 PC에서 관리할 수 있습니다.
   </span>
+</section>
 
-  <b>→</b>
-</button>
+<div class="admin-menu-list">
+  <button
+    class="admin-menu-item"
+    type="button"
+    data-admin-section="hero"
+  >
+    <span>
+      <small>00</small>
+
+      <strong>
+        첫 화면 관리
+      </strong>
+
+      <em>
+        배경사진과 첫 화면 문구·버튼 설정
+      </em>
+    </span>
+
+    <b>→</b>
+  </button>
+
+  <button
+    class="admin-menu-item"
+    type="button"
+    data-admin-section="header"
+  >
+    <span>
+      <small>01</small>
+
+      <strong>
+        헤더 관리
+      </strong>
+
+      <em>
+        상단 로고와 메뉴 표시 설정
+      </em>
+    </span>
+
+    <b>→</b>
+  </button>
 
         <button
           class="admin-menu-item"
@@ -2280,6 +2309,360 @@
         type="submit"
       >
         저장
+      </button>
+    </div>
+  </form>
+</section>
+
+<!-- =========================================
+     첫 화면 관리
+========================================= -->
+
+<section
+  class="admin-section-view admin-view"
+  id="adminHeroView"
+  data-admin-view="hero"
+  aria-hidden="true"
+>
+  <div class="admin-section-header">
+    <button
+      class="admin-back-button"
+      type="button"
+      data-admin-back
+    >
+      ← 관리자 홈
+    </button>
+
+    <div>
+      <p class="admin-section-kicker">
+        HERO
+      </p>
+
+      <h2>
+        첫 화면 관리
+      </h2>
+
+      <p>
+        홈페이지 첫 화면의 배경사진과 문구를 설정합니다.
+      </p>
+    </div>
+  </div>
+
+  <form
+    class="admin-content-form"
+    id="adminHeroForm"
+  >
+    <section class="admin-form-card">
+      <div class="admin-form-card-heading">
+        <div>
+          <span>
+            01
+          </span>
+
+          <h3>
+            배경사진
+          </h3>
+        </div>
+
+        <p>
+          사진을 선택한 뒤 확대와 위치를 조절할 수 있습니다.
+        </p>
+      </div>
+
+      <label class="admin-upload-field">
+        <span>
+          첫 화면 배경사진
+        </span>
+
+        <input
+          id="adminHeroImageInput"
+          type="file"
+          accept="image/*"
+        />
+
+        <small class="admin-field-help">
+          가로 사진을 권장합니다.
+        </small>
+      </label>
+
+      <div
+        class="admin-image-editor-preview admin-hero-image-preview"
+        id="adminHeroImagePreview"
+      >
+        <img
+          id="adminHeroPreviewImage"
+          src=""
+          alt="첫 화면 배경사진 미리보기"
+        />
+      </div>
+
+      <div class="admin-image-editor-controls">
+        <label>
+          사진 확대
+
+          <span class="admin-range-value">
+            <b id="adminHeroImageScaleValue">
+              100%
+            </b>
+          </span>
+
+          <input
+            id="adminHeroImageScale"
+            type="range"
+            min="100"
+            max="200"
+            value="100"
+            step="1"
+          />
+        </label>
+
+        <label>
+          좌우 위치
+
+          <span class="admin-range-value">
+            <b id="adminHeroImagePosXValue">
+              50%
+            </b>
+          </span>
+
+          <input
+            id="adminHeroImagePosX"
+            type="range"
+            min="0"
+            max="100"
+            value="50"
+            step="1"
+          />
+        </label>
+
+        <label>
+          상하 위치
+
+          <span class="admin-range-value">
+            <b id="adminHeroImagePosYValue">
+              50%
+            </b>
+          </span>
+
+          <input
+            id="adminHeroImagePosY"
+            type="range"
+            min="0"
+            max="100"
+            value="50"
+            step="1"
+          />
+        </label>
+
+        <button
+          class="admin-secondary-button"
+          id="adminHeroImageReset"
+          type="button"
+        >
+          사진 위치 초기화
+        </button>
+      </div>
+    </section>
+
+    <section class="admin-form-card">
+      <div class="admin-form-card-heading">
+        <div>
+          <span>
+            02
+          </span>
+
+          <h3>
+            첫 화면 문구
+          </h3>
+        </div>
+
+        <p>
+          방문자가 가장 먼저 보게 되는 문구입니다.
+        </p>
+      </div>
+
+      <label>
+        작은 상단 문구
+
+        <input
+          id="adminHeroEyebrow"
+          type="text"
+          maxlength="60"
+          placeholder="예: JAZZ HIPHOP COLLECTIVE · SINCE 2026"
+        />
+      </label>
+
+      <label>
+        큰 제목 첫째 줄
+
+        <input
+          id="adminHeroTitleLine1"
+          type="text"
+          maxlength="40"
+          placeholder="예: 서로 다른 셋,"
+          required
+        />
+      </label>
+
+      <label>
+        큰 제목 둘째 줄
+
+        <input
+          id="adminHeroTitleLine2"
+          type="text"
+          maxlength="40"
+          placeholder="예: 하나의 장면."
+          required
+        />
+      </label>
+
+      <label>
+        설명 첫째 줄
+
+        <input
+          id="adminHeroDescriptionLine1"
+          type="text"
+          maxlength="80"
+          placeholder="예: 재즈와 힙합으로 완성하는 오뉴월의 음악."
+        />
+      </label>
+
+      <label>
+        설명 둘째 줄
+
+        <input
+          id="adminHeroDescriptionLine2"
+          type="text"
+          maxlength="80"
+          placeholder="예: ONYOUR의 첫 번째 이야기를 만나보세요."
+        />
+      </label>
+    </section>
+
+    <section class="admin-form-card">
+      <div class="admin-form-card-heading">
+        <div>
+          <span>
+            03
+          </span>
+
+          <h3>
+            버튼 표시
+          </h3>
+        </div>
+
+        <p>
+          첫 화면에 표시할 버튼을 선택합니다.
+        </p>
+      </div>
+
+      <div class="admin-toggle-list">
+        <label class="admin-toggle-item">
+          <span>
+            <strong>
+              Listen to Music
+            </strong>
+
+            <small>
+              음악 섹션 이동 버튼
+            </small>
+          </span>
+
+          <input
+            id="adminHeroShowMusicButton"
+            type="checkbox"
+            checked
+          />
+        </label>
+
+        <label class="admin-toggle-item">
+          <span>
+            <strong>
+              Watch Live
+            </strong>
+
+            <small>
+              라이브 영상 버튼
+            </small>
+          </span>
+
+          <input
+            id="adminHeroShowLiveButton"
+            type="checkbox"
+            checked
+          />
+        </label>
+
+        <label class="admin-toggle-item">
+          <span>
+            <strong>
+              Message
+            </strong>
+
+            <small>
+              메시지 작성 버튼
+            </small>
+          </span>
+
+          <input
+            id="adminHeroShowMessageButton"
+            type="checkbox"
+            checked
+          />
+        </label>
+
+        <label class="admin-toggle-item">
+          <span>
+            <strong>
+              Instagram
+            </strong>
+
+            <small>
+              첫 화면 인스타그램 링크
+            </small>
+          </span>
+
+          <input
+            id="adminHeroShowInstagram"
+            type="checkbox"
+            checked
+          />
+        </label>
+
+        <label class="admin-toggle-item">
+          <span>
+            <strong>
+              YouTube
+            </strong>
+
+            <small>
+              첫 화면 유튜브 링크
+            </small>
+          </span>
+
+          <input
+            id="adminHeroShowYoutube"
+            type="checkbox"
+            checked
+          />
+        </label>
+      </div>
+    </section>
+
+    <div class="admin-form-actions">
+      <button
+        class="admin-secondary-button"
+        type="button"
+        data-admin-back
+      >
+        취소
+      </button>
+
+      <button
+        class="admin-form-submit"
+        type="submit"
+      >
+        첫 화면 저장
       </button>
     </div>
   </form>
