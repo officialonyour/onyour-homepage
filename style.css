@@ -7276,10 +7276,6 @@ body.admin-dashboard-open {
     padding: calc(var(--header-height) + 72px) var(--page-padding) calc(58px + env(safe-area-inset-bottom));
   }
 
-  .hero-v2 .hero-image {
-    object-position: 58% center;
-  }
-
 .hero-v2 .hero-overlay {
   background:
     linear-gradient(
@@ -7686,8 +7682,6 @@ body.admin-dashboard-open {
     min-height: 100svh;
     object-fit: cover;
     object-position: center center;
-    transform: scale(1.08);
-    transform-origin: center center;
   }
 
   .hero-v2 .hero-content {
