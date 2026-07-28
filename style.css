@@ -11534,19 +11534,28 @@ body.performance-gallery-open {
   }
 
   .featured-live {
-    grid-template-columns: 1fr;
+    display: block;
     min-height: 0;
+    overflow: hidden;
     border-radius: 16px;
   }
 
   .video-frame {
+    width: 100%;
     min-height: 0;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 9 / 16;
+    background: #050505;
+  }
+
+  .video-frame iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
   }
 
   .live-video-badge {
-    top: 9px;
-    right: 9px;
+    top: 10px;
+    right: 10px;
     min-height: 25px;
     padding: 0 8px;
     gap: 5px;
@@ -11559,36 +11568,36 @@ body.performance-gallery-open {
   }
 
   .live-info {
-    padding: 14px 15px 15px;
+    padding: 13px 15px 15px;
   }
 
   .live-kicker {
-    margin-bottom: 6px;
+    margin-bottom: 5px;
     font-size: 7px;
   }
 
   .live-info h3 {
-    font-size: 22px;
+    font-size: 21px;
     line-height: 1.08;
   }
 
   .live-info-main > p:last-child {
     display: -webkit-box;
-    margin-top: 8px;
+    margin-top: 7px;
     overflow: hidden;
-    font-size: 10px;
-    line-height: 1.5;
+    font-size: 9px;
+    line-height: 1.45;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 1;
   }
 
   .live-info-footer {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    gap: 10px;
-    margin-top: 13px;
-    padding-top: 11px;
+    gap: 9px;
+    margin-top: 11px;
+    padding-top: 10px;
   }
 
   .live-meta {
@@ -11602,8 +11611,8 @@ body.performance-gallery-open {
   .live-youtube-link {
     width: auto;
     min-width: 118px;
-    min-height: 36px;
-    padding: 0 11px;
+    min-height: 34px;
+    padding: 0 10px;
     border-radius: 9px;
   }
 
@@ -11617,172 +11626,6 @@ body.performance-gallery-open {
 
   .live-link-arrow {
     font-size: 13px;
-  }
-
-  /* =========================
-     LIVE
-  ========================= */
-
-  .performance-background-word {
-    top: 48px;
-    right: -12px;
-    font-size: 82px;
-  }
-
-  .performance-section-heading {
-    gap: 7px;
-    margin-bottom: 13px;
-  }
-
-  .performance-section-heading h2 {
-    max-width: 320px;
-    font-size: clamp(29px, 8.5vw, 38px);
-    line-height: 1;
-    letter-spacing: -0.05em;
-  }
-
-  .performance-heading-description {
-    max-width: 330px;
-    font-size: 10px;
-    line-height: 1.5;
-  }
-
-  .performance-layout {
-    gap: 8px;
-  }
-
-  .performance-main-card {
-    min-height: 0;
-    padding: 14px;
-    border-radius: 16px;
-  }
-
-  .performance-status-group {
-    gap: 5px;
-  }
-
-  .performance-status,
-  .performance-dday {
-    min-height: 21px;
-    padding: 0 7px;
-    font-size: 5px;
-  }
-
-  .performance-card-number {
-    font-size: 7px;
-  }
-
-  .performance-main-content {
-    grid-template-columns: 48px minmax(0, 1fr);
-    align-items: start;
-    gap: 12px;
-    margin-top: 18px;
-    padding-top: 0;
-  }
-
-  .performance-date strong {
-    margin: 4px 0;
-    font-size: 42px;
-  }
-
-  .performance-month,
-  .performance-year {
-    font-size: 6px;
-  }
-
-  .performance-kicker {
-    margin-bottom: 5px;
-    font-size: 5px;
-  }
-
-  .performance-info h3 {
-    font-size: clamp(21px, 6.4vw, 28px);
-    line-height: 1.08;
-  }
-
-  .performance-location {
-    margin-top: 7px;
-    font-size: 9px;
-  }
-
-  .performance-description {
-    display: -webkit-box;
-    margin-top: 6px;
-    overflow: hidden;
-    font-size: 9px;
-    line-height: 1.45;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-  }
-
-  .performance-bottom {
-    gap: 9px;
-    margin-top: 14px;
-    padding-top: 11px;
-  }
-
-  .performance-setlist-label {
-    margin-bottom: 7px;
-    font-size: 6px;
-  }
-
-  .performance-setlist ol {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
-    gap: 5px;
-  }
-
-  .performance-setlist li {
-    min-height: 30px;
-    padding: 0 8px;
-    gap: 6px;
-    border-radius: 7px;
-  }
-
-  .performance-setlist li span {
-    font-size: 6px;
-  }
-
-  .performance-setlist li strong {
-    overflow: hidden;
-    font-size: 8px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .performance-live-note {
-    display: none;
-  }
-
-  .performance-archive-cover {
-    aspect-ratio: 16 / 8.5;
-    margin-top: 11px;
-    border-radius: 11px;
-  }
-
-  .performance-archive-cover-label {
-    left: 9px;
-    bottom: 8px;
-    font-size: 6px;
-  }
-
-  .performance-archive-actions {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
-    gap: 5px;
-    margin-top: 9px;
-  }
-
-  .performance-archive-button {
-    min-width: 0;
-    min-height: 34px;
-    padding: 0 9px;
-    gap: 7px;
-    font-size: 8px;
-  }
-
-  .performance-side {
-    display: none;
   }
 
   /* =========================
