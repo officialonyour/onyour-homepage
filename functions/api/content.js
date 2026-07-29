@@ -39,22 +39,28 @@ const CONTENT_CONFIG = {
     },
   },
 
-  video: {
-    table: "videos",
-    orderBy: "created_at DESC",
+video: {
+  table: "videos",
+  orderBy: "created_at DESC",
 
-    fields: {
-      title: "title",
-      videoType: "video_type",
-      url: "video_url",
-      thumbnailUrl: "thumbnail_url",
-      description: "description",
-      featured: "featured",
-      published: "published",
-      publishAt: "publish_at",
-    },
+  fields: {
+    category: "category",
+    eventTitle: "event_title",
+    songTitle: "song_title",
+    title: "title",
+    eventDate: "event_date",
+    venue: "venue",
+
+    videoType: "video_type",
+    url: "video_url",
+    thumbnailUrl: "thumbnail_url",
+    description: "description",
+
+    featured: "featured",
+    published: "published",
+    publishAt: "publish_at",
   },
-
+},
   music: {
     table: "music",
     orderBy: "created_at DESC",

@@ -2279,6 +2279,34 @@ function resetAdminForm(sectionName) {
       preview.hidden = true;
     });
 
+  if (sectionName === "video") {
+    if (adminVideoId) {
+      adminVideoId.value = "";
+    }
+
+    if (adminVideoCategory) {
+      adminVideoCategory.value = "live";
+    }
+
+    if (adminVideoFeatured) {
+      adminVideoFeatured.checked = false;
+    }
+
+    if (adminVideoPublished) {
+      adminVideoPublished.checked = true;
+    }
+
+    if (adminVideoPreviewFrame) {
+      adminVideoPreviewFrame.removeAttribute(
+        "src"
+      );
+    }
+
+    if (adminVideoPreview) {
+      adminVideoPreview.hidden = true;
+    }
+  }
+
   const galleryPreview =
     document.getElementById(
       "adminGalleryPreview"
@@ -2978,27 +3006,57 @@ function renderAdminPerformanceList() {
 }
 
 function renderAdminVideoList() {
-  const list = document.getElementById(
-    "adminVideoList"
-  );
+  const list =
+    document.getElementById(
+      "adminVideoList"
+    );
 
   if (!list) return;
 
-  list.innerHTML = adminStore.video
-    .map((item) =>
-      createAdminListItem({
-        sectionName: "video",
-        id: item.id,
-        category: item.featured
-          ? "Featured"
-          : "Video",
-        title: item.title,
-        meta: item.published
-          ? "공개"
-          : "비공개",
+  list.innerHTML =
+    adminStore.video
+      .map((item) => {
+        const categoryLabel =
+          item.category === "video"
+            ? "일반 영상"
+            : "공연 라이브";
+
+        const statusLabels = [
+          categoryLabel,
+          item.featured
+            ? "대표"
+            : "",
+          item.published !== false
+            ? "공개"
+            : "비공개",
+        ].filter(Boolean);
+
+        const displayTitle =
+          item.songTitle ||
+          item.title ||
+          "제목 없음";
+
+        const meta = [
+          item.eventTitle,
+          item.eventDate,
+          item.venue,
+        ]
+          .filter(Boolean)
+          .join(" · ");
+
+        return createAdminListItem({
+          sectionName: "video",
+          id: item.id,
+          category:
+            statusLabels.join(" · "),
+          title: displayTitle,
+          meta:
+            meta ||
+            item.description ||
+            "공연 정보 없음",
+        });
       })
-    )
-    .join("");
+      .join("");
 }
 
 function renderAdminMusicList() {
@@ -7279,25 +7337,55 @@ function fillAdminVideoForm(item) {
     "adminVideoId",
     item.id
   );
+
+  setAdminFormValue(
+    "adminVideoCategory",
+    item.category || "live"
+  );
+
+  setAdminFormValue(
+    "adminVideoEventTitle",
+    item.eventTitle || ""
+  );
+
+  setAdminFormValue(
+    "adminVideoSongTitle",
+    item.songTitle || ""
+  );
+
   setAdminFormValue(
     "adminVideoTitle",
-    item.title
+    item.title || ""
   );
+
+  setAdminFormValue(
+    "adminVideoEventDate",
+    item.eventDate || ""
+  );
+
+  setAdminFormValue(
+    "adminVideoVenue",
+    item.venue || ""
+  );
+
   setAdminFormValue(
     "adminVideoUrl",
-    item.url
+    item.url || ""
   );
+
   setAdminFormValue(
     "adminVideoDescription",
-    item.description
+    item.description || ""
   );
+
   setAdminFormValue(
     "adminVideoFeatured",
-    item.featured
+    item.featured === true
   );
+
   setAdminFormValue(
     "adminVideoPublished",
-    item.published
+    item.published !== false
   );
 
   adminVideoUrl?.dispatchEvent(
@@ -8349,37 +8437,79 @@ adminPerformanceForm
     handleAdminPerformanceSubmit
   );
 
-document
-  .getElementById("adminVideoForm")
+adminVideoForm
   ?.addEventListener(
     "submit",
     (event) => {
       event.preventDefault();
 
-      const id = getAdminFormValue(
-        "adminVideoId"
-      );
+      const id =
+        getAdminFormValue(
+          "adminVideoId"
+        );
 
       const data = {
-        id: id || createAdminId("video"),
-        title: getAdminFormValue(
-          "adminVideoTitle"
-        ),
-        url: getAdminFormValue(
-          "adminVideoUrl"
-        ),
-        description: getAdminFormValue(
-          "adminVideoDescription"
-        ),
-        featured: getAdminFormValue(
-          "adminVideoFeatured"
-        ),
-        published: getAdminFormValue(
-          "adminVideoPublished"
-        ),
+        id:
+          id ||
+          createAdminId(
+            "video"
+          ),
+
+        category:
+          getAdminFormValue(
+            "adminVideoCategory"
+          ) || "live",
+
+        eventTitle:
+          getAdminFormValue(
+            "adminVideoEventTitle"
+          ),
+
+        songTitle:
+          getAdminFormValue(
+            "adminVideoSongTitle"
+          ),
+
+        title:
+          getAdminFormValue(
+            "adminVideoTitle"
+          ),
+
+        eventDate:
+          getAdminFormValue(
+            "adminVideoEventDate"
+          ),
+
+        venue:
+          getAdminFormValue(
+            "adminVideoVenue"
+          ),
+
+        url:
+          getAdminFormValue(
+            "adminVideoUrl"
+          ),
+
+        description:
+          getAdminFormValue(
+            "adminVideoDescription"
+          ),
+
+        featured:
+          getAdminFormValue(
+            "adminVideoFeatured"
+          ),
+
+        published:
+          getAdminFormValue(
+            "adminVideoPublished"
+          ),
       };
 
-      saveAdminItem("video", data);
+      saveAdminItem(
+        "video",
+        data
+      );
     }
   );
 
@@ -10511,6 +10641,102 @@ function getYoutubeEmbedUrl(url) {
   }
 }
 
+function isPublicVideo(video) {
+  return (
+    video.published === true ||
+    video.published === 1 ||
+    video.published === "1"
+  );
+}
+
+
+function isFeaturedVideo(video) {
+  return (
+    video.featured === true ||
+    video.featured === 1 ||
+    video.featured === "1"
+  );
+}
+
+
+function formatLiveDate(dateValue) {
+  if (!dateValue) return "";
+
+  const cleanDate =
+    String(dateValue)
+      .trim()
+      .slice(0, 10);
+
+  const parts =
+    cleanDate.split("-");
+
+  if (parts.length !== 3) {
+    return cleanDate;
+  }
+
+  return parts.join(".");
+}
+
+
+function getLiveVideoUrl(video) {
+  return String(
+    video.url ||
+    video.videoUrl ||
+    video.video_url ||
+    video.youtubeUrl ||
+    video.youtube_url ||
+    ""
+  ).trim();
+}
+
+
+function getLiveThumbnailUrl(video) {
+  const directThumbnail =
+    String(
+      video.thumbnailUrl ||
+      video.thumbnail_url ||
+      ""
+    ).trim();
+
+  if (directThumbnail) {
+    return directThumbnail;
+  }
+
+  const embedUrl =
+    getYoutubeEmbedUrl(
+      getLiveVideoUrl(video)
+    );
+
+  const videoId =
+    embedUrl
+      .split("/embed/")[1]
+      ?.split("?")[0];
+
+  if (!videoId) {
+    return "";
+  }
+
+  return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+}
+
+
+function getLiveSortValue(video) {
+  const dateValue =
+    video.eventDate ||
+    video.event_date ||
+    video.createdAt ||
+    video.created_at ||
+    "";
+
+  const timestamp =
+    new Date(dateValue).getTime();
+
+  return Number.isFinite(timestamp)
+    ? timestamp
+    : 0;
+}
+
+
 function applyPublicFeaturedVideo(video) {
   if (
     !video ||
@@ -10519,48 +10745,58 @@ function applyPublicFeaturedVideo(video) {
     return;
   }
 
-  const defaultTitle =
-    "ONYOUR — Featured Live";
-
-  const defaultDescription =
-    "보컬과 랩, 라이브 기타가 한 무대에서 만나는 ONYOUR의 대표 라이브를 감상해 보세요.";
-
-  const videoUrl = String(
-    video.url ||
-    video.videoUrl ||
-    video.video_url ||
-    video.youtubeUrl ||
-    video.youtube_url ||
-    ""
-  ).trim();
+  const videoUrl =
+    getLiveVideoUrl(video);
 
   const embedUrl =
     getYoutubeEmbedUrl(videoUrl);
 
-  const title =
+  const eventTitle =
     String(
+      video.eventTitle ||
+      video.event_title ||
+      "ONYOUR LIVE"
+    ).trim();
+
+  const songTitle =
+    String(
+      video.songTitle ||
+      video.song_title ||
       video.title ||
-      video.name ||
-      ""
-    ).trim() ||
-    defaultTitle;
+      "ONYOUR — Featured Live"
+    ).trim();
 
   const description =
     String(
       video.description ||
       video.content ||
-      ""
-    ).trim() ||
-    defaultDescription;
+      "보컬과 랩, 라이브 기타가 한 무대에서 만나는 ONYOUR의 대표 라이브입니다."
+    ).trim();
+
+  const eventDate =
+    formatLiveDate(
+      video.eventDate ||
+      video.event_date
+    );
+
+  const venue =
+    String(
+      video.venue || ""
+    ).trim();
+
+  const performanceMeta =
+    [venue, eventDate]
+      .filter(Boolean)
+      .join(" · ");
 
   const featuredVideo =
     document.getElementById(
       "featuredVideo"
     );
 
-  const youtubeVideoButton =
+  const liveEventTitle =
     document.getElementById(
-      "youtubeVideoButton"
+      "liveEventTitle"
     );
 
   const liveTitle =
@@ -10568,22 +10804,48 @@ function applyPublicFeaturedVideo(video) {
       "liveTitle"
     );
 
+  const livePerformanceMeta =
+    document.getElementById(
+      "livePerformanceMeta"
+    );
+
   const liveDescription =
     document.getElementById(
       "liveDescription"
     );
 
-  if (featuredVideo) {
-    if (embedUrl) {
-      featuredVideo.src = embedUrl;
-    }
+  const youtubeVideoButton =
+    document.getElementById(
+      "youtubeVideoButton"
+    );
+
+  if (
+    featuredVideo &&
+    embedUrl
+  ) {
+    featuredVideo.src =
+      embedUrl;
 
     featuredVideo.title =
-      `${title} 라이브 영상`;
+      `${songTitle} 라이브 영상`;
+  }
+
+  if (liveEventTitle) {
+    liveEventTitle.textContent =
+      eventTitle;
   }
 
   if (liveTitle) {
-    liveTitle.textContent = title;
+    liveTitle.textContent =
+      songTitle;
+  }
+
+  if (livePerformanceMeta) {
+    livePerformanceMeta.textContent =
+      performanceMeta;
+
+    livePerformanceMeta.hidden =
+      !performanceMeta;
   }
 
   if (liveDescription) {
@@ -10608,7 +10870,7 @@ function applyPublicFeaturedVideo(video) {
 
       youtubeVideoButton.setAttribute(
         "aria-label",
-        `${title} YouTube에서 보기`
+        `${songTitle} YouTube에서 보기`
       );
     } else {
       youtubeVideoButton.hidden =
@@ -10623,6 +10885,289 @@ function applyPublicFeaturedVideo(video) {
         "true"
       );
     }
+  }
+}
+
+
+function createPublicLiveCard(video) {
+  const videoUrl =
+    getLiveVideoUrl(video);
+
+  const thumbnailUrl =
+    getLiveThumbnailUrl(video);
+
+  const eventTitle =
+    String(
+      video.eventTitle ||
+      video.event_title ||
+      "ONYOUR LIVE"
+    ).trim();
+
+  const songTitle =
+    String(
+      video.songTitle ||
+      video.song_title ||
+      video.title ||
+      "공연 라이브"
+    ).trim();
+
+  const eventDate =
+    formatLiveDate(
+      video.eventDate ||
+      video.event_date
+    );
+
+  const venue =
+    String(
+      video.venue || ""
+    ).trim();
+
+  const meta =
+    [venue, eventDate]
+      .filter(Boolean)
+      .join(" · ");
+
+  const imageMarkup =
+    thumbnailUrl
+      ? `
+        <img
+          src="${escapeAdminHtml(thumbnailUrl)}"
+          alt="${escapeAdminHtml(songTitle)} 라이브 썸네일"
+          loading="lazy"
+        />
+      `
+      : `
+        <div class="live-card-placeholder">
+          ONYOUR LIVE
+        </div>
+      `;
+
+  return `
+    <article class="live-card">
+      <a
+        class="live-card-thumbnail"
+        href="${escapeAdminHtml(videoUrl)}"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="${escapeAdminHtml(songTitle)} YouTube에서 보기"
+      >
+        ${imageMarkup}
+
+        <span
+          class="live-card-play"
+          aria-hidden="true"
+        >
+          ▶
+        </span>
+      </a>
+
+      <div class="live-card-content">
+        <p class="live-card-event">
+          ${escapeAdminHtml(eventTitle)}
+        </p>
+
+        <h4>
+          ${escapeAdminHtml(songTitle)}
+        </h4>
+
+        ${
+          meta
+            ? `
+              <p class="live-card-meta">
+                ${escapeAdminHtml(meta)}
+              </p>
+            `
+            : ""
+        }
+
+        <a
+          class="live-card-link"
+          href="${escapeAdminHtml(videoUrl)}"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          YouTube에서 보기
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </article>
+  `;
+}
+
+
+function renderPublicLiveArchive(
+  videos,
+  featuredVideo
+) {
+  const latestLiveGrid =
+    document.getElementById(
+      "latestLiveGrid"
+    );
+
+  const allLiveGrid =
+    document.getElementById(
+      "allLiveGrid"
+    );
+
+  const liveArchivePanel =
+    document.getElementById(
+      "liveArchivePanel"
+    );
+
+  const openButton =
+    document.getElementById(
+      "openLiveArchiveButton"
+    );
+
+  const closeButton =
+    document.getElementById(
+      "closeLiveArchiveButton"
+    );
+
+  const archiveVideos =
+    videos.filter(
+      (video) =>
+        String(video.id) !==
+        String(featuredVideo?.id)
+    );
+
+  const latestVideos =
+    archiveVideos.slice(0, 3);
+
+  if (latestLiveGrid) {
+    latestLiveGrid.innerHTML =
+      latestVideos.length
+        ? latestVideos
+            .map(
+              createPublicLiveCard
+            )
+            .join("")
+        : `
+          <p class="live-archive-empty">
+            새로운 공연 라이브를 준비하고 있습니다.
+          </p>
+        `;
+  }
+
+  if (allLiveGrid) {
+    allLiveGrid.innerHTML =
+      videos
+        .map(
+          createPublicLiveCard
+        )
+        .join("");
+  }
+
+  if (openButton) {
+    openButton.hidden =
+      videos.length <= 3;
+  }
+
+  openButton?.addEventListener(
+    "click",
+    () => {
+      if (!liveArchivePanel) {
+        return;
+      }
+
+      liveArchivePanel.hidden =
+        false;
+
+      openButton.setAttribute(
+        "aria-expanded",
+        "true"
+      );
+
+      liveArchivePanel.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  );
+
+  closeButton?.addEventListener(
+    "click",
+    () => {
+      if (!liveArchivePanel) {
+        return;
+      }
+
+      liveArchivePanel.hidden =
+        true;
+
+      openButton?.setAttribute(
+        "aria-expanded",
+        "false"
+      );
+
+      openButton?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  );
+}
+
+
+async function loadPublicFeaturedVideo() {
+  try {
+    const response = await fetch(
+      "/api/content?type=video"
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        "영상 정보를 불러오지 못했습니다."
+      );
+    }
+
+    const result =
+      await response.json();
+
+    const videos =
+      Array.isArray(result.items)
+        ? result.items
+        : [];
+
+    const publishedLiveVideos =
+      videos
+        .filter(
+          (video) =>
+            isPublicVideo(video) &&
+            (
+              !video.category ||
+              video.category === "live"
+            )
+        )
+        .sort(
+          (firstVideo, secondVideo) =>
+            getLiveSortValue(secondVideo) -
+            getLiveSortValue(firstVideo)
+        );
+
+    const featuredVideo =
+      publishedLiveVideos.find(
+        isFeaturedVideo
+      ) ||
+      publishedLiveVideos[0];
+
+    if (!featuredVideo) {
+      return;
+    }
+
+    applyPublicFeaturedVideo(
+      featuredVideo
+    );
+
+    renderPublicLiveArchive(
+      publishedLiveVideos,
+      featuredVideo
+    );
+  } catch (error) {
+    console.error(
+      "라이브 영상 불러오기 실패:",
+      error
+    );
   }
 }
 
@@ -10679,8 +11224,65 @@ async function loadPublicFeaturedVideo() {
   }
 }
 
+const adminVideoForm =
+  document.getElementById(
+    "adminVideoForm"
+  );
+
+const adminVideoId =
+  document.getElementById(
+    "adminVideoId"
+  );
+
+const adminVideoCategory =
+  document.getElementById(
+    "adminVideoCategory"
+  );
+
+const adminVideoEventTitle =
+  document.getElementById(
+    "adminVideoEventTitle"
+  );
+
+const adminVideoSongTitle =
+  document.getElementById(
+    "adminVideoSongTitle"
+  );
+
+const adminVideoTitle =
+  document.getElementById(
+    "adminVideoTitle"
+  );
+
+const adminVideoEventDate =
+  document.getElementById(
+    "adminVideoEventDate"
+  );
+
+const adminVideoVenue =
+  document.getElementById(
+    "adminVideoVenue"
+  );
+
 const adminVideoUrl =
-  document.getElementById("adminVideoUrl");
+  document.getElementById(
+    "adminVideoUrl"
+  );
+
+const adminVideoDescription =
+  document.getElementById(
+    "adminVideoDescription"
+  );
+
+const adminVideoFeatured =
+  document.getElementById(
+    "adminVideoFeatured"
+  );
+
+const adminVideoPublished =
+  document.getElementById(
+    "adminVideoPublished"
+  );
 
 const adminVideoPreview =
   document.getElementById(

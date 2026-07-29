@@ -154,26 +154,35 @@
     </section>
 
 <!-- FEATURED LIVE -->
-<section class="section live-section" id="live">
-  <div class="section-heading live-section-heading reveal">
+<section
+  class="section live-section"
+  id="live"
+>
+  <div
+    class="section-heading live-section-heading reveal"
+  >
     <div>
       <p class="section-label">
-        Featured Live
+        ONYOUR LIVE
       </p>
 
       <h2>
-        무대 위에서 완성되는<br />
+        무대 위에서 만나는<br />
         ONYOUR의 음악.
       </h2>
     </div>
 
     <p class="live-heading-description">
-      보컬과 랩, 라이브 기타가 어우러지는
-      ONYOUR의 대표 라이브를 만나보세요.
+      공연마다 새롭게 완성되는
+      ONYOUR의 라이브를 만나보세요.
     </p>
   </div>
 
-  <article class="featured-live reveal">
+  <!-- 대표 라이브 -->
+  <article
+    class="featured-live reveal"
+    id="featuredLiveCard"
+  >
     <div class="video-frame">
       <iframe
         id="featuredVideo"
@@ -189,23 +198,32 @@
         aria-hidden="true"
       >
         <span class="live-video-dot"></span>
+
         Featured Live
       </div>
     </div>
 
     <div class="live-info">
       <div class="live-info-main">
-        <p class="live-kicker">
-          Now Playing
+        <p
+          class="live-kicker"
+          id="liveEventTitle"
+        >
+          ONYOUR LIVE
         </p>
 
         <h3 id="liveTitle">
           ONYOUR — Featured Live
         </h3>
 
+        <p
+          class="live-performance-meta"
+          id="livePerformanceMeta"
+        ></p>
+
         <p id="liveDescription">
           보컬과 랩, 라이브 기타가 한 무대에서
-          만나는 ONYOUR의 대표 라이브를 감상해 보세요.
+          만나는 ONYOUR의 대표 라이브입니다.
         </p>
       </div>
 
@@ -234,6 +252,66 @@
       </div>
     </div>
   </article>
+
+  <!-- 최신 라이브 -->
+  <div class="live-archive-header reveal">
+    <div>
+      <p class="live-archive-kicker">
+        LIVE ARCHIVE
+      </p>
+
+      <h3>최근 공연 라이브</h3>
+    </div>
+
+    <button
+      class="live-archive-more"
+      id="openLiveArchiveButton"
+      type="button"
+      aria-expanded="false"
+      aria-controls="liveArchivePanel"
+    >
+      전체 라이브 보기
+      <span aria-hidden="true">↗</span>
+    </button>
+  </div>
+
+  <div
+    class="live-card-grid"
+    id="latestLiveGrid"
+    aria-live="polite"
+  ></div>
+
+  <!-- 전체 라이브 목록 -->
+  <div
+    class="live-archive-panel"
+    id="liveArchivePanel"
+    hidden
+  >
+    <div class="live-archive-panel-header">
+      <div>
+        <p class="live-archive-kicker">
+          ALL PERFORMANCES
+        </p>
+
+        <h3>전체 라이브</h3>
+      </div>
+
+      <button
+        class="live-archive-close"
+        id="closeLiveArchiveButton"
+        type="button"
+        aria-label="전체 라이브 목록 닫기"
+      >
+        닫기
+      </button>
+    </div>
+
+    <div
+      class="live-card-grid live-card-grid-all"
+      id="allLiveGrid"
+      aria-live="polite"
+    ></div>
+  </div>
 </section>
 
 <!-- MEMBERS -->
@@ -2027,291 +2105,167 @@
     </div>
   </div>
 
-  <form
-    class="admin-content-form"
-    id="adminMusicForm"
+<form
+  class="admin-content-form"
+  id="adminVideoForm"
+>
+  <input
+    id="adminVideoId"
+    type="hidden"
+  />
+
+  <label>
+    영상 구분
+
+    <select
+      id="adminVideoCategory"
+      required
+    >
+      <option value="live">
+        공연 라이브
+      </option>
+
+      <option value="video">
+        일반 영상
+      </option>
+    </select>
+  </label>
+
+  <label>
+    공연명
+
+    <input
+      id="adminVideoEventTitle"
+      type="text"
+      maxlength="80"
+      placeholder="예: 강릉 버스킹 전국대회"
+    />
+  </label>
+
+  <label>
+    곡명
+
+    <input
+      id="adminVideoSongTitle"
+      type="text"
+      maxlength="80"
+      placeholder="예: Moonlight"
+    />
+  </label>
+
+  <label>
+    영상 제목
+
+    <input
+      id="adminVideoTitle"
+      type="text"
+      maxlength="120"
+      placeholder="예: Moonlight Live in Gangneung"
+      required
+    />
+  </label>
+
+  <div class="admin-form-grid">
+    <label>
+      공연 날짜
+
+      <input
+        id="adminVideoEventDate"
+        type="date"
+      />
+    </label>
+
+    <label>
+      공연 장소
+
+      <input
+        id="adminVideoVenue"
+        type="text"
+        maxlength="80"
+        placeholder="예: 강릉 경포해변"
+      />
+    </label>
+  </div>
+
+  <label>
+    YouTube URL
+
+    <input
+      id="adminVideoUrl"
+      type="url"
+      placeholder="https://youtube.com/..."
+      required
+    />
+  </label>
+
+  <label>
+    영상 설명
+
+    <textarea
+      id="adminVideoDescription"
+      rows="4"
+      maxlength="500"
+      placeholder="공연이나 영상에 대한 간단한 소개"
+    ></textarea>
+  </label>
+
+  <label class="admin-checkbox-label">
+    <input
+      id="adminVideoFeatured"
+      type="checkbox"
+    />
+
+    <span>
+      대표 라이브로 설정
+    </span>
+  </label>
+
+  <label class="admin-checkbox-label">
+    <input
+      id="adminVideoPublished"
+      type="checkbox"
+      checked
+    />
+
+    <span>
+      홈페이지에 공개
+    </span>
+  </label>
+
+  <div
+    class="admin-video-preview"
+    id="adminVideoPreview"
+    hidden
   >
-    <!-- =========================
-         기본 저장 정보
-    ========================== -->
-    <input
-      id="adminMusicId"
-      type="hidden"
-    />
+    <p>영상 미리보기</p>
 
-    <input
-      id="adminMusicProfileKey"
-      type="hidden"
-    />
-
-    <input
-      id="adminMusicCoverUrl"
-      type="hidden"
-    />
-
-    <!-- 동적 플랫폼 데이터 저장용 -->
-    <input
-      id="adminMusicPlatformsJson"
-      type="hidden"
-      value="[]"
-    />
-
-    <!-- =========================
-         기존 데이터 임시 호환용
-         다음 JS 단계에서 제거 예정
-    ========================== -->
-    <input
-      id="adminMusicYoutube"
-      type="hidden"
-    />
-
-    <input
-      id="adminMusicSpotify"
-      type="hidden"
-    />
-
-    <input
-      id="adminMusicApple"
-      type="hidden"
-    />
-
-    <input
-      id="adminMusicArtworkTitle"
-      type="hidden"
-    />
-
-    <input
-      id="adminMusicDisplayLabel"
-      type="hidden"
-    />
-
-    <input
-      id="adminMusicTrackCount"
-      type="hidden"
-      value="0"
-    />
-
-    <input
-      id="adminMusicReleaseDate"
-      type="hidden"
-    />
-
-    <input
-      id="adminMusicDescription"
-      type="hidden"
-    />
-
-    <input
-      id="adminMusicReleaseUrl"
-      type="hidden"
-    />
-
-    <!-- =========================
-         아티스트 또는 팀 이름
-    ========================== -->
-    <div class="admin-music-editor-profile">
-      <span id="adminMusicEditorCategory">
-        MUSIC PROFILE
-      </span>
-
-      <input
-        id="adminMusicEditorName"
-        class="admin-music-editor-name-input"
-        type="text"
-        maxlength="40"
-        placeholder="아티스트 또는 팀 이름"
-        aria-label="아티스트 또는 팀 이름"
-        required
-      />
-
-      <small>
-        홈페이지 Music 카드에 표시되는 아티스트 또는 팀 이름입니다.
-      </small>
+    <div class="admin-preview-frame">
+      <iframe
+        id="adminVideoPreviewFrame"
+        title="YouTube 영상 미리보기"
+        allowfullscreen
+      ></iframe>
     </div>
+  </div>
 
-    <!-- =========================
-         앨범 종류
-    ========================== -->
-    <label>
-      앨범 종류
-
-      <select
-        id="adminMusicType"
-        required
-      >
-        <option value="">
-          앨범 종류 선택
-        </option>
-
-        <option value="SINGLE">
-          SINGLE
-        </option>
-
-        <option value="EP">
-          EP
-        </option>
-
-        <option value="FULL ALBUM">
-          FULL ALBUM
-        </option>
-
-        <option value="MINI ALBUM">
-          MINI ALBUM
-        </option>
-
-        <option value="LIVE ALBUM">
-          LIVE ALBUM
-        </option>
-
-        <option value="OST">
-          OST
-        </option>
-
-        <option value="PARTICIPATION">
-          PARTICIPATION
-        </option>
-
-        <option value="COMING SOON">
-          COMING SOON
-        </option>
-      </select>
-
-      <small class="admin-field-help">
-        홈페이지에서 앨범명 위에 표시됩니다.
-      </small>
-    </label>
-
-    <!-- =========================
-         앨범명
-    ========================== -->
-    <label>
-      앨범명
-
-      <input
-        id="adminMusicTitle"
-        type="text"
-        maxlength="100"
-        placeholder="예: Side by Side"
-        required
-      />
-
-      <small class="admin-field-help">
-        홈페이지 Music 카드에 표시되는 대표 앨범명입니다.
-      </small>
-    </label>
-
-    <!-- =========================
-         앨범 자켓
-    ========================== -->
-    <label>
-      앨범 자켓
-
-      <input
-        id="adminMusicImage"
-        type="file"
-        accept="image/jpeg,image/png,image/webp,image/gif"
-      />
-
-      <small class="admin-field-help">
-        새 이미지를 선택하지 않으면 기존 앨범 자켓이 유지됩니다.
-      </small>
-    </label>
-
-    <div
-      class="admin-image-preview"
-      id="adminMusicImagePreview"
-      hidden
+  <div class="admin-form-actions">
+    <button
+      class="admin-form-cancel"
+      type="button"
+      data-admin-back="video"
     >
-      <img
-        id="adminMusicPreviewImage"
-        src=""
-        alt="앨범 자켓 미리보기"
-      />
-    </div>
+      취소
+    </button>
 
-    <!-- =========================
-         음원 플랫폼
-    ========================== -->
-    <section
-      class="admin-music-platform-section"
-      aria-labelledby="adminMusicPlatformTitle"
+    <button
+      class="admin-form-submit"
+      type="submit"
     >
-      <div class="admin-music-platform-heading">
-        <div>
-          <strong id="adminMusicPlatformTitle">
-            음원 플랫폼
-          </strong>
+      저장
+    </button>
+  </div>
+</form>
 
-          <p class="admin-field-help">
-            필요한 음원 플랫폼을 추가하고 링크를 입력하세요.
-            등록된 개수에 맞춰 홈페이지 버튼 크기가 자동으로 조절됩니다.
-          </p>
-        </div>
-
-        <button
-          class="admin-platform-add-button"
-          id="adminMusicPlatformAddButton"
-          type="button"
-        >
-          ＋ 플랫폼 추가
-        </button>
-      </div>
-
-      <div
-        class="admin-platform-dynamic-list"
-        id="adminMusicPlatformList"
-        aria-live="polite"
-      >
-        <div
-          class="admin-platform-empty-state"
-          id="adminMusicPlatformEmpty"
-        >
-          <strong>
-            등록된 음원 플랫폼이 없습니다.
-          </strong>
-
-          <p>
-            플랫폼 추가 버튼을 눌러 음원 링크를 등록해 주세요.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- =========================
-         공개 여부
-    ========================== -->
-    <label class="admin-checkbox-label">
-      <input
-        id="adminMusicPublished"
-        type="checkbox"
-        checked
-      />
-
-      <span>
-        홈페이지에 공개
-      </span>
-    </label>
-
-    <!-- =========================
-         하단 버튼
-    ========================== -->
-    <div class="admin-form-actions">
-      <button
-        class="admin-form-cancel"
-        type="button"
-        data-admin-back="music"
-      >
-        취소
-      </button>
-
-      <button
-        class="admin-form-submit"
-        type="submit"
-      >
-        저장
-      </button>
-    </div>
-  </form>
 </section>
 
 <!-- =========================================
