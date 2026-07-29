@@ -2587,9 +2587,11 @@ const adminStore = {
   ],
 };
 
-
 /* =========================
    SAVE ADD / EDIT
+   - 서버 저장 결과 확인
+   - 저장 후 서버 목록 재조회
+   - 확인된 경우에만 목록 이동
 ========================= */
 
 async function saveAdminItem(
@@ -2597,7 +2599,11 @@ async function saveAdminItem(
   data
 ) {
   const sectionItems =
-    adminStore[sectionName] || [];
+    Array.isArray(
+      adminStore[sectionName]
+    )
+      ? adminStore[sectionName]
+      : [];
 
   const existingIndex =
     sectionItems.findIndex(
@@ -2609,60 +2615,123 @@ async function saveAdminItem(
   const isUpdate =
     existingIndex >= 0;
 
-  const url = isUpdate
-    ? `/api/content?type=${encodeURIComponent(
-        sectionName
-      )}&id=${encodeURIComponent(
-        data.id
-      )}`
-    : `/api/content?type=${encodeURIComponent(
-        sectionName
-      )}`;
+  const requestUrl =
+    isUpdate
+      ? `/api/content?type=${encodeURIComponent(
+          sectionName
+        )}&id=${encodeURIComponent(
+          data.id
+        )}`
+      : `/api/content?type=${encodeURIComponent(
+          sectionName
+        )}`;
 
-  const result =
-    await adminApiRequest(url, {
-      method: isUpdate
-        ? "PUT"
-        : "POST",
+  const saveResult =
+    await adminApiRequest(
+      requestUrl,
+      {
+        method:
+          isUpdate
+            ? "PUT"
+            : "POST",
 
-      body: JSON.stringify(data),
-    });
+        body:
+          JSON.stringify(
+            data
+          ),
+      }
+    );
 
-  const savedItem =
-    result.item ||
-    result.data ||
+  if (
+    saveResult?.success ===
+    false
+  ) {
+    throw new Error(
+      saveResult.message ||
+        "콘텐츠를 저장하지 못했습니다."
+    );
+  }
+
+  let savedItem =
+    saveResult?.item ||
+    saveResult?.data ||
     null;
 
-  if (!savedItem) {
+  /*
+   * 배포된 API가 저장 객체 대신
+   * ID만 반환하는 경우 다시 조회
+   */
+  const savedItemId =
+    savedItem?.id ||
+    saveResult?.id ||
+    data.id;
+
+  if (!savedItem && savedItemId) {
+    const itemResult =
+      await adminApiRequest(
+        `/api/content?type=${encodeURIComponent(
+          sectionName
+        )}&id=${encodeURIComponent(
+          savedItemId
+        )}&includePrivate=true`
+      );
+
+    savedItem =
+      itemResult?.item ||
+      itemResult?.data ||
+      null;
+  }
+
+  if (
+    !savedItem ||
+    !savedItem.id
+  ) {
     console.error(
-      "저장 API 응답:",
-      result
+      "저장 후 확인 결과:",
+      saveResult
     );
 
     throw new Error(
-      "서버가 저장된 콘텐츠 정보를 반환하지 않았습니다."
+      "서버에서 저장된 콘텐츠를 확인하지 못했습니다."
     );
   }
 
-  if (!savedItem.id) {
-    savedItem.id = data.id;
-  }
+  /*
+   * 저장 직후 서버의 실제 목록을
+   * 다시 불러와 관리자 화면과 일치시킴
+   */
+  const listResult =
+    await adminApiRequest(
+      `/api/content?type=${encodeURIComponent(
+        sectionName
+      )}&includePrivate=true`
+    );
 
-  if (isUpdate) {
-    adminStore[sectionName][
-      existingIndex
-    ] = savedItem;
-  } else {
-    adminStore[sectionName].unshift(
-      savedItem
+  const serverItems =
+    Array.isArray(
+      listResult?.items
+    )
+      ? listResult.items
+      : [];
+
+  const savedItemExists =
+    serverItems.some(
+      (item) =>
+        String(item.id) ===
+        String(savedItem.id)
+    );
+
+  if (!savedItemExists) {
+    throw new Error(
+      "저장 요청은 처리됐지만 서버 목록에서 새 콘텐츠를 찾지 못했습니다."
     );
   }
+
+  adminStore[sectionName] =
+    serverItems;
 
   renderAllAdminLists();
 
-  /*
-   * News·공연 공개 화면 즉시 갱신
-   */
   if (
     sectionName === "news" &&
     typeof loadPublicNews ===
@@ -2680,7 +2749,37 @@ async function saveAdminItem(
     await loadPublicPerformances();
   }
 
-  openAdminView(sectionName);
+  if (
+    sectionName === "video" &&
+    typeof loadPublicFeaturedVideo ===
+      "function"
+  ) {
+    await loadPublicFeaturedVideo();
+  }
+
+  if (
+    sectionName === "music" &&
+    typeof loadPublicMusic ===
+      "function"
+  ) {
+    await loadPublicMusic();
+  }
+
+  if (
+    sectionName === "members" &&
+    typeof loadPublicMembers ===
+      "function"
+  ) {
+    await loadPublicMembers();
+  }
+
+  /*
+   * 서버 저장과 목록 재조회가
+   * 모두 성공한 뒤에만 목록 이동
+   */
+  openAdminView(
+    sectionName
+  );
 
   return savedItem;
 }
