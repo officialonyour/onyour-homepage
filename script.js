@@ -10627,6 +10627,291 @@ function applyPublicFeaturedVideo(video) {
 }
 
 
+function isPublishedLiveVideo(video) {
+  const isPublished =
+    video.published === true ||
+    video.published === 1 ||
+    video.published === "1";
+
+  return (
+    isPublished &&
+    (
+      !video.category ||
+      video.category === "live"
+    )
+  );
+}
+
+
+function getPublicVideoUrl(video) {
+  return String(
+    video.url ||
+    video.videoUrl ||
+    video.video_url ||
+    video.youtubeUrl ||
+    video.youtube_url ||
+    ""
+  ).trim();
+}
+
+
+function getPublicVideoThumbnail(video) {
+  const savedThumbnail =
+    String(
+      video.thumbnailUrl ||
+      video.thumbnail_url ||
+      ""
+    ).trim();
+
+  if (savedThumbnail) {
+    return savedThumbnail;
+  }
+
+  const embedUrl =
+    getYoutubeEmbedUrl(
+      getPublicVideoUrl(video)
+    );
+
+  const videoId =
+    embedUrl
+      .split("/embed/")[1]
+      ?.split("?")[0] || "";
+
+  return videoId
+    ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+    : "";
+}
+
+
+function formatPublicLiveDate(value) {
+  return String(value || "")
+    .trim()
+    .slice(0, 10)
+    .replaceAll("-", ".");
+}
+
+
+function createPublicLiveCard(video) {
+  const videoUrl =
+    getPublicVideoUrl(video);
+
+  const thumbnailUrl =
+    getPublicVideoThumbnail(video);
+
+  const eventTitle =
+    String(
+      video.eventTitle ||
+      video.event_title ||
+      "ONYOUR LIVE"
+    ).trim();
+
+  const title =
+    String(
+      video.songTitle ||
+      video.song_title ||
+      video.title ||
+      "공연 라이브"
+    ).trim();
+
+  const venue =
+    String(video.venue || "").trim();
+
+  const eventDate =
+    formatPublicLiveDate(
+      video.eventDate ||
+      video.event_date
+    );
+
+  const meta =
+    [venue, eventDate]
+      .filter(Boolean)
+      .join(" · ");
+
+  const thumbnailMarkup =
+    thumbnailUrl
+      ? `
+        <img
+          src="${escapeAdminHtml(thumbnailUrl)}"
+          alt="${escapeAdminHtml(title)} 썸네일"
+          loading="lazy"
+        />
+      `
+      : `
+        <div class="live-card-placeholder">
+          ONYOUR LIVE
+        </div>
+      `;
+
+  const linkAttributes =
+    videoUrl
+      ? `
+        href="${escapeAdminHtml(videoUrl)}"
+        target="_blank"
+        rel="noopener noreferrer"
+      `
+      : `
+        href="#"
+        aria-disabled="true"
+        tabindex="-1"
+      `;
+
+  return `
+    <article class="live-card">
+      <a
+        class="live-card-thumbnail"
+        ${linkAttributes}
+        aria-label="${escapeAdminHtml(title)} YouTube에서 보기"
+      >
+        ${thumbnailMarkup}
+
+        <span
+          class="live-card-play"
+          aria-hidden="true"
+        >
+          ▶
+        </span>
+      </a>
+
+      <div class="live-card-content">
+        <p class="live-card-event">
+          ${escapeAdminHtml(eventTitle)}
+        </p>
+
+        <h4>
+          ${escapeAdminHtml(title)}
+        </h4>
+
+        ${
+          meta
+            ? `
+              <p class="live-card-meta">
+                ${escapeAdminHtml(meta)}
+              </p>
+            `
+            : ""
+        }
+
+        <a
+          class="live-card-link"
+          ${linkAttributes}
+        >
+          YouTube에서 보기
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </article>
+  `;
+}
+
+
+function renderPublicLiveArchive(
+  videos,
+  featuredVideo
+) {
+  const latestLiveGrid =
+    document.getElementById(
+      "latestLiveGrid"
+    );
+
+  const allLiveGrid =
+    document.getElementById(
+      "allLiveGrid"
+    );
+
+  const liveArchivePanel =
+    document.getElementById(
+      "liveArchivePanel"
+    );
+
+  const openButton =
+    document.getElementById(
+      "openLiveArchiveButton"
+    );
+
+  const closeButton =
+    document.getElementById(
+      "closeLiveArchiveButton"
+    );
+
+  const recentVideos =
+    videos
+      .filter(
+        (video) =>
+          String(video.id) !==
+          String(featuredVideo?.id)
+      )
+      .slice(0, 3);
+
+  if (latestLiveGrid) {
+    latestLiveGrid.innerHTML =
+      recentVideos.length
+        ? recentVideos
+            .map(createPublicLiveCard)
+            .join("")
+        : `
+          <p class="live-archive-empty">
+            대표 라이브 외에 등록된 공연 영상이 없습니다.
+          </p>
+        `;
+  }
+
+  if (allLiveGrid) {
+    allLiveGrid.innerHTML =
+      videos.length
+        ? videos
+            .map(createPublicLiveCard)
+            .join("")
+        : `
+          <p class="live-archive-empty">
+            등록된 공연 영상이 없습니다.
+          </p>
+        `;
+  }
+
+  if (openButton) {
+    openButton.hidden = false;
+
+    openButton.onclick = () => {
+      if (!liveArchivePanel) {
+        return;
+      }
+
+      liveArchivePanel.hidden = false;
+
+      openButton.setAttribute(
+        "aria-expanded",
+        "true"
+      );
+
+      liveArchivePanel.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    };
+  }
+
+  if (closeButton) {
+    closeButton.onclick = () => {
+      if (!liveArchivePanel) {
+        return;
+      }
+
+      liveArchivePanel.hidden = true;
+
+      openButton?.setAttribute(
+        "aria-expanded",
+        "false"
+      );
+
+      openButton?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    };
+  }
+}
+
+
 async function loadPublicFeaturedVideo() {
   try {
     const response = await fetch(
@@ -10648,12 +10933,25 @@ async function loadPublicFeaturedVideo() {
         : [];
 
     const publishedVideos =
-      videos.filter(
-        (video) =>
-          video.published === true ||
-          video.published === 1 ||
-          video.published === "1"
-      );
+      videos
+        .filter(isPublishedLiveVideo)
+        .sort(
+          (firstVideo, secondVideo) =>
+            new Date(
+              secondVideo.eventDate ||
+              secondVideo.event_date ||
+              secondVideo.createdAt ||
+              secondVideo.created_at ||
+              0
+            ).getTime() -
+            new Date(
+              firstVideo.eventDate ||
+              firstVideo.event_date ||
+              firstVideo.createdAt ||
+              firstVideo.created_at ||
+              0
+            ).getTime()
+        );
 
     const featuredVideo =
       publishedVideos.find(
@@ -10664,11 +10962,14 @@ async function loadPublicFeaturedVideo() {
       ) ||
       publishedVideos[0];
 
-    if (!featuredVideo) {
-      return;
+    if (featuredVideo) {
+      applyPublicFeaturedVideo(
+        featuredVideo
+      );
     }
 
-    applyPublicFeaturedVideo(
+    renderPublicLiveArchive(
+      publishedVideos,
       featuredVideo
     );
   } catch (error) {
