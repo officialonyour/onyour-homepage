@@ -8349,38 +8349,194 @@ adminPerformanceForm
     handleAdminPerformanceSubmit
   );
 
-document
-  .getElementById("adminVideoForm")
-  ?.addEventListener(
-    "submit",
-    (event) => {
-      event.preventDefault();
+/* =========================================================
+   VIDEO FORM SUBMIT
+   - 새 영상 추가 및 기존 영상 수정
+   - 서버 저장 완료 후 목록 화면 이동
+   - 저장 실패 시 현재 화면 유지
+========================================================= */
 
-      const id = getAdminFormValue(
-        "adminVideoId"
+async function handleAdminVideoSubmit(
+  event
+) {
+  event.preventDefault();
+
+  const form =
+    event.currentTarget;
+
+  const submitButton =
+    form.querySelector(
+      ".admin-form-submit"
+    ) ||
+    form.querySelector(
+      'button[type="submit"]'
+    );
+
+  const originalButtonText =
+    submitButton?.textContent?.trim() ||
+    "저장";
+
+  const id =
+    getAdminFormValue(
+      "adminVideoId"
+    ).trim();
+
+  const title =
+    getAdminFormValue(
+      "adminVideoTitle"
+    ).trim();
+
+  const url =
+    getAdminFormValue(
+      "adminVideoUrl"
+    ).trim();
+
+  const description =
+    getAdminFormValue(
+      "adminVideoDescription"
+    ).trim();
+
+  const featured =
+    Boolean(
+      getAdminFormValue(
+        "adminVideoFeatured"
+      )
+    );
+
+  const published =
+    Boolean(
+      getAdminFormValue(
+        "adminVideoPublished"
+      )
+    );
+
+  if (!title) {
+    alert(
+      "영상 제목을 입력해 주세요."
+    );
+
+    document
+      .getElementById(
+        "adminVideoTitle"
+      )
+      ?.focus();
+
+    return;
+  }
+
+  if (!url) {
+    alert(
+      "YouTube URL을 입력해 주세요."
+    );
+
+    document
+      .getElementById(
+        "adminVideoUrl"
+      )
+      ?.focus();
+
+    return;
+  }
+
+  const embedUrl =
+    getYoutubeEmbedUrl(url);
+
+  if (!embedUrl) {
+    alert(
+      "올바른 YouTube 영상 주소를 입력해 주세요."
+    );
+
+    document
+      .getElementById(
+        "adminVideoUrl"
+      )
+      ?.focus();
+
+    return;
+  }
+
+  const videoData = {
+    id:
+      id ||
+      createAdminId("video"),
+
+    title,
+    url,
+    description,
+    featured,
+    published,
+
+    category: "live",
+    videoType: "youtube",
+
+    updatedAt:
+      new Date().toISOString(),
+  };
+
+  try {
+    if (submitButton) {
+      submitButton.disabled =
+        true;
+
+      submitButton.textContent =
+        "저장 중...";
+    }
+
+    const savedVideo =
+      await saveAdminItem(
+        "video",
+        videoData
       );
 
-      const data = {
-        id: id || createAdminId("video"),
-        title: getAdminFormValue(
-          "adminVideoTitle"
-        ),
-        url: getAdminFormValue(
-          "adminVideoUrl"
-        ),
-        description: getAdminFormValue(
-          "adminVideoDescription"
-        ),
-        featured: getAdminFormValue(
-          "adminVideoFeatured"
-        ),
-        published: getAdminFormValue(
-          "adminVideoPublished"
-        ),
-      };
-
-      saveAdminItem("video", data);
+    if (!savedVideo) {
+      throw new Error(
+        "서버에서 저장 결과를 확인하지 못했습니다."
+      );
     }
+
+    if (
+      typeof loadPublicFeaturedVideo ===
+      "function"
+    ) {
+      await loadPublicFeaturedVideo();
+    }
+
+    alert(
+      id
+        ? "영상이 수정되었습니다."
+        : "새 영상이 저장되었습니다."
+    );
+  } catch (error) {
+    console.error(
+      "영상 저장 실패:",
+      error
+    );
+
+    alert(
+      error?.message ||
+        "영상을 저장하지 못했습니다."
+    );
+  } finally {
+    if (submitButton) {
+      submitButton.disabled =
+        false;
+
+      submitButton.textContent =
+        originalButtonText;
+    }
+  }
+}
+
+
+const adminVideoForm =
+  document.getElementById(
+    "adminVideoForm"
+  );
+
+adminVideoForm
+  ?.addEventListener(
+    "submit",
+    handleAdminVideoSubmit
   );
 
 /* =========================================================
