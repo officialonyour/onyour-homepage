@@ -5042,14 +5042,16 @@ body.admin-dashboard-open {
 }
 
 #adminDashboard .admin-content-item-main strong {
-  overflow: hidden;
+  display: block;
+  overflow: visible;
 
   font-size: 14px;
   font-weight: 600;
-  line-height: 1.4;
+  line-height: 1.45;
 
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 
 #adminDashboard .admin-content-item-main small {
