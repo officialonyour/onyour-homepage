@@ -2834,6 +2834,150 @@ async function adminApiRequest(
   return result;
 }
 
+/* =========================================================
+   업로드 이미지 자동 압축·크기 축소
+========================================================= */
+
+async function prepareAdminImageForUpload(
+  file,
+  folder = "music"
+) {
+  if (
+    !file ||
+    !file.type.startsWith("image/") ||
+    file.type === "image/gif" ||
+    typeof createImageBitmap !==
+      "function"
+  ) {
+    return file;
+  }
+
+  const sizeLimits = {
+    hero: 2560,
+    "hero-mobile": 1920,
+    team: 2400,
+    performance: 2000,
+    members: 1600,
+    music: 1600,
+  };
+
+  const maxDimension =
+    sizeLimits[folder] || 1600;
+
+  let imageBitmap = null;
+
+  try {
+    imageBitmap =
+      await createImageBitmap(file);
+
+    const scale = Math.min(
+      1,
+      maxDimension /
+        Math.max(
+          imageBitmap.width,
+          imageBitmap.height
+        )
+    );
+
+    const targetWidth = Math.max(
+      1,
+      Math.round(
+        imageBitmap.width * scale
+      )
+    );
+
+    const targetHeight = Math.max(
+      1,
+      Math.round(
+        imageBitmap.height * scale
+      )
+    );
+
+    const canvas =
+      document.createElement("canvas");
+
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
+
+    const context =
+      canvas.getContext("2d");
+
+    if (!context) {
+      return file;
+    }
+
+    context.imageSmoothingEnabled =
+      true;
+
+    context.imageSmoothingQuality =
+      "high";
+
+    context.drawImage(
+      imageBitmap,
+      0,
+      0,
+      targetWidth,
+      targetHeight
+    );
+
+    const optimizedBlob =
+      await new Promise((resolve) => {
+        canvas.toBlob(
+          resolve,
+          "image/webp",
+          0.84
+        );
+      });
+
+    if (
+      !optimizedBlob ||
+      optimizedBlob.type !==
+        "image/webp"
+    ) {
+      return file;
+    }
+
+    const wasResized =
+      scale < 1;
+
+    if (
+      !wasResized &&
+      optimizedBlob.size >= file.size
+    ) {
+      return file;
+    }
+
+    const fileName =
+      String(
+        file.name || "image"
+      ).replace(/\.[^.]+$/, "");
+
+    return new File(
+      [optimizedBlob],
+      `${fileName}.webp`,
+      {
+        type: "image/webp",
+        lastModified: Date.now(),
+      }
+    );
+  } catch (error) {
+    console.warn(
+      "이미지 자동 최적화 생략:",
+      error
+    );
+
+    return file;
+  } finally {
+    if (
+      imageBitmap &&
+      typeof imageBitmap.close ===
+        "function"
+    ) {
+      imageBitmap.close();
+    }
+  }
+}
+
 async function uploadAdminImage(
   file,
   folder = "music"
@@ -2842,50 +2986,41 @@ async function uploadAdminImage(
     return "";
   }
 
+  const optimizedFile =
+    await prepareAdminImageForUpload(
+      file,
+      folder
+    );
+
   const formData = new FormData();
 
-  formData.append("file", file);
-  formData.append("folder", folder);
-
-  const headers = new Headers();
-
-  if (currentAdminPassword) {
-    headers.set(
-      "X-Admin-Password",
-      currentAdminPassword
-    );
-  }
-
-  const response = await fetch(
-    "/api/upload",
-    {
-      method: "POST",
-      headers,
-      body: formData,
-    }
+  formData.append(
+    "file",
+    optimizedFile
   );
 
-  let result;
+  formData.append(
+    "folder",
+    folder
+  );
 
-  try {
-    result = await response.json();
-  } catch {
-    throw new Error(
-      "이미지 업로드 응답을 읽을 수 없습니다."
+  const result =
+    await adminApiRequest(
+      "/api/upload",
+      {
+        method: "POST",
+        body: formData,
+      }
     );
-  }
 
-  if (
-    !response.ok ||
-    result.success === false
-  ) {
+  if (result?.success === false) {
     throw new Error(
       result.message ||
-      "이미지를 업로드하지 못했습니다."
+        "이미지를 업로드하지 못했습니다."
     );
   }
 
-  return result.file?.url || "";
+  return result?.file?.url || "";
 }
 
 const ADMIN_CONTENT_TYPES = [
@@ -5343,6 +5478,22 @@ function createMainPerformanceCard(
       "공개 공연 불러오기 실패:",
       error
     );
+
+    publicPerformanceList.innerHTML = `
+      ${createEmptyPerformanceCard()}
+
+      <div class="performance-side">
+        ${createSidePerformanceCard(null)}
+        ${createPerformanceQuoteCard()}
+      </div>
+    `;
+
+    if (
+      typeof loadSiteSettings ===
+      "function"
+    ) {
+      await loadSiteSettings();
+    }
   }
 }
 

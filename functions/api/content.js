@@ -199,10 +199,11 @@ export async function onRequestGet(context) {
     }
 
     if (includePrivate) {
-      const authorized = isAdminAuthorized(
-        request,
-        env
-      );
+      const authorized =
+        await isAdminAuthorized(
+          request,
+          env
+        );
 
       if (!authorized) {
         return unauthorizedResponse();
@@ -332,7 +333,12 @@ export async function onRequestDelete(context) {
       );
     }
 
-    if (!isAdminAuthorized(request, env)) {
+    if (
+      !(await isAdminAuthorized(
+        request,
+        env
+      ))
+    ) {
       return unauthorizedResponse();
     }
 
@@ -436,7 +442,12 @@ async function saveContent(
       );
     }
 
-    if (!isAdminAuthorized(request, env)) {
+    if (
+      !(await isAdminAuthorized(
+        request,
+        env
+      ))
+    ) {
       return unauthorizedResponse();
     }
 
