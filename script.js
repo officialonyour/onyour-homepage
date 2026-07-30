@@ -7703,35 +7703,100 @@ function fillAdminMusicForm(item) {
   );
 }
 
-/* =========================
-   음악 프로필 수정 화면 열기
-========================= */
-
 function openAdminMusicProfileForm(
   profileKey
 ) {
-  const item =
-    adminStore.music.find(
-      (musicItem) => {
-        const itemProfileKey =
-          musicItem.profileKey ||
-          musicItem.profile_key ||
-          musicItem.id;
+  const normalizedProfileKey =
+    String(profileKey || "").trim();
 
-        return (
-          itemProfileKey ===
-          profileKey
-        );
-      }
-    );
+  const profileSetting =
+    ADMIN_MUSIC_PROFILES[
+      normalizedProfileKey
+    ];
 
-  if (!item) {
+  if (
+    !normalizedProfileKey ||
+    !profileSetting
+  ) {
     alert(
-      "해당 음원 정보를 찾을 수 없습니다."
+      "음원 프로필 정보를 찾을 수 없습니다."
     );
 
     return;
   }
+
+  const existingItem =
+    adminStore.music.find(
+      (musicItem) => {
+        const savedProfileKey =
+          String(
+            musicItem.profileKey ||
+              musicItem.profile_key ||
+              ""
+          ).trim();
+
+        if (savedProfileKey) {
+          return (
+            savedProfileKey ===
+            normalizedProfileKey
+          );
+        }
+
+        const savedArtist =
+          String(
+            musicItem.artist ||
+              musicItem.artist_name ||
+              ""
+          )
+            .trim()
+            .toLowerCase();
+
+        return (
+          savedArtist ===
+          String(
+            profileSetting.name || ""
+          )
+            .trim()
+            .toLowerCase()
+        );
+      }
+    );
+
+  const item = existingItem
+    ? {
+        ...existingItem,
+        profileKey:
+          normalizedProfileKey,
+      }
+    : {
+        id: normalizedProfileKey,
+
+        profileKey:
+          normalizedProfileKey,
+
+        type: "",
+        title: "",
+
+        artist:
+          profileSetting.name || "",
+
+        artworkTitle: "",
+        displayLabel: "",
+        trackCount: 0,
+        releaseDate: "",
+        description: "",
+        coverUrl: "",
+
+        platforms: [],
+        platformsJson: "[]",
+
+        youtubeUrl: "",
+        spotifyUrl: "",
+        appleUrl: "",
+        releaseUrl: "",
+
+        published: true,
+      };
 
   resetAdminForm("music");
 

@@ -3630,6 +3630,292 @@
 </section>
 
 
+<!-- =========================
+     음원 프로필 수정
+========================== -->
+<section
+  class="admin-section-view admin-view"
+  id="adminMusicFormView"
+  data-admin-view="music-form"
+  aria-hidden="true"
+>
+  <div class="admin-section-header">
+    <button
+      class="admin-section-back"
+      type="button"
+      data-admin-back="music"
+      aria-label="음원 관리로 돌아가기"
+    >
+      ←
+    </button>
+
+    <div>
+      <p>MUSIC PROFILE EDITOR</p>
+
+      <h3 id="adminMusicFormTitle">
+        음원 정보 수정
+      </h3>
+    </div>
+  </div>
+
+  <form
+    class="admin-content-form"
+    id="adminMusicForm"
+  >
+    <input
+      id="adminMusicId"
+      type="hidden"
+    />
+
+    <input
+      id="adminMusicProfileKey"
+      type="hidden"
+    />
+
+    <input
+      id="adminMusicCoverUrl"
+      type="hidden"
+    />
+
+    <input
+      id="adminMusicPlatformsJson"
+      type="hidden"
+      value="[]"
+    />
+
+    <input
+      id="adminMusicYoutube"
+      type="hidden"
+    />
+
+    <input
+      id="adminMusicSpotify"
+      type="hidden"
+    />
+
+    <input
+      id="adminMusicApple"
+      type="hidden"
+    />
+
+    <input
+      id="adminMusicArtworkTitle"
+      type="hidden"
+    />
+
+    <input
+      id="adminMusicDisplayLabel"
+      type="hidden"
+    />
+
+    <input
+      id="adminMusicTrackCount"
+      type="hidden"
+      value="0"
+    />
+
+    <input
+      id="adminMusicReleaseDate"
+      type="hidden"
+    />
+
+    <input
+      id="adminMusicDescription"
+      type="hidden"
+    />
+
+    <input
+      id="adminMusicReleaseUrl"
+      type="hidden"
+    />
+
+    <div class="admin-music-editor-profile">
+      <span id="adminMusicEditorCategory">
+        MUSIC PROFILE
+      </span>
+
+      <input
+        id="adminMusicEditorName"
+        class="admin-music-editor-name-input"
+        type="text"
+        maxlength="40"
+        placeholder="아티스트 또는 팀 이름"
+        aria-label="아티스트 또는 팀 이름"
+        required
+      />
+
+      <small>
+        홈페이지 Music 카드에 표시되는 아티스트 또는 팀 이름입니다.
+      </small>
+    </div>
+
+    <label>
+      앨범 종류
+
+      <select
+        id="adminMusicType"
+        required
+      >
+        <option value="">
+          앨범 종류 선택
+        </option>
+
+        <option value="SINGLE">
+          SINGLE
+        </option>
+
+        <option value="EP">
+          EP
+        </option>
+
+        <option value="FULL ALBUM">
+          FULL ALBUM
+        </option>
+
+        <option value="MINI ALBUM">
+          MINI ALBUM
+        </option>
+
+        <option value="LIVE ALBUM">
+          LIVE ALBUM
+        </option>
+
+        <option value="OST">
+          OST
+        </option>
+
+        <option value="PARTICIPATION">
+          PARTICIPATION
+        </option>
+
+        <option value="COMING SOON">
+          COMING SOON
+        </option>
+      </select>
+
+      <small class="admin-field-help">
+        홈페이지에서 앨범명 위에 표시됩니다.
+      </small>
+    </label>
+
+    <label>
+      앨범명
+
+      <input
+        id="adminMusicTitle"
+        type="text"
+        maxlength="100"
+        placeholder="예: Side by Side"
+        required
+      />
+
+      <small class="admin-field-help">
+        홈페이지 Music 카드에 표시되는 대표 앨범명입니다.
+      </small>
+    </label>
+
+    <label>
+      앨범 자켓
+
+      <input
+        id="adminMusicImage"
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/gif"
+      />
+
+      <small class="admin-field-help">
+        새 이미지를 선택하지 않으면 기존 앨범 자켓이 유지됩니다.
+      </small>
+    </label>
+
+    <div
+      class="admin-image-preview"
+      id="adminMusicImagePreview"
+      hidden
+    >
+      <img
+        id="adminMusicPreviewImage"
+        src=""
+        alt="앨범 자켓 미리보기"
+      />
+    </div>
+
+    <section
+      class="admin-music-platform-section"
+      aria-labelledby="adminMusicPlatformTitle"
+    >
+      <div class="admin-music-platform-heading">
+        <div>
+          <strong id="adminMusicPlatformTitle">
+            음원 플랫폼
+          </strong>
+
+          <p class="admin-field-help">
+            필요한 음원 플랫폼을 추가하고 링크를 입력하세요.
+            등록된 개수에 맞춰 홈페이지 버튼 크기가 자동으로 조절됩니다.
+          </p>
+        </div>
+
+        <button
+          class="admin-platform-add-button"
+          id="adminMusicPlatformAddButton"
+          type="button"
+        >
+          ＋ 플랫폼 추가
+        </button>
+      </div>
+
+      <div
+        class="admin-platform-dynamic-list"
+        id="adminMusicPlatformList"
+        aria-live="polite"
+      >
+        <div
+          class="admin-platform-empty-state"
+          id="adminMusicPlatformEmpty"
+        >
+          <strong>
+            등록된 음원 플랫폼이 없습니다.
+          </strong>
+
+          <p>
+            플랫폼 추가 버튼을 눌러 음원 링크를 등록해 주세요.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <label class="admin-checkbox-label">
+      <input
+        id="adminMusicPublished"
+        type="checkbox"
+        checked
+      />
+
+      <span>
+        홈페이지에 공개
+      </span>
+    </label>
+
+    <div class="admin-form-actions">
+      <button
+        class="admin-form-cancel"
+        type="button"
+        data-admin-back="music"
+      >
+        취소
+      </button>
+
+      <button
+        class="admin-form-submit"
+        type="submit"
+      >
+        저장
+      </button>
+    </div>
+  </form>
+</section>
+
     <!-- =========================
          갤러리 목록
     ========================== -->
