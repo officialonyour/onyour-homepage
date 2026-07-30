@@ -2470,121 +2470,11 @@ document
 ========================================================= */
 
 const adminStore = {
-  news: [
-    {
-      id: "news-1",
-      category: "Release",
-      title: "가을 첫 정규앨범 발매 예정",
-      date: "2026 Autumn",
-      description: "",
-      published: true,
-      featured: true,
-    },
-    {
-      id: "news-2",
-      category: "Performance",
-      title: "강릉 버스킹 전국대회 본선",
-      date: "2026.07.25",
-      description: "",
-      published: true,
-      featured: false,
-    },
-    {
-      id: "news-3",
-      category: "Video",
-      title: "새로운 라이브 영상 공개",
-      date: "New",
-      description: "",
-      published: true,
-      featured: false,
-    },
-  ],
-
-  performance: [
-    {
-      id: "performance-1",
-      title: "강릉 버스킹 전국대회",
-      date: "2026-07-25",
-      time: "",
-      location: "강릉",
-      address: "",
-      description: "",
-      setlist: "",
-      ticketUrl: "",
-      published: true,
-    },
-  ],
-
-  video: [
-    {
-      id: "video-1",
-      title: "ONYOUR Live Session",
-      url: "",
-      description: "",
-      featured: true,
-      published: true,
-    },
-  ],
-
-  music: [
-    {
-      id: "music-1",
-      type: "Upcoming Album",
-      title: "ONYOUR 1st Full Album",
-      artist: "ONYOUR",
-      releaseDate: "2026 Autumn",
-      description: "",
-      youtubeUrl: "",
-      spotifyUrl: "",
-      appleUrl: "",
-      published: true,
-    },
-    {
-      id: "music-2",
-      type: "Latest Release",
-      title: "최근 발매 음원",
-      artist: "이휘근",
-      releaseDate: "",
-      description: "",
-      youtubeUrl: "",
-      spotifyUrl: "",
-      appleUrl: "",
-      published: true,
-    },
-  ],
-
-  members: [
-    {
-      id: "member-1",
-      name: "이휘근",
-      englishName: "",
-      role: "Producer · Rap",
-      description: "",
-      instagram: "",
-      order: 1,
-      published: true,
-    },
-    {
-      id: "member-2",
-      name: "이루니",
-      englishName: "",
-      role: "Vocal · Rap",
-      description: "",
-      instagram: "",
-      order: 2,
-      published: true,
-    },
-    {
-      id: "member-3",
-      name: "이체린",
-      englishName: "",
-      role: "Guitar",
-      description: "",
-      instagram: "",
-      order: 3,
-      published: true,
-    },
-  ],
+  news: [],
+  performance: [],
+  video: [],
+  music: [],
+  members: [],
 };
 
 /* =========================
@@ -4427,6 +4317,82 @@ async function loadPublicNews() {
     `;
   }
 
+  function showEmptyNewsState() {
+    publicNewsList.style.setProperty(
+      "display",
+      "block"
+    );
+
+    publicNewsList.innerHTML = `
+      <article
+        class="news-card news-card-compact reveal visible"
+        aria-label="등록된 새 소식 없음"
+      >
+        <div
+          class="news-card-number"
+          aria-hidden="true"
+        >
+          —
+        </div>
+
+        <div class="news-meta">
+          <span class="news-category">
+            ONYOUR Notice
+          </span>
+
+          <span>Updating</span>
+        </div>
+
+        <div class="news-content">
+          <div
+            class="news-icon"
+            aria-hidden="true"
+          >
+            <span>●</span>
+          </div>
+
+          <div class="news-text">
+            <p class="news-kicker">
+              Latest News
+            </p>
+
+            <h3>
+              새로운 소식을 준비하고 있습니다.
+            </h3>
+
+            <p>
+              ONYOUR의 공연과 음원 소식을
+              곧 전해드리겠습니다.
+            </p>
+          </div>
+        </div>
+
+        <div class="news-card-footer">
+          <span class="news-status">
+            <span
+              class="news-status-dot"
+              aria-hidden="true"
+            ></span>
+
+            Preparing News
+          </span>
+
+          <span
+            class="news-card-line"
+            aria-hidden="true"
+          ></span>
+        </div>
+      </article>
+    `;
+  }
+
+  showEmptyNewsState();
+
+  publicNewsList.setAttribute(
+    "aria-busy",
+    "true"
+  );
+
   try {
     const response = await fetch(
       "/api/content?type=news",
@@ -4442,21 +4408,28 @@ async function loadPublicNews() {
       }
     );
 
-    const result =
-      await response.json();
+    let result;
+
+    try {
+      result = await response.json();
+    } catch {
+      throw new Error(
+        "News 응답을 읽을 수 없습니다."
+      );
+    }
 
     if (
       !response.ok ||
-      result.success === false
+      result?.success === false
     ) {
       throw new Error(
-        result.message ||
+        result?.message ||
         "News를 불러오지 못했습니다."
       );
     }
 
     const publishedNews = (
-      Array.isArray(result.items)
+      Array.isArray(result?.items)
         ? result.items
         : []
     ).filter(
@@ -4484,8 +4457,13 @@ async function loadPublicNews() {
       publishedNews.slice(0, 3);
 
     if (!latestNews.length) {
+      showEmptyNewsState();
       return;
     }
+
+    publicNewsList.style.removeProperty(
+      "display"
+    );
 
     publicNewsList.innerHTML =
       latestNews
@@ -4497,6 +4475,12 @@ async function loadPublicNews() {
     console.error(
       "공개 News 불러오기 실패:",
       error
+    );
+
+    showEmptyNewsState();
+  } finally {
+    publicNewsList.removeAttribute(
+      "aria-busy"
     );
   }
 }
@@ -11384,19 +11368,122 @@ function renderPublicLiveArchive(
 
 
 async function loadPublicFeaturedVideo() {
-  try {
-    const response = await fetch(
-      "/api/content?type=video"
+  const featuredLiveCard =
+    document.getElementById(
+      "featuredLiveCard"
     );
 
-    if (!response.ok) {
-      throw new Error(
-        "영상 정보를 불러오지 못했습니다."
+  const featuredVideoFrame =
+    document.getElementById(
+      "featuredVideo"
+    );
+
+  const youtubeVideoButton =
+    document.getElementById(
+      "youtubeVideoButton"
+    );
+
+  const openArchiveButton =
+    document.getElementById(
+      "openLiveArchiveButton"
+    );
+
+  const liveArchivePanel =
+    document.getElementById(
+      "liveArchivePanel"
+    );
+
+  const latestLiveGrid =
+    document.getElementById(
+      "latestLiveGrid"
+    );
+
+  function showEmptyLiveState() {
+    if (featuredVideoFrame) {
+      featuredVideoFrame.removeAttribute(
+        "src"
+      );
+
+      featuredVideoFrame.title =
+        "등록된 대표 라이브 영상 없음";
+    }
+
+    if (youtubeVideoButton) {
+      youtubeVideoButton.hidden = true;
+      youtubeVideoButton.removeAttribute(
+        "href"
+      );
+
+      youtubeVideoButton.setAttribute(
+        "aria-hidden",
+        "true"
       );
     }
 
-    const result =
-      await response.json();
+    if (featuredLiveCard) {
+      featuredLiveCard.hidden = true;
+    }
+
+    renderPublicLiveArchive(
+      [],
+      null
+    );
+
+    if (latestLiveGrid) {
+      latestLiveGrid.innerHTML = `
+        <p class="live-archive-empty">
+          등록된 공연 영상이 없습니다.
+        </p>
+      `;
+    }
+
+    if (openArchiveButton) {
+      openArchiveButton.hidden = true;
+
+      openArchiveButton.setAttribute(
+        "aria-expanded",
+        "false"
+      );
+    }
+
+    if (liveArchivePanel) {
+      liveArchivePanel.hidden = true;
+    }
+  }
+
+  try {
+    const response = await fetch(
+      "/api/content?type=video",
+      {
+        method: "GET",
+
+        headers: {
+          Accept: "application/json",
+        },
+
+        cache: "no-store",
+      }
+    );
+
+    let result;
+
+    try {
+      result = await response.json();
+    } catch {
+      throw new Error(
+        "영상 정보 응답을 읽을 수 없습니다."
+      );
+    }
+
+    if (
+      !response.ok ||
+      result.success === false
+    ) {
+      throw new Error(
+        result.message ||
+          "영상 정보를 불러오지 못했습니다."
+      );
+    }
 
     const videos =
       Array.isArray(result.items)
@@ -11407,20 +11494,23 @@ async function loadPublicFeaturedVideo() {
       videos
         .filter(isPublishedLiveVideo)
         .sort(
-          (firstVideo, secondVideo) =>
+          (
+            firstVideo,
+            secondVideo
+          ) =>
             new Date(
               secondVideo.eventDate ||
-              secondVideo.event_date ||
-              secondVideo.createdAt ||
-              secondVideo.created_at ||
-              0
+                secondVideo.event_date ||
+                secondVideo.createdAt ||
+                secondVideo.created_at ||
+                0
             ).getTime() -
             new Date(
               firstVideo.eventDate ||
-              firstVideo.event_date ||
-              firstVideo.createdAt ||
-              firstVideo.created_at ||
-              0
+                firstVideo.event_date ||
+                firstVideo.createdAt ||
+                firstVideo.created_at ||
+                0
             ).getTime()
         );
 
@@ -11431,13 +11521,21 @@ async function loadPublicFeaturedVideo() {
           video.featured === 1 ||
           video.featured === "1"
       ) ||
-      publishedVideos[0];
+      publishedVideos[0] ||
+      null;
 
-    if (featuredVideo) {
-      applyPublicFeaturedVideo(
-        featuredVideo
-      );
+    if (!featuredVideo) {
+      showEmptyLiveState();
+      return;
     }
+
+    if (featuredLiveCard) {
+      featuredLiveCard.hidden = false;
+    }
+
+    applyPublicFeaturedVideo(
+      featuredVideo
+    );
 
     renderPublicLiveArchive(
       publishedVideos,
@@ -11448,6 +11546,8 @@ async function loadPublicFeaturedVideo() {
       "대표 영상 불러오기 실패:",
       error
     );
+
+    showEmptyLiveState();
   }
 }
 
@@ -11787,8 +11887,18 @@ async function uploadFanMessagePhoto(file) {
     };
   }
 
+  const optimizedFile =
+    await prepareAdminImageForUpload(
+      file,
+      "fan-message"
+    );
+
   const formData = new FormData();
-  formData.append("file", file);
+
+  formData.append(
+    "file",
+    optimizedFile
+  );
 
   const response = await fetch(
     "/api/fan-message-photo",
@@ -11802,7 +11912,9 @@ async function uploadFanMessagePhoto(file) {
   );
 
   const result =
-    await parseFanMessageApiResponse(response);
+    await parseFanMessageApiResponse(
+      response
+    );
 
   return {
     photoUrl:
@@ -11810,6 +11922,7 @@ async function uploadFanMessagePhoto(file) {
       result.photo_url ||
       result.file?.url ||
       "",
+
     photoKey:
       result.photoKey ||
       result.photo_key ||
